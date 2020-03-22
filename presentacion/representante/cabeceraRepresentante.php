@@ -16,12 +16,13 @@ $representante -> consultar();
     <i class="fa fa-bars menu-toggle"></i>
 
     <ul class="nav">
-        <li><a href="index.php?pid=<?php echo base64_encode('presentacion/profesor/sesionEstudiante.php') ?>">Home</a></li>
+        <li><a href="index.php?pid=<?php echo base64_encode('presentacion/representante/sesionRepresentante.php') ?>">Home</a></li>
+        <li><a href="index.php?pid=<?php echo base64_encode('presentacion/representante/modelos.php') ?>">Modelos</a></li>
         <li>
             <a href="#">Corte</a>
             <ul style="right: 0px;">
-                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/profesor/consultarProyecto.php") . "&tipo=t" ?>">Tutor</a></li>
-                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/profesor/consultarProyecto.php") . "&tipo=j" ?>">Jurado</a></li>
+                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/representante/crearCorte.php")?>">Nuevo</a></li>
+                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/representante/consultarCorte.php")?>">Consultar</a></li>
             </ul>
         </li>
         <li>
