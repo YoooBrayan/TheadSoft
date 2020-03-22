@@ -5,7 +5,7 @@ class Proveedor{
     private $id;
     private $razonSocial;
 
-    function Proveedor($id, $razonSocial){
+    function Proveedor($id="", $razonSocial=""){
         $this->id = $id;
         $this->razonSocial = $razonSocial;
     }

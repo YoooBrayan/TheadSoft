@@ -19,4 +19,8 @@ class RepresentanteDAO{
     function consultar(){
         return "select representante_nombre, representante_correo, representante_proveedor from representante where representante_id =  '" . $this -> id . "' ";
     }
+
+    function proveedor(){
+        return "select representante_proveedor from representante where '" . $this-> id . "'";
+    }
 }

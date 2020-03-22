@@ -2,6 +2,8 @@
 
 require_once "logica/proveedor.php";
 require_once "logica/Operacion.php";
+require_once "persistencia/Conexion.php";
+require_once "persistencia/ModeloDAO.php";
 
 class Modelo{
 
@@ -10,12 +12,16 @@ class Modelo{
     private $valor;
     private $proveedor;
     private $operaciones;
+    private $conexion;
+    private $modeloDAO;
 
-    function Modelo($id="", $nombre="", $valor="", $proveedor, $operaciones){
+    function Modelo($id="", $nombre="", $valor="", $proveedor=""){
         $this -> id = $id;
         $this -> nombre = $nombre;
         $this -> valor = $valor;
-        $this -> proveedor = new Proyecto();
+        $this -> proveedor = $proveedor;
+        $this -> conexion = new Conexion();
+        $this -> modeloDAO = new ModeloDAO($id, $nombre, $valor, $proveedor);
         $this -> operaciones = new Operacion();
     }
 
@@ -57,6 +63,20 @@ class Modelo{
 
     function setOperaciones($operaciones){
         $this -> operaciones = $operaciones;
+    }
+
+    function consultarModelos(){
+        $this->conexion->abrir();
+        //echo $this->proyectoDAO->consultarTutores();
+        $this->conexion->ejecutar($this->modeloDAO->consultarModelos());
+        $resultados = array();
+        $i = 0;
+        while (($registro = $this->conexion->extraer()) != null) {
+            $resultados[$i] = new Modelo($registro[0], $registro[1], $registro[2]);
+            $i++;
+        }
+        $this->conexion->cerrar();
+        return $resultados;
     }
     
 }

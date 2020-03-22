@@ -5,6 +5,9 @@ session_start();
 require 'logica/Persona.php';
 require_once "logica/administrador.php";
 require_once "logica/representante.php";
+require_once 'logica/Modelo.php';
+require_once 'logica/Talla.php';
+require_once 'logica/Color.php';
 
 ?>
 
@@ -17,6 +20,10 @@ require_once "logica/representante.php";
     <title>Document</title>
 
     <!--Librerias-->
+
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
 
     <!-- BootStrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
@@ -33,10 +40,6 @@ require_once "logica/representante.php";
         })
     </script>
 
-    <!-- JQuery -->
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
-
     <!--PDF-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script>
 
@@ -47,20 +50,21 @@ require_once "logica/representante.php";
     <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
+    <!-- Summernote -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
 
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.ripples/0.5.3/jquery.ripples.min.js"></script>
-
     <script src="//cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
 
-<!--    <script src="presentacion/js/material.min.js"></script> 
+    <script src="presentacion/js/material.min.js"></script>
 
     <script>
 		$.material.init();
-	</script> -->
+	</script>
     
 </head>
 
@@ -85,24 +89,4 @@ require_once "logica/representante.php";
 
 </body>
 
-<select class="selectpicker show-menu-arrow" 
-            data-style="form-control" 
-            data-live-search="true" 
-            title="-- Select your coffee --"
-            multiple="multiple">
-      <option data-tokens="Espresso">Espresso</option>
-      <option data-tokens="Americano">Americano</option>
-      <option data-tokens="Mocha">Mocha</option>
-      <option data-tokens="Capuccino">Capuccino</option>
-      <option data-tokens="Affogato">Affogato</option>
-      <option data-tokens="Long Black">Long Black</option>
-      <option data-tokens="Macchiato">Macchiato</option>
-    </select>
-
 </html>
-
-<script>
-      $('.selectpicker').selectpicker({
-    style: 'btn-default'
-  });
-</script>

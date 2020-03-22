@@ -49,4 +49,13 @@ class Representante extends Persona{
         
     }
 
+    function proveedor(){
+        $this -> conexion -> abrir();
+        $this -> conexion -> ejecutar($this -> representanteDAO -> proveedor());
+        $resultado = $this -> conexion -> extraer();
+        $this -> proveedor = $resultado[0];
+        $this -> conexion -> cerrar();
+        
+    }
+
 }
