@@ -2,6 +2,7 @@
 
 session_start();
 
+require 'logica/Persona.php';
 require_once "logica/administrador.php";
 require_once "logica/representante.php";
 
@@ -46,28 +47,41 @@ require_once "logica/representante.php";
     <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
 
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.ripples/0.5.3/jquery.ripples.min.js"></script>
+
+    <script src="//cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
+
+    <script src="presentacion/js/material.min.js"></script>
+
+    <script>
+		$.material.init();
+	</script>
+    
 </head>
 
 <body>
 
-<?php
+    <?php
 
-if(isset($_GET['pid'])){
-    $pid = base64_decode($_GET['pid']);
-    if(isset($_GET['nos']) || (!isset($_GET['nos']) && $_SESSION['id'] != "")){
-        include $pid;
-    }else{
-        header("Location: index.php");
+    if (isset($_GET['pid'])) {
+        $pid = base64_decode($_GET['pid']);
+        if (isset($_GET['nos']) || (!isset($_GET['nos']) && $_SESSION['id'] != "")) {
+            include $pid;
+        } else {
+            header("Location: index.php");
+        }
+    } else {
+        $_SESSION['id'] = "";
+        include 'presentacion/inicio.php';
     }
-}else{
-    $_SESSION['id'] = "";
-    include 'presentacion/inicio.php';
-}
 
-?>
-    
+    ?>
+
 
 </body>
 

@@ -6,7 +6,7 @@ class Conexion{
     private $resultado;
 
     function abrir(){
-        $this -> mysqli = new mysqli("localhost", "root", "ROCKY13.soloyo13.", "threadSoft", 3306);
+        $this -> mysqli = new mysqli("localhost", "root", "", "act", 3306);
         $this -> mysqli -> set_charset("utf8");
     }
 
@@ -18,16 +18,15 @@ class Conexion{
         $this -> mysqli -> close();
     }
 
-    function numFilas(){
-        if($this -> resultado != null){
+    public function numFilas(){
+        if($this -> resultado!=null){
             return $this -> resultado -> num_rows;
         }else{
             return 0;
         }
     }
-
-    function extraer(){
-        $this -> resultado -> fetch_row();
+    public function extraer(){
+        return $this -> resultado -> fetch_row();
     }
 
 }

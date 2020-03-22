@@ -9,7 +9,6 @@ class AdministradorDAO{
         $this -> nombre = $nombre;
         $this -> correo = $correo;
         $this -> clave = $clave;
-        $this -> usuario = new Usuario();
     }
 
     function autenticar(){

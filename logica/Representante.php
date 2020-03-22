@@ -9,9 +9,10 @@ class Representante extends Persona{
     private $representanteDAO;
     private $conexion;
 
-    function Representante($id="", $nombre="", $correo="", $clave="", $usuario="", $proveedor=""){
-        $this -> Persona($id, $nombre, $correo, $clave, $usuario);
-        $this -> proveedor = new Proveedor();
+    function Representante($id="", $nombre="", $correo="", $clave=""){
+        $this -> Persona($id, $nombre, $correo, $clave);
+        //$this -> proveedor = new Proveedor();
+        $this -> conexion = new Conexion();
         $this -> representanteDAO = new RepresentanteDAO($id, $nombre, $correo, $clave);
     }
 
@@ -26,7 +27,7 @@ class Representante extends Persona{
     function autenticar(){
         $this -> conexion -> abrir();
         $this -> conexion -> ejecutar($this -> representanteDAO -> autenticar());
-        if($this -> conexion -> numFilas == 1){
+        if($this -> conexion -> numFilas() == 1){
             $resultado = $this -> conexion -> extraer();
             $this -> id = $resultado[0];
             $this -> conexion -> cerrar();

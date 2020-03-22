@@ -4,16 +4,16 @@ class RepresentanteDAO{
     
     private $id, $nombre, $correo, $clave, $usuario;
 
-    function RepresentanteDAO($id="", $nombre="", $correo="", $clave="", $usuario=""){
+    function RepresentanteDAO($id="", $nombre="", $correo="", $clave=""){
         $this -> id = $id;
         $this -> nombre = $nombre;
         $this -> correo = $correo;
         $this -> clave = $clave;
-        $this -> usuario = new Usuario();
+        //$this -> usuario = new Usuario();
     }
 
     function autenticar(){
-        return "select representante_id from representante where correo = '". $this -> correo ."' and clave = 'sha1(". $this -> clave ."')";
+        return "select representante_id from representante where representante_correo = '". $this -> correo ."' and clave = sha1('". $this -> clave ."')";
     }
 
     function consultar(){

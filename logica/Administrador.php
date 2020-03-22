@@ -1,7 +1,7 @@
 <?php
 
 require_once "persistencia/Conexion.php";
-require "persistencia/Administrador.php";
+require "persistencia/AdministradorDAO.php";
 
 class Administrador extends Persona{
 
@@ -10,6 +10,7 @@ class Administrador extends Persona{
 
     function Administrador($id="", $nombre="", $correo="", $clave="", $usuario=""){
         $this -> Persona($id, $nombre, $correo, $clave, $usuario);
+        $this-> conexion = new Conexion();
         $this -> administradorDAO = new AdministradorDAO($id, $nombre, $correo, $clave);
     }
 

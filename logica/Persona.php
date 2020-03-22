@@ -2,14 +2,13 @@
 
 abstract class Persona{
 
-    private $id, $nombre, $correo, $clave, $usuario;
+    protected $id, $nombre, $correo, $clave, $usuario;
 
-    function Persona($id="", $nombre="", $correo="", $clave="", $usuario=""){
+    function Persona($id="", $nombre="", $correo="", $clave=""){
         $this -> id = $id;
         $this -> nombre = $nombre;
         $this -> correo = $correo;
         $this -> clave = $clave;
-        $this -> usuario = new Usuario();
     }
 
     function getId(){
