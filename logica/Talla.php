@@ -10,10 +10,12 @@ class Talla{
     private $colores;
     private $conexion;
     private $tallaDAO;
+    private $cantidad;
 
-    function Talla($id="", $nombre="", $colores=""){
+    function Talla($id="", $nombre="", $colores="", $cantidad=""){
         $this -> id = $id;
         $this -> nombre = $nombre;
+        $this -> cantidad = $cantidad;
         $this -> conexion = new Conexion();
         $this -> tallaDAO = new TallaDAO();
         $this-> colores = new Color();
@@ -55,6 +57,14 @@ class Talla{
         }
         $this->conexion->cerrar();
         return $resultados;
+    }
+
+    function setCantidad($cantidad){
+        $this -> cantidad = $cantidad;
+    }
+
+    function getCantidad(){
+        return $this -> cantidad;
     }
 
 }

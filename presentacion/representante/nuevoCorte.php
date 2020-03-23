@@ -2,6 +2,8 @@
 
 include 'presentacion/representante/cabeceraRepresentante.php';
 
+$_SESSION['tallas'] = array();
+
 $representante->proveedor();
 
 $modelos = new Modelo("", "", "", $representante->getProveedor());
@@ -18,26 +20,16 @@ $colores = $color->consultarColores();
         <div class="col-3"></div>
         <div class="col-6">
             <div class="card">
+            <div id="mensaje" class='alert alert-danger' role='alert' hidden></div>
                 <div class="card-header bg-primary text-white bg-dark" style="text-align: center;">Registro</div>
                 <div class="card-body">
-                    <?php /*
-                    if ($error == 0) {
-                        ?>
-                        <div class="alert alert-success" role="alert">
-                            Registrado exitosamente.
-                        </div>
-                    <?php } else if ($error == 1) { ?>
-                        <div class="alert alert-danger" role="alert">
-                            El correo <?php echo $correo; ?> ya existe
-                        </div>
-                    <?php } */ ?>
                     <form action=<?php echo "index.php?pid=" . base64_encode("presentacion/representante/registrarCorte.php") ?> method="post">
                         <hr/ style="border: 1px solid">
-                        <h6>Registro del nuevo corte</h6>
+                        <h6>Nuevo corte</h6>
                         <div class="form-group">
                             <label>Seleccione Modelo <?php // echo " " . $titulo; 
                                                         ?>:</label>
-                            <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idS">
+                            <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idM">
                                 <?php
                                 foreach ($modelos as $m) {
                                 ?>
@@ -47,10 +39,10 @@ $colores = $color->consultarColores();
                             </select>
                         </div>
                         <div class="form-group">
-                            <input onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha de Envio" name="fechaInicio">
+                            <input id="fechaEnvio" onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha de Envio" name="fechaEnvio">
                         </div>
                         <div class="form-group">
-                            <input onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha de Entrega" name="fechaInicio">
+                            <input id="fechaEntrega" onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha de Entrega" name="fechaEntrega">
                         </div>
                         <div class="form-group">
                             <label style="color: gray;" id="label3"> Observaciones </label>
@@ -63,7 +55,7 @@ $colores = $color->consultarColores();
 
                         <label>Seleccione Tallas <?php // echo " " . $titulo; 
                                                     ?>:</label>
-                        <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idS">
+                        <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idT">
                             <?php
                             foreach ($tallas as $t) {
                             ?>
@@ -73,10 +65,10 @@ $colores = $color->consultarColores();
                         </select>
                         <div class="form-gruop mt-2">
                             <label>Cantidad</label>
-                            <input type="number" style="width: 61px">
+                            <input id="cantidadT" type="number" style="width: 61px">
                         </div>
 
-                        <button type="submit" name="registrar" class="btn btn-dark mt-2 mb-2">Agregar</button>
+                        <button id="btnTalla" type="submit" name="registrar" class="btn btn-dark mt-2 mb-2">Agregar</button>
                         <table class="table table-striped table-hover">
                             <thead>
                                 <tr>
@@ -84,7 +76,7 @@ $colores = $color->consultarColores();
                                     <th scope="col">Cantidad</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="tallas">
                                 <?php
                                 /*foreach ($profesores as $p) {
         echo "<tr id=". $p -> getId() .">";
@@ -113,7 +105,7 @@ $colores = $color->consultarColores();
                         </select>
                         <div class="form-gruop mt-2">
                             <label>Cantidad</label>
-                            <input type="number" style="width: 61px">
+                            <input id="cantidadC" type="number" style="width: 61px">
                         </div>
 
                         <button type="submit" name="registrar" class="btn btn-dark mt-2 mb-2">Agregar</button>
@@ -144,7 +136,7 @@ $colores = $color->consultarColores();
 
 
 
-                        <button type="submit" name="registrar" class="btn btn-dark">Registrar</button>
+                        <button id="registrar" type="submit" name="registrar" class="btn btn-dark">Registrar</button>
                         <a class="btn btn-dark " href="index.php?pid=<?php echo base64_encode('presentacion/sesionAdministrador.php') ?>" role="button">Inicio</a>
                     </form>
                 </div>
@@ -158,5 +150,90 @@ $colores = $color->consultarColores();
 <script>
     $(document).ready(function() {
         $(".editor").summernote({});
+    });
+
+    $(document).on('click', '#btnTalla', function(e) {
+        e.preventDefault();
+        let idT = $("#idT option:selected")[0].value;
+        //console.log(idT);
+        let cantidadT = $("#cantidadT").val();
+        //console.log(cantidadT);
+        $.ajax({
+            type: "POST",
+            url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarTalla.php") ?>",
+            data: {
+                idT,
+                cantidadT
+            },
+            success: function(response) {
+
+                let tallas = JSON.parse(response);
+                console.log(tallas);
+                //console.log(response);
+
+                let template = '';
+                tallas.forEach(talla => {
+                    template += `
+                        <tr>
+                            <td>${talla.id}</td>
+                            <td>${talla.cantidad}</td>
+                        </tr>
+                    `
+                });
+
+                $("#tallas").html(template);
+
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Talla Agregada',
+                    showConfirmButton: false,
+                    timer: 800
+                });
+            }
+        });
+
+    })
+
+    $(document).on("click", "#registrar", function(e) {
+        e.preventDefault();
+        let idM = $("#idM option:selected")[0].value;
+        let fecha_envio = $("#fechaEnvio").val();
+        let fecha_entrega = $("#fechaEntrega").val();
+        let observaciones = $($("#editor").summernote("code")).text();
+        let idR = <?php echo $_SESSION['id']; ?>
+
+        $.ajax({
+            type: "POST",
+            url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/crearCorte.php") ?>",
+            data: {
+                idR,
+                idM,
+                fecha_envio,
+                fecha_entrega,
+                observaciones
+            },
+            success: function(response) {
+
+                if (response) {
+                    $("#mensaje").removeAttr("hidden");
+                    $("#mensaje").removeClass();
+                    $("#mensaje").addClass("alert alert-success");
+                    $("#mensaje").html("Corte Registrado");
+                    window.scrollTo(0, 0);
+                    
+                    $("#editor").summernote("code", "");
+                    $("#cantidadT").val(" ");
+                    $("#cantidadC").val(" ");
+                }else{
+                    $("#mensaje").removeAttr("hidden");
+                    $("#mensaje").removeClass();
+                    $("#mensaje").addClass("alert alert-danger");
+                    $("#mensaje").html("Algo salio mal");
+                    window.scrollTo(0, 0);
+                }
+            }
+        });
+
     });
 </script>

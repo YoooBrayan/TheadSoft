@@ -26,7 +26,7 @@
 	</form>
 	<!--====== Scripts -->
 	
-	<script src="js/main.js"></script>
+	<script src="presentacion/js/main.js"></script>
 
 </body>
 

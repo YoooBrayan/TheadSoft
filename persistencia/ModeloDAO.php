@@ -8,7 +8,7 @@ class ModeloDAO{
     private $proveedor;
     private $operaciones;
 
-    function ModeloDAO($id="", $nombre="", $valor="", $proveedor){
+    function ModeloDAO($id="", $nombre="", $valor="", $proveedor=""){
         $this -> id = $id;
         $this -> nombre = $nombre;
         $this -> valor = $valor;
@@ -17,6 +17,10 @@ class ModeloDAO{
 
     function consultarModelos(){
         return "call modelosProveedor('". $this -> proveedor ."')";
+    }
+
+    function getId(){
+        return $this->id;
     }
 
 }
