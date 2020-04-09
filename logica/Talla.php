@@ -67,4 +67,14 @@ class Talla{
         return $this -> cantidad;
     }
 
+    public function __get($prop)
+    {
+        return $this->$prop;
+    }
+
+    public function __isset($prop) : bool
+    {
+        return isset($this->$prop);
+    }
+
 }

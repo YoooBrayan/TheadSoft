@@ -23,4 +23,8 @@ class RepresentanteDAO{
     function proveedor(){
         return "select representante_proveedor from representante where '" . $this-> id . "'";
     }
-}
+
+    function insertar(){
+        return "insert into representante(representante_id, representante_nombre, representante_Correo, representante_Clave, representante_proveedor) values ('". $this->id ."', '". $this->nombre ."', '". $this->correo ."', sha1('".$this->clave."'), '".$this->proveedor()->getId()."')";
+    }
+} 

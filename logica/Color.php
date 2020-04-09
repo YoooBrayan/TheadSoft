@@ -10,10 +10,12 @@ class Color{
     private $nombre;
     private $conexion;
     private $colorDAO;
+    private $cantidad;
 
-    function Color($id="", $nombre=""){
+    function Color($id="", $nombre="", $cantidad=""){
         $this -> id = $id;
         $this-> nombre = $nombre;
+        $this->cantidad=$cantidad;
         $this -> conexion = new Conexion(); 
         $this -> colorDAO = new ColorDAO($id, $nombre);
     }
@@ -46,5 +48,24 @@ class Color{
         }
         $this->conexion->cerrar();
         return $resultados;
+    }
+
+    function getCantidad(){
+        return $this->cantidad;
+    }
+
+    function setCantidad($cantidad){
+        $this->cantidad = $cantidad;
+    }
+
+
+    public function __get($prop)
+    {
+        return $this->$prop;
+    }
+
+    public function __isset($prop) : bool
+    {
+        return isset($this->$prop);
     }
 }

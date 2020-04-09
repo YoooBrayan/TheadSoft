@@ -3,6 +3,7 @@
 include 'presentacion/representante/cabeceraRepresentante.php';
 
 $_SESSION['tallas'] = array();
+$_SESSION['colores'] = array();
 
 $representante->proveedor();
 
@@ -20,7 +21,7 @@ $colores = $color->consultarColores();
         <div class="col-3"></div>
         <div class="col-6">
             <div class="card">
-            <div id="mensaje" class='alert alert-danger' role='alert' hidden></div>
+                <div id="mensaje" class='alert alert-danger' role='alert' hidden></div>
                 <div class="card-header bg-primary text-white bg-dark" style="text-align: center;">Registro</div>
                 <div class="card-body">
                     <form action=<?php echo "index.php?pid=" . base64_encode("presentacion/representante/registrarCorte.php") ?> method="post">
@@ -65,7 +66,7 @@ $colores = $color->consultarColores();
                         </select>
                         <div class="form-gruop mt-2">
                             <label>Cantidad</label>
-                            <input id="cantidadT" type="number" style="width: 61px">
+                            <input id="cantidadT" type="number" min="0" oninput="validity.valid||(value='');" style="width: 61px">
                         </div>
 
                         <button id="btnTalla" type="submit" name="registrar" class="btn btn-dark mt-2 mb-2">Agregar</button>
@@ -74,20 +75,10 @@ $colores = $color->consultarColores();
                                 <tr>
                                     <th scope="col">Talla</th>
                                     <th scope="col">Cantidad</th>
+                                    <th scope="col">Servicios</th>
                                 </tr>
                             </thead>
                             <tbody id="tallas">
-                                <?php
-                                /*foreach ($profesores as $p) {
-        echo "<tr id=". $p -> getId() .">";
-        echo "<td>" . $p->getId() . "</td>";
-        echo "<td>" . $p->getNombre() . "</td>";
-        echo "<td>" . $p->getApellido() . "</td>";
-        echo "<td>" . $p->getCorreo() . "</td>";
-        echo "</tr>";
-    
-    }
-    echo "<tr><td colspan='9'>" . count($profesores) . " registros encontrados</td></tr>" */ ?>
                             </tbody>
                         </table>
 
@@ -95,7 +86,7 @@ $colores = $color->consultarColores();
 
                         <label>Seleccione Colores <?php // echo " " . $titulo; 
                                                     ?>:</label>
-                        <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idS">
+                        <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idC">
                             <?php
                             foreach ($colores as $c) {
                             ?>
@@ -108,26 +99,16 @@ $colores = $color->consultarColores();
                             <input id="cantidadC" type="number" style="width: 61px">
                         </div>
 
-                        <button type="submit" name="registrar" class="btn btn-dark mt-2 mb-2">Agregar</button>
+                        <button id="btnColor" type="submit" name="registrar" class="btn btn-dark mt-2 mb-2">Agregar</button>
                         <table class="table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th scope="col">Talla</th>
+                                    <th scope="col">Color</th>
                                     <th scope="col">Cantidad</th>
+                                    <th scope="col">Servicios</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <?php
-                                /*foreach ($profesores as $p) {
-        echo "<tr id=". $p -> getId() .">";
-        echo "<td>" . $p->getId() . "</td>";
-        echo "<td>" . $p->getNombre() . "</td>";
-        echo "<td>" . $p->getApellido() . "</td>";
-        echo "<td>" . $p->getCorreo() . "</td>";
-        echo "</tr>";
-    
-    }
-    echo "<tr><td colspan='9'>" . count($profesores) . " registros encontrados</td></tr>" */ ?>
+                            <tbody id="colores">
                             </tbody>
                         </table>
                         <hr/ style="border: 1px solid">
@@ -147,6 +128,21 @@ $colores = $color->consultarColores();
 
 </div>
 
+<div class="modal fade" id="modalColores" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" id="modalContent">
+        </div>
+    </div>
+</div>
+
+<script>
+    $('body').on('show.bs.modal', '.modal', function(e) {
+        var link = $(e.relatedTarget);
+        $(this).find(".modal-content").load(link.attr("href"));
+    });
+</script>
+
+
 <script>
     $(document).ready(function() {
         $(".editor").summernote({});
@@ -158,6 +154,9 @@ $colores = $color->consultarColores();
         //console.log(idT);
         let cantidadT = $("#cantidadT").val();
         //console.log(cantidadT);
+
+        let urls = "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/modalColores.php") ?>";
+
         $.ajax({
             type: "POST",
             url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarTalla.php") ?>",
@@ -174,9 +173,14 @@ $colores = $color->consultarColores();
                 let template = '';
                 tallas.forEach(talla => {
                     template += `
-                        <tr>
+                        <tr id='${talla.id}'>
                             <td>${talla.id}</td>
                             <td>${talla.cantidad}</td>
+                            <td> 
+                            <a class='fas fa-times-circle eliminar' data-toggle='tooltip' 
+                            data-placement='left' title='Eliminar'> </a>
+                            <a class='fas fa-pencil-ruler colores' href='modalColores.php?idTalla=${talla.id}' data-placement='left' title='Agregar Tallas' data-toggle='modal' data-target='#modalColores'> </a>
+                            </td>
                         </tr>
                     `
                 });
@@ -193,7 +197,57 @@ $colores = $color->consultarColores();
             }
         });
 
-    })
+    });
+
+    $(document).on('click', '#btnColor', function(e) {
+        e.preventDefault();
+        let idC = $("#idC option:selected")[0].value;
+        let color = $("#idC option:selected")[0].label;
+        //console.log(idC);
+        //console.log(color);
+        let cantidadC = $("#cantidadC").val();
+        //console.log(cantidadT);
+        $.ajax({
+            type: "POST",
+            url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColor.php") ?>",
+            data: {
+                idC,
+                color,
+                cantidadC
+            },
+            success: function(response) {
+
+                let colores = JSON.parse(response);
+                //console.log(colores);
+                //console.log(response);
+
+                let template = '';
+                colores.forEach(color => {
+                    template += `
+                        <tr id='${color.id}'>
+                            <td>${color.nombre}</td>
+                            <td>${color.cantidad}</td>
+                            <td> 
+                            <a class='fas fa-times-circle eliminar' data-toggle='tooltip' data-placement='left' title='Eliminar'> </a>
+                            </td>
+                            
+                        </tr>
+                    `
+                });
+
+                $("#colores").html(template);
+
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Color Agregada',
+                    showConfirmButton: false,
+                    timer: 800
+                });
+            }
+        });
+
+    });
 
     $(document).on("click", "#registrar", function(e) {
         e.preventDefault();
@@ -221,11 +275,11 @@ $colores = $color->consultarColores();
                     $("#mensaje").addClass("alert alert-success");
                     $("#mensaje").html("Corte Registrado");
                     window.scrollTo(0, 0);
-                    
+
                     $("#editor").summernote("code", "");
                     $("#cantidadT").val(" ");
                     $("#cantidadC").val(" ");
-                }else{
+                } else {
                     $("#mensaje").removeAttr("hidden");
                     $("#mensaje").removeClass();
                     $("#mensaje").addClass("alert alert-danger");
@@ -235,5 +289,115 @@ $colores = $color->consultarColores();
             }
         });
 
+    });
+
+    $("table").on("click", "#tallas .eliminar", function(event) {
+        event.preventDefault();
+        var elemento = $(this)[0].parentElement.parentElement;
+        var talla = $(elemento).attr('id');
+        $.ajax({
+            type: "POST",
+            url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/eliminarTalla.php") ?>",
+            data: {
+                talla
+            },
+            success: function(response) {
+
+                $("#" + talla).remove();
+
+                /*let tallas = JSON.parse(response);
+                console.log(tallas);
+                //console.log(response);
+
+                let template = '';
+                tallas.forEach(talla => {
+                    template += `
+                        <tr id='${talla.id}'>
+                            <td>${talla.id}</td>
+                            <td>${talla.cantidad}</td>
+                            <td> 
+                            <a class='fas fa-times-circle eliminar' href='index.php?pid=" . base64_encode("presentacion/paciente/actualizarPaciente.php") . "&idPaciente=" . $p->getId() . "' data-toggle='tooltip' data-placement='left' title='Eliminar'> </a>
+                            <a class='fas fa-pencil-ruler' href='index.php?pid=" . base64_encode("presentacion/paciente/actualizarPaciente.php") . "&idPaciente=" . $p->getId() . "' data-toggle='tooltip' data-placement='left' title='Actualizar'> </a>
+                            </td>
+                            
+                        </tr>
+                    `
+                });
+
+                $("#tallas").html(template);*/
+            }
+        });
+
+    })
+
+    $("table").on("click", "#colores .eliminar", function(event) {
+        event.preventDefault();
+        var elemento = $(this)[0].parentElement.parentElement;
+        var color = $(elemento).attr('id');
+        $.ajax({
+            type: "POST",
+            url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/eliminarColor.php") ?>",
+            data: {
+                color
+            },
+            success: function(response) {
+
+                $("#" + color).remove();
+
+                /*let tallas = JSON.parse(response);
+                console.log(tallas);
+                //console.log(response);
+
+                let template = '';
+                tallas.forEach(talla => {
+                    template += `
+                        <tr id='${talla.id}'>
+                            <td>${talla.id}</td>
+                            <td>${talla.cantidad}</td>
+                            <td> 
+                            <a class='fas fa-times-circle eliminar' href='index.php?pid=" . base64_encode("presentacion/paciente/actualizarPaciente.php") . "&idPaciente=" . $p->getId() . "' data-toggle='tooltip' data-placement='left' title='Eliminar'> </a>
+                            <a class='fas fa-pencil-ruler' href='index.php?pid=" . base64_encode("presentacion/paciente/actualizarPaciente.php") . "&idPaciente=" . $p->getId() . "' data-toggle='tooltip' data-placement='left' title='Actualizar'> </a>
+                            </td>
+                            
+                        </tr>
+                    `
+                });
+
+                $("#tallas").html(template);*/
+            }
+        });
+
+    });
+
+    $(document).on('hide.bs.modal', '#modalColores', function() {
+
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false
+        })
+
+        swalWithBootstrapButtons.fire({
+            title: 'Desea agregar estos mismos colores a las demas tallas?',
+            icon: 'question',
+            showCancelButton: true,
+            cancelButtonText: ' No ',                                                     
+            confirmButtonText: '    Si ',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.value) {
+                swalWithBootstrapButtons.fire(
+                    'Colores agregados!',
+                )
+            } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                
+            }
+        })
+        //Do stuff here
     });
 </script>

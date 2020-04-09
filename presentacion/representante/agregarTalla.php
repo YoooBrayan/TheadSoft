@@ -8,6 +8,7 @@ if(isset($_POST['idT'])){
     $talla -> setCantidad($_POST['cantidadT']);
 
     array_push($_SESSION['tallas'], $talla);
+    $_SESSION['colores'.$idT] = array();    
 
     $json = array();
     foreach($_SESSION['tallas'] as $t){

@@ -21,6 +21,7 @@ class CorteDAO
         $this->fecha_entrega = $fecha_entrega;
         $this->observaciones = $observaciones;
         $this->tallas = new Talla();
+        $this->colores = new Color();
         $this->representante = new Representante();
         $this->modelo = new Modelo();
     }
@@ -37,12 +38,24 @@ class CorteDAO
         return "call agregarTallaCorte('". $this -> id ."', '". $this -> tallas -> getId() ."', '" . $this -> tallas -> getCantidad() ."')";
     }
 
+    function agregarColores(){
+        return "call agregarColorCorte('". $this -> id ."', '". $this -> colores -> getId() ."', '" . $this -> colores -> getCantidad() ."')";
+    }
+
     function setTallas($tallas){
         $this->tallas = $tallas;
     }
 
     function getTallas(){
         return $this -> tallas;
+    }
+
+    function setColores($colores){
+        $this->colores = $colores;
+    }
+
+    function getColores(){
+        return $this->colores;
     }
 
     function consultar(){
@@ -55,6 +68,10 @@ class CorteDAO
     
     function setModelo($modelo){
         $this->modelo=$modelo;
+    }
+
+    function eliminarTalla($talla){
+        return "delete from corte_talla where corte_id = '". $this->id ."' and talla_id = '". $this-> $talla ."'";
     }
 }
 ?>

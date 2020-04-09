@@ -14,7 +14,7 @@ class Corte{
     private $estado;
     private $tareas;
     private $tallas = array();
-    private $colores;
+    private $colores = array();
     private $conexion;
     private $corteDAO;
 
@@ -29,6 +29,7 @@ class Corte{
         $this -> representante = new Representante(); 
         $this -> modelo = new Modelo();
         $this -> tallas = $tallas;
+        $this-> colores = $colores;
     }
 
     function getId(){
@@ -129,13 +130,32 @@ class Corte{
         $this->conexion->cerrar();
     }
 
-    function agregarTalla(){
+    function eliminarTalla($talla){
+        $this->conexion->abrir();
+        //echo "<br>" . $this->corteDAO->insertar() . "<br>";
+        $this->conexion->ejecutar($this->corteDAO->eliminarTalla($talla));
+        $this->conexion->cerrar();
+    }
+
+    function agregarTallas(){
         $this->conexion->abrir();
 
         foreach($this->tallas as $t){
             $this->corteDAO -> setTallas($t);
             //echo "<br>" . $this-> corteDAO->agregarTallas() . "<br>";
             $this->conexion->ejecutar($this->corteDAO->agregarTallas());
+        }
+
+        $this->conexion->cerrar();
+    }
+
+    function agregarColores(){
+        $this->conexion->abrir();
+
+        foreach($this->colores as $c){
+            $this->corteDAO -> setColores($c);
+            //echo "<br>" . $this-> corteDAO->agregarTallas() . "<br>";
+            $this->conexion->ejecutar($this->corteDAO->agregarColores());
         }
 
         $this->conexion->cerrar();
