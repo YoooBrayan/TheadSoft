@@ -8,7 +8,7 @@ if(isset($_POST['idM'])){
     $representante = new Representante($_POST['idR']);
     
     foreach($_SESSION['tallas'] as $t){
-        $t -> setColores($_SESSION['colores'+$->getId()]);
+        $t -> setColores($_SESSION['colores'.$t->getId()]);
     }
 
     $corteid = new Corte();
@@ -18,8 +18,10 @@ if(isset($_POST['idM'])){
 
 
     $corte -> insertar();
+
     $corte -> agregarTallas();
-    $corte -> agregarColores();    
+
+    //$corte -> agregarColores($corte -> getTallas());
 
     if($corte->consultar()){
         echo true;

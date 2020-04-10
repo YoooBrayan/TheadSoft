@@ -269,6 +269,8 @@ $colores = $color->consultarColores();
             },
             success: function(response) {
 
+                console.log(response);
+
                 if (response) {
                     $("#mensaje").removeAttr("hidden");
                     $("#mensaje").removeClass();

@@ -113,6 +113,7 @@ class Corte{
     function setColores($colores){
         $this -> colores = $colores;
     }
+
     function idCorteNuevo(){
         $this -> conexion -> abrir();
         //echo "<br>" . $this->corteDAO->idCorteNuevo() . "<br>"; 
@@ -120,6 +121,14 @@ class Corte{
 
         $resultado = $this->conexion->extraer();
         $this -> conexion -> cerrar();
+        return $resultado[0];
+    }
+
+    function idTallaCorte($corte, $talla){
+        $this -> conexion -> abrir();
+        $this -> conexion -> ejecutar($this->corteDAO->idTallaCorte($corte, $talla));
+        $resultado = $this->conexion->extraer();
+        //$this -> conexion -> cerrar();
         return $resultado[0];
     }
 
@@ -142,22 +151,25 @@ class Corte{
 
         foreach($this->tallas as $t){
             $this->corteDAO -> setTallas($t);
-            //echo "<br>" . $this-> corteDAO->agregarTallas() . "<br>";
+            echo "\n" . $this-> corteDAO->agregarTallas() . "\n";
             $this->conexion->ejecutar($this->corteDAO->agregarTallas());
+            $idTalla = $this->idTallaCorte($this->id, $t -> getId());
+
+            echo "<\n Cantidad: " . count($t->getColores());
+
+            foreach($t->getColores() as $c){
+                
+                echo "\n" . $this -> corteDAO -> agregarColores($idTalla, $c -> getId(), $c -> getCantidad()) . "\n";
+                $this->conexion->ejecutar($this -> corteDAO -> agregarColores($idTalla, $c -> getId(), $c -> getCantidad()));
+            }
+
         }
 
         $this->conexion->cerrar();
     }
 
-    function agregarColores(){
+    function agregarColores($talla){
         $this->conexion->abrir();
-
-        foreach($this->colores as $c){
-            $this->corteDAO -> setColores($c);
-            //echo "<br>" . $this-> corteDAO->agregarTallas() . "<br>";
-            $this->conexion->ejecutar($this->corteDAO->agregarColores());
-        }
-
         $this->conexion->cerrar();
     }
 

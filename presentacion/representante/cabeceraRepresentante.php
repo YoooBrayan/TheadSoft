@@ -65,16 +65,3 @@ $representante -> consultar();
 
     })
 </script>
-
-<!--<div class="modal fade" id="modalProyecto" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content" id="modalContent"></div>
-    </div>
-</div>
-
-<script>
-	$('body').on('show.bs.modal', '.modal', function (e) {
-		var link = $(e.relatedTarget);
-		$(this).find(".modal-content").load(link.attr("href"));
-	});
-</script>-->

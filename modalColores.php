@@ -7,7 +7,7 @@ $colores = $color->consultarColores();
 
 ?>
 <div class="modal-header">
-	<h5 class="modal-title">Agregar Colores</h5>
+	<h5 class="modal-title">Agregar Colores <?php  echo " en la talla: "  . $_GET['idTalla']?></h5>
 	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		<span aria-hidden="true">&times;</span>
 	</button>
@@ -52,22 +52,25 @@ $colores = $color->consultarColores();
 		e.preventDefault();
 		let idCM = $("#idCM option:selected")[0].value;
 		let colorM = $("#idCM option:selected")[0].label;
+		let idTalla = "CP";
 		console.log(idCM);
 		console.log(colorM);
 		let cantidadCM = $("#cantidadCM").val();
 		console.log(cantidadCM);
+		
 		$.ajax({
 			type: "POST",
 			url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColor.php") ?>",
 			data: {
 				idCM,
 				colorM,
-				cantidadCM
+				cantidadCM,
+				idTalla
 			},
 			success: function(response) {
 
 				let colores = JSON.parse(response);
-				//console.log(colores);
+				console.log(colores);
 				//console.log(response);
 
 				let template = '';

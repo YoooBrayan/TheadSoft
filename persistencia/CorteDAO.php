@@ -38,8 +38,8 @@ class CorteDAO
         return "call agregarTallaCorte('". $this -> id ."', '". $this -> tallas -> getId() ."', '" . $this -> tallas -> getCantidad() ."')";
     }
 
-    function agregarColores(){
-        return "call agregarColorCorte('". $this -> id ."', '". $this -> colores -> getId() ."', '" . $this -> colores -> getCantidad() ."')";
+    function agregarColores($talla, $color, $cantidad){
+        return "insert into corte_Talla_color(corte_talla_id, color_id, cantidad) values ('". $talla ."', '". $color ."', '". $cantidad ."')";
     }
 
     function setTallas($tallas){
@@ -73,5 +73,14 @@ class CorteDAO
     function eliminarTalla($talla){
         return "delete from corte_talla where corte_id = '". $this->id ."' and talla_id = '". $this-> $talla ."'";
     }
+
+    function idTallaCorte($corte, $talla){
+        return "select Corte_Talla_id from corte_Talla ct join talla t on ct.talla_id = t.talla_id where t.talla_id = '". $talla ."' and ct.corte_id = '". $corte ."'";
+    }
+
+    function setId($id){
+        $this->id = $id;
+    }
+    
 }
 ?>
