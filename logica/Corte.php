@@ -133,7 +133,7 @@ class Corte{
     }
 
     function insertar(){
-        $this->conexion->abrir();
+        $this->conexion->abrir(); 
         //echo "<br>" . $this->corteDAO->insertar() . "<br>";
         $this->conexion->ejecutar($this->corteDAO->insertar());
         $this->conexion->cerrar();

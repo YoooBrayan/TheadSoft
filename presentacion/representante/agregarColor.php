@@ -9,7 +9,7 @@ if(isset($_POST['idCM'])){
     $color -> setNombre($_POST['colorM']);
     $color -> setCantidad($_POST['cantidadCM']);
     $talla = $_POST['idTalla'];
-
+      
     array_push($_SESSION['colores'.$talla], $color);
 
     $json = array();

@@ -13,7 +13,7 @@ class RepresentanteDAO{
     }
 
     function autenticar(){
-        return "select representante_id from representante where representante_correo = '". $this -> correo ."' and clave = sha1('". $this -> clave ."')";
+        return "select representante_id from representante where representante_correo = '". $this -> correo ."' and representante_clave = sha1('". $this -> clave ."')";
     }
 
     function consultar(){

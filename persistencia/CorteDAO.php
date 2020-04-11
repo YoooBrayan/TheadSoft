@@ -31,7 +31,7 @@ class CorteDAO
     }
 
     function idCorteNuevo(){
-        return "select (Corte_Id + 1) from Corte order by Corte_Id desc limit 1";
+        return "select idCorteNuevo()";
     }
 
     function agregarTallas(){

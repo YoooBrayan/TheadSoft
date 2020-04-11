@@ -52,7 +52,7 @@ $colores = $color->consultarColores();
 		e.preventDefault();
 		let idCM = $("#idCM option:selected")[0].value;
 		let colorM = $("#idCM option:selected")[0].label;
-		let idTalla = "CP";
+		let idTalla = "CT";
 		console.log(idCM);
 		console.log(colorM);
 		let cantidadCM = $("#cantidadCM").val();
