@@ -4,6 +4,7 @@ require_once 'logica/Color.php';
 
 $color = new Color();
 $colores = $color->consultarColores();
+$talla = $_GET['idTalla'];
 
 ?>
 <div class="modal-header">
@@ -52,7 +53,7 @@ $colores = $color->consultarColores();
 		e.preventDefault();
 		let idCM = $("#idCM option:selected")[0].value;
 		let colorM = $("#idCM option:selected")[0].label;
-		let idTalla = "CT";
+		let idTalla = "<?php echo $talla; ?>";
 		console.log(idCM);
 		console.log(colorM);
 		let cantidadCM = $("#cantidadCM").val();

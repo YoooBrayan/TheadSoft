@@ -84,33 +84,6 @@ $colores = $color->consultarColores();
 
                         <hr/ style="border: 1px solid">
 
-                        <label>Seleccione Colores <?php // echo " " . $titulo; 
-                                                    ?>:</label>
-                        <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idC">
-                            <?php
-                            foreach ($colores as $c) {
-                            ?>
-                                <option value="<?php echo $c->getId() ?>"><?php echo $c->getNombre();  ?></option>
-                            <?php }
-                            ?>
-                        </select>
-                        <div class="form-gruop mt-2">
-                            <label>Cantidad</label>
-                            <input id="cantidadC" type="number" style="width: 61px">
-                        </div>
-
-                        <button id="btnColor" type="submit" name="registrar" class="btn btn-dark mt-2 mb-2">Agregar</button>
-                        <table class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Color</th>
-                                    <th scope="col">Cantidad</th>
-                                    <th scope="col">Servicios</th>
-                                </tr>
-                            </thead>
-                            <tbody id="colores">
-                            </tbody>
-                        </table>
                         <hr/ style="border: 1px solid">
                         <br>
                         <br>
@@ -385,11 +358,22 @@ $colores = $color->consultarColores();
             title: 'Desea agregar estos mismos colores a las demas tallas?',
             icon: 'question',
             showCancelButton: true,
-            cancelButtonText: ' No ',                                                     
+            cancelButtonText: ' No ',
             confirmButtonText: '    Si ',
             reverseButtons: true
         }).then((result) => {
             if (result.value) {
+
+                let colores = "";
+
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColores.php") ?>",
+                    data: {
+                        colores
+                    }
+                });
+
                 swalWithBootstrapButtons.fire(
                     'Colores agregados!',
                 )
@@ -397,7 +381,7 @@ $colores = $color->consultarColores();
                 /* Read more about handling dismissals below */
                 result.dismiss === Swal.DismissReason.cancel
             ) {
-                
+
             }
         })
         //Do stuff here

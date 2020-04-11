@@ -151,25 +151,20 @@ class Corte{
 
         foreach($this->tallas as $t){
             $this->corteDAO -> setTallas($t);
-            echo "\n" . $this-> corteDAO->agregarTallas() . "\n";
+            //echo "\n" . $this-> corteDAO->agregarTallas() . "\n";
             $this->conexion->ejecutar($this->corteDAO->agregarTallas());
             $idTalla = $this->idTallaCorte($this->id, $t -> getId());
 
-            echo "<\n Cantidad: " . count($t->getColores());
+            //echo "<\n Cantidad: " . count($t->getColores());
 
             foreach($t->getColores() as $c){
                 
-                echo "\n" . $this -> corteDAO -> agregarColores($idTalla, $c -> getId(), $c -> getCantidad()) . "\n";
+              //  echo "\n" . $this -> corteDAO -> agregarColores($idTalla, $c -> getId(), $c -> getCantidad()) . "\n";
                 $this->conexion->ejecutar($this -> corteDAO -> agregarColores($idTalla, $c -> getId(), $c -> getCantidad()));
             }
 
         }
 
-        $this->conexion->cerrar();
-    }
-
-    function agregarColores($talla){
-        $this->conexion->abrir();
         $this->conexion->cerrar();
     }
 
