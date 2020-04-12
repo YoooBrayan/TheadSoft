@@ -119,6 +119,8 @@ $colores = $color->consultarColores();
 <script>
     $(document).ready(function() {
         $(".editor").summernote({});
+        let tallas = "<?php echo count($_SESSION['tallas']); ?>";
+        console.log(tallas)
     });
 
     $(document).on('click', '#btnTalla', function(e) {
@@ -169,57 +171,8 @@ $colores = $color->consultarColores();
                 });
             }
         });
-
-    });
-
-    $(document).on('click', '#btnColor', function(e) {
-        e.preventDefault();
-        let idC = $("#idC option:selected")[0].value;
-        let color = $("#idC option:selected")[0].label;
-        //console.log(idC);
-        //console.log(color);
-        let cantidadC = $("#cantidadC").val();
-        //console.log(cantidadT);
-        $.ajax({
-            type: "POST",
-            url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColor.php") ?>",
-            data: {
-                idC,
-                color,
-                cantidadC
-            },
-            success: function(response) {
-
-                let colores = JSON.parse(response);
-                //console.log(colores);
-                //console.log(response);
-
-                let template = '';
-                colores.forEach(color => {
-                    template += `
-                        <tr id='${color.id}'>
-                            <td>${color.nombre}</td>
-                            <td>${color.cantidad}</td>
-                            <td> 
-                            <a class='fas fa-times-circle eliminar' data-toggle='tooltip' data-placement='left' title='Eliminar'> </a>
-                            </td>
-                            
-                        </tr>
-                    `
-                });
-
-                $("#colores").html(template);
-
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Color Agregada',
-                    showConfirmButton: false,
-                    timer: 800
-                });
-            }
-        });
-
+        let tallas = "<?php echo count($_SESSION['tallas']); ?>";
+        console.log(tallas);
     });
 
     $(document).on("click", "#registrar", function(e) {

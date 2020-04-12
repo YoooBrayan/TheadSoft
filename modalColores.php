@@ -4,11 +4,10 @@ require_once 'logica/Color.php';
 
 $color = new Color();
 $colores = $color->consultarColores();
-$talla = $_GET['idTalla'];
 
 ?>
 <div class="modal-header">
-	<h5 class="modal-title">Agregar Colores <?php  echo " en la talla: "  . $_GET['idTalla']?></h5>
+	<h5 class="modal-title">Agregar Colores <?php echo " en la talla: "  . $_GET['idTalla']; ?></h5>
 	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		<span aria-hidden="true">&times;</span>
 	</button>
@@ -49,19 +48,19 @@ $talla = $_GET['idTalla'];
 		});
 	});
 
-	$(document).on('click', '#btnColorM', function(e) {
+	$("#btnColorM").click(function(e){
 		e.preventDefault();
 		let idCM = $("#idCM option:selected")[0].value;
 		let colorM = $("#idCM option:selected")[0].label;
-		let idTalla = "<?php echo $talla; ?>";
+		let idTalla = "<?php echo $_GET['idTalla']; ?>";
+		console.log(idTalla);
 		console.log(idCM);
 		console.log(colorM);
 		let cantidadCM = $("#cantidadCM").val();
 		console.log(cantidadCM);
-		
 		$.ajax({
 			type: "POST",
-			url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColor.php") ?>",
+			url: "<?php  echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColor.php") ?>",
 			data: {
 				idCM,
 				colorM,
@@ -70,6 +69,7 @@ $talla = $_GET['idTalla'];
 			},
 			success: function(response) {
 
+				console.log(response);
 				let colores = JSON.parse(response);
 				console.log(colores);
 				//console.log(response);
@@ -99,7 +99,60 @@ $talla = $_GET['idTalla'];
 				});
 			}
 		});
-
 	});
 
+	/*$(document).on('click', '#btnColorM', function(e) {
+		e.preventDefault();
+		let idCM = $("#idCM option:selected")[0].value;
+		let colorM = $("#idCM option:selected")[0].label;
+		let idTalla = "<?php // echo $_GET['idTalla']; ?>";
+		console.log(idTalla);
+		console.log(idCM);
+		console.log(colorM);
+		let cantidadCM = $("#cantidadCM").val();
+		console.log(cantidadCM);
+		/*
+		$.ajax({
+			type: "POST",
+			url: "<?php // echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColor.php") ?>",
+			data: {
+				idCM,
+				colorM,
+				cantidadCM,
+				idTalla
+			},
+			success: function(response) {
+
+				console.log(response);
+				let colores = JSON.parse(response);
+				console.log(colores);
+				//console.log(response);
+
+				let template = '';
+				colores.forEach(color => {
+					template += `
+                        <tr id='${color.id}'>
+                            <td>${color.nombre}</td>
+                            <td>${color.cantidad}</td>
+                            <td> 
+                            <a class='fas fa-times-circle eliminar' data-toggle='tooltip' data-placement='left' title='Eliminar'> </a>
+                            </td>
+                            
+                        </tr>
+                    `
+				});
+
+				$("#coloresM").html(template);
+
+				Swal.fire({
+					position: 'top-end',
+					icon: 'success',
+					title: 'Color Agregada',
+					showConfirmButton: false,
+					timer: 800
+				});
+			}
+		});
+		
+	});*/
 </script>

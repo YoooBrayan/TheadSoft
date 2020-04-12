@@ -9,7 +9,7 @@ if(isset($_POST['idCM'])){
     $color -> setNombre($_POST['colorM']);
     $color -> setCantidad($_POST['cantidadCM']);
     $talla = $_POST['idTalla'];
-      
+    
     array_push($_SESSION['colores'.$talla], $color);
 
     $json = array();
@@ -17,12 +17,11 @@ if(isset($_POST['idCM'])){
         $json[] = array(
             'id' => $c -> getId(),
             'nombre' => $c -> getNombre(),
-            'cantidad' => $c -> getCantidad()
+            'cantidad' => $c -> getCantidad(),
+            'talla' => $talla
         );
     }
-
     echo json_encode($json);
-
 }
 
 ?>

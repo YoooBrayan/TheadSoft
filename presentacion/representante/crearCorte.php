@@ -21,6 +21,12 @@ if(isset($_POST['idM'])){
 
     $corte -> agregarTallas();
 
+    foreach($_SESSION['tallas'] as $t){
+        $_SESSION['colores'.$t->getId()] = "";
+    }
+
+    $_SESSION['tallas'] = "";
+
     //$corte -> agregarColores($corte -> getTallas());
 
     if($corte->consultar()){

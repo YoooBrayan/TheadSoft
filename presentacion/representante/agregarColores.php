@@ -6,7 +6,6 @@ if(isset($_POST['colores'])){
 
     $talla;
     $tallas = array();
-    $m = "";
 
     foreach($_SESSION['tallas'] as $t){
         
@@ -20,7 +19,6 @@ if(isset($_POST['colores'])){
 
     foreach($tallas as $t){
         $_SESSION['colores'.$t->getId()] = $_SESSION['colores'.$talla];
-        $m .= "\n". $t -> getId() . "\n";
     }
 
 }
