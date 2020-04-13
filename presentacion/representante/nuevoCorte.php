@@ -126,6 +126,11 @@ $colores = $color->consultarColores();
     $(document).on('click', '#btnTalla', function(e) {
         e.preventDefault();
         let idT = $("#idT option:selected")[0].value;
+
+        var itemSelectorOption = $('#idT option:selected');
+        itemSelectorOption.remove();
+        $('#idT').selectpicker('refresh');
+
         //console.log(idT);
         let cantidadT = $("#cantidadT").val();
         //console.log(cantidadT);
@@ -233,6 +238,8 @@ $colores = $color->consultarColores();
 
                 $("#" + talla).remove();
 
+                $('#idT').append(`<option value="${talla}">${talla}</option>`);
+                $('#idT').selectpicker('refresh');
                 /*let tallas = JSON.parse(response);
                 console.log(tallas);
                 //console.log(response);
@@ -257,45 +264,6 @@ $colores = $color->consultarColores();
         });
 
     })
-
-    $("table").on("click", "#colores .eliminar", function(event) {
-        event.preventDefault();
-        var elemento = $(this)[0].parentElement.parentElement;
-        var color = $(elemento).attr('id');
-        $.ajax({
-            type: "POST",
-            url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/eliminarColor.php") ?>",
-            data: {
-                color
-            },
-            success: function(response) {
-
-                $("#" + color).remove();
-
-                /*let tallas = JSON.parse(response);
-                console.log(tallas);
-                //console.log(response);
-
-                let template = '';
-                tallas.forEach(talla => {
-                    template += `
-                        <tr id='${talla.id}'>
-                            <td>${talla.id}</td>
-                            <td>${talla.cantidad}</td>
-                            <td> 
-                            <a class='fas fa-times-circle eliminar' href='index.php?pid=" . base64_encode("presentacion/paciente/actualizarPaciente.php") . "&idPaciente=" . $p->getId() . "' data-toggle='tooltip' data-placement='left' title='Eliminar'> </a>
-                            <a class='fas fa-pencil-ruler' href='index.php?pid=" . base64_encode("presentacion/paciente/actualizarPaciente.php") . "&idPaciente=" . $p->getId() . "' data-toggle='tooltip' data-placement='left' title='Actualizar'> </a>
-                            </td>
-                            
-                        </tr>
-                    `
-                });
-
-                $("#tallas").html(template);*/
-            }
-        });
-
-    });
 
     $(document).on('hide.bs.modal', '#modalColores', function() {
 

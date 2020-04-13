@@ -4,18 +4,18 @@ session_start();
 
 if(isset($_POST['color'])){
 
-    $talla = $_POST['color'];
-    $tallas = $_SESSION['colores'];
+    $color = $_POST['color'];
+    //$colores = $_SESSION['colores'.$_POST['talla']];
 
-    $ids = array_column($_SESSION['colores'], 'id');
+    $ids = array_column($_SESSION['colores'.$_POST['talla']], 'id');
     $indice = array_search($color, $ids);
-    unset($_SESSION['colores'][$indice]);
-    $colores = array_values($_SESSION['colores']);
-    unset($_SESSION['colores']);
-    $_SESSION['colores'] = $colores;
+    unset($_SESSION['colores'.$_POST['talla']][$indice]);
+    $colores = array_values($_SESSION['colores'.$_POST['talla']]);
+    unset($_SESSION['colores'.$_POST['talla']]);
+    $_SESSION['colores'.$_POST['talla']] = $colores;
 
     $json = array();
-    foreach($_SESSION['colores'] as $c){
+    foreach($_SESSION['colores'.$_POST['talla']] as $c){
         $json[] = array(
             'id' => $c -> getId(),
             'nombre' => $c -> getNombre(),

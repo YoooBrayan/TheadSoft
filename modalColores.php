@@ -42,17 +42,56 @@ $colores = $color->consultarColores();
 </div>
 
 <script type="text/javascript">
+
+	var tallaId = "<?php echo $_GET['idTalla']; ?>";
+
+	$.ajax({
+		type: "POST",
+		url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColor.php") ?>",
+		data: {
+			tallaId
+		},
+		success: function(response) {
+			console.log(response);
+			let colores = JSON.parse(response);
+			console.log(colores);
+			//console.log(response);
+
+			let template = '';
+			colores.forEach(color => {
+				template += `
+                        <tr id='${color.id}'>
+                            <td>${color.nombre}</td>
+                            <td>${color.cantidad}</td>
+                            <td> 
+                            <a class='fas fa-times-circle eliminar' data-toggle='tooltip' data-placement='left' title='Eliminar'> </a>
+                            </td>
+                            
+                        </tr>
+                    `
+			});
+
+			$("#coloresM").html(template);
+		}
+	});
+
 	$(document).ready(function() {
 		$('.selectpicker').selectpicker({
 			style: 'btn-default'
 		});
+
 	});
 
-	$("#btnColorM").click(function(e){
+	$("#btnColorM").click(function(e) {
 		e.preventDefault();
 		let idCM = $("#idCM option:selected")[0].value;
 		let colorM = $("#idCM option:selected")[0].label;
 		let idTalla = "<?php echo $_GET['idTalla']; ?>";
+
+		var itemSelectorOption = $('#idCM option:selected');
+        itemSelectorOption.remove();
+        $('#idCM').selectpicker('refresh');
+
 		console.log(idTalla);
 		console.log(idCM);
 		console.log(colorM);
@@ -60,7 +99,7 @@ $colores = $color->consultarColores();
 		console.log(cantidadCM);
 		$.ajax({
 			type: "POST",
-			url: "<?php  echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColor.php") ?>",
+			url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColor.php") ?>",
 			data: {
 				idCM,
 				colorM,
@@ -105,7 +144,8 @@ $colores = $color->consultarColores();
 		e.preventDefault();
 		let idCM = $("#idCM option:selected")[0].value;
 		let colorM = $("#idCM option:selected")[0].label;
-		let idTalla = "<?php // echo $_GET['idTalla']; ?>";
+		let idTalla = "<?php // echo $_GET['idTalla']; 
+						?>";
 		console.log(idTalla);
 		console.log(idCM);
 		console.log(colorM);
@@ -114,7 +154,8 @@ $colores = $color->consultarColores();
 		/*
 		$.ajax({
 			type: "POST",
-			url: "<?php // echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColor.php") ?>",
+			url: "<?php // echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColor.php") 
+					?>",
 			data: {
 				idCM,
 				colorM,
@@ -155,4 +196,28 @@ $colores = $color->consultarColores();
 		});
 		
 	});*/
+
+	$("table").on("click", "#coloresM .eliminar", function(event) {
+		event.preventDefault();
+		var elemento = $(this)[0].parentElement.parentElement;
+		var colorN = elemento.children[0].innerHTML;
+		var color = $(elemento).attr('id');
+		let talla = "<?php  echo $_GET['idTalla']; ?>";
+		console.log(colorN);
+		$.ajax({
+			type: "POST",
+			url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/eliminarColor.php") ?>",
+			data: {
+				color,
+				talla
+			},
+			success: function(response) {
+
+				$("#" + color).remove();
+				$('#idCM').append(`<option value="${color}">${colorN}</option>`);
+                $('#idCM').selectpicker('refresh');
+
+			}
+		});
+	});
 </script>

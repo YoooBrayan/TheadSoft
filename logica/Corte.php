@@ -134,7 +134,7 @@ class Corte{
 
     function insertar(){
         $this->conexion->abrir(); 
-        //echo "<br>" . $this->corteDAO->insertar() . "<br>";
+        echo "\n" . $this->corteDAO->insertar() . "\n";
         $this->conexion->ejecutar($this->corteDAO->insertar());
         $this->conexion->cerrar();
     }
@@ -151,15 +151,15 @@ class Corte{
 
         foreach($this->tallas as $t){
             $this->corteDAO -> setTallas($t);
-            //echo "\n" . $this-> corteDAO->agregarTallas() . "\n";
+            echo "\n" . $this-> corteDAO->agregarTallas() . "\n";
             $this->conexion->ejecutar($this->corteDAO->agregarTallas());
             $idTalla = $this->idTallaCorte($this->id, $t -> getId());
 
-            //echo "<\n Cantidad: " . count($t->getColores());
+            echo "<\n Cantidad: " . count($t->getColores());
 
             foreach($t->getColores() as $c){
                 
-              //  echo "\n" . $this -> corteDAO -> agregarColores($idTalla, $c -> getId(), $c -> getCantidad()) . "\n";
+                echo "\n" . $this -> corteDAO -> agregarColores($idTalla, $c -> getId(), $c -> getCantidad()) . "\n";
                 $this->conexion->ejecutar($this -> corteDAO -> agregarColores($idTalla, $c -> getId(), $c -> getCantidad()));
             }
 
@@ -170,7 +170,7 @@ class Corte{
 
     function consultar(){
         $this -> conexion -> abrir();
-        //echo "<br>" . $this -> corteDAO -> consultar() . "<br>";
+        //echo "\n" . $this -> corteDAO -> consultar() . "\n";
         $this -> conexion -> ejecutar($this -> corteDAO -> consultar());
         if($this -> conexion -> numFilas() == 1){
             $resultado = $this -> conexion -> extraer();

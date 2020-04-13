@@ -1,27 +1,35 @@
-<?php 
+<?php
 
 session_start();
 
 
-if(isset($_POST['idCM'])){
+if (isset($_POST['idCM'])) {
     $color = new color();
-    $color -> setId($_POST['idCM']);
-    $color -> setNombre($_POST['colorM']);
-    $color -> setCantidad($_POST['cantidadCM']);
+    $color->setId($_POST['idCM']);
+    $color->setNombre($_POST['colorM']);
+    $color->setCantidad($_POST['cantidadCM']);
     $talla = $_POST['idTalla'];
-    
-    array_push($_SESSION['colores'.$talla], $color);
+
+    array_push($_SESSION['colores' . $talla], $color);
 
     $json = array();
-    foreach($_SESSION['colores'.$talla] as $c){
+    foreach ($_SESSION['colores' . $talla] as $c) {
         $json[] = array(
-            'id' => $c -> getId(),
-            'nombre' => $c -> getNombre(),
-            'cantidad' => $c -> getCantidad(),
+            'id' => $c->getId(),
+            'nombre' => $c->getNombre(),
+            'cantidad' => $c->getCantidad(),
             'talla' => $talla
         );
     }
     echo json_encode($json);
+} else if ($_POST['tallaId']) {
+    $json = array();
+    foreach ($_SESSION['colores' . $_POST['tallaId']] as $c) {
+        $json[] = array(
+            'id' => $c->getId(),
+            'nombre' => $c->getNombre(),
+            'cantidad' => $c->getCantidad()
+        );
+    }
+    echo json_encode($json);
 }
-
-?>
