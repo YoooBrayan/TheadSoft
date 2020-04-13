@@ -289,6 +289,7 @@ foreach ($tallas as $t) {
                 id: true
             },
             success: function(response) {
+                console.log(response);
                 if (response > 1) {
                     const swalWithBootstrapButtons = Swal.mixin({
                         customClass: {

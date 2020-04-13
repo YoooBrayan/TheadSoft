@@ -20,6 +20,8 @@ if(isset($_POST['idT'])){
 
     echo json_encode($json);
 
+}else if($_POST['id']){
+    echo count($_SESSION['tallas']);
 }
 
 ?>
