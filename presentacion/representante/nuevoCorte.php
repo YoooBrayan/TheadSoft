@@ -14,6 +14,12 @@ $tallas = $talla->consultarTallas();
 $color = new Color();
 $colores = $color->consultarColores();
 
+$tallass = array();
+
+foreach ($tallas as $t) {
+    array_push($tallass, $t->getId());
+}
+
 ?>
 <br>
 <div class="container">
@@ -28,8 +34,7 @@ $colores = $color->consultarColores();
                         <hr/ style="border: 1px solid">
                         <h6>Nuevo corte</h6>
                         <div class="form-group">
-                            <label>Seleccione Modelo <?php // echo " " . $titulo; 
-                                                        ?>:</label>
+                            <label>Seleccione Modelo</label>
                             <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idM">
                                 <?php
                                 foreach ($modelos as $m) {
@@ -40,10 +45,12 @@ $colores = $color->consultarColores();
                             </select>
                         </div>
                         <div class="form-group">
-                            <input id="fechaEnvio" onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha de Envio" name="fechaEnvio">
+                            <input id="fechaEnvio" onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha de Envio" name="fechaEnvio" required="required">
+                            <label class="text-danger" hidden>Seleccione Fecha</label>
                         </div>
                         <div class="form-group">
-                            <input id="fechaEntrega" onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha de Entrega" name="fechaEntrega">
+                            <input id="fechaEntrega" onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha de Entrega" name="fechaEntrega" required="required">
+                            <label class="text-danger" hidden>Seleccione Fecha</label>
                         </div>
                         <div class="form-group">
                             <label style="color: gray;" id="label3"> Observaciones </label>
@@ -54,8 +61,7 @@ $colores = $color->consultarColores();
 
                         <h6>Seleccionar Tallas y Colores</h6>
 
-                        <label>Seleccione Tallas <?php // echo " " . $titulo; 
-                                                    ?>:</label>
+                        <label>Seleccione Tallas</label>
                         <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idT">
                             <?php
                             foreach ($tallas as $t) {
@@ -120,7 +126,6 @@ $colores = $color->consultarColores();
     $(document).ready(function() {
         $(".editor").summernote({});
         let tallas = "<?php echo count($_SESSION['tallas']); ?>";
-        console.log(tallas)
     });
 
     $(document).on('click', '#btnTalla', function(e) {
@@ -130,10 +135,7 @@ $colores = $color->consultarColores();
         var itemSelectorOption = $('#idT option:selected');
         itemSelectorOption.remove();
         $('#idT').selectpicker('refresh');
-
-        //console.log(idT);
         let cantidadT = $("#cantidadT").val();
-        //console.log(cantidadT);
 
         let urls = "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/modalColores.php") ?>";
 
@@ -147,8 +149,6 @@ $colores = $color->consultarColores();
             success: function(response) {
 
                 let tallas = JSON.parse(response);
-                console.log(tallas);
-                //console.log(response);
 
                 let template = '';
                 tallas.forEach(talla => {
@@ -177,7 +177,6 @@ $colores = $color->consultarColores();
             }
         });
         let tallas = "<?php echo count($_SESSION['tallas']); ?>";
-        console.log(tallas);
     });
 
     $(document).on("click", "#registrar", function(e) {
@@ -188,39 +187,57 @@ $colores = $color->consultarColores();
         let observaciones = $($("#editor").summernote("code")).text();
         let idR = <?php echo $_SESSION['id']; ?>
 
-        $.ajax({
-            type: "POST",
-            url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/crearCorte.php") ?>",
-            data: {
-                idR,
-                idM,
-                fecha_envio,
-                fecha_entrega,
-                observaciones
-            },
-            success: function(response) {
+        if (fecha_envio != "" && fecha_entrega != "") {
+            $.ajax({
+                type: "POST",
+                url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/crearCorte.php") ?>",
+                data: {
+                    idR,
+                    idM,
+                    fecha_envio,
+                    fecha_entrega,
+                    observaciones
+                },
+                success: function(response) {
+                    if (response) {
+                        $(".text-danger").attr("style", "display: none");
+                        $("#mensaje").removeAttr("hidden");
+                        $("#mensaje").removeClass();
+                        $("#mensaje").addClass("alert alert-success");
+                        $("#mensaje").html("Corte Registrado");
+                        $("#tallas tr").remove();
 
-                console.log(response);
+                        $("#idT option").remove();
 
-                if (response) {
-                    $("#mensaje").removeAttr("hidden");
-                    $("#mensaje").removeClass();
-                    $("#mensaje").addClass("alert alert-success");
-                    $("#mensaje").html("Corte Registrado");
-                    window.scrollTo(0, 0);
+                        const tallass = <?php echo json_encode($tallass); ?>;
+                        tallass.forEach(
+                            talla => {
+                                $('#idT').append(`<option value="${talla}">${talla}</option>`)
+                            }
+                        );
 
-                    $("#editor").summernote("code", "");
-                    $("#cantidadT").val(" ");
-                    $("#cantidadC").val(" ");
-                } else {
-                    $("#mensaje").removeAttr("hidden");
-                    $("#mensaje").removeClass();
-                    $("#mensaje").addClass("alert alert-danger");
-                    $("#mensaje").html("Algo salio mal");
-                    window.scrollTo(0, 0);
+                        $('#idT').selectpicker('refresh');
+
+                        window.scrollTo(0, 0);
+
+                        $("#editor").summernote("code", "");
+                        $("#cantidadT").val(" ");
+                        $("#cantidadC").val(" ");
+                    } else {
+                        $("#mensaje").removeAttr("hidden");
+                        $("#mensaje").removeClass();
+                        $("#mensaje").addClass("alert alert-danger");
+                        $("#mensaje").html("Algo salio mal");
+                        window.scrollTo(0, 0);
+                    }
                 }
-            }
-        });
+            });
+        } else {
+
+            $(".text-danger").removeAttr("hidden");
+            var top = document.getElementById("fechaEnvio").offsetTop;
+            window.scrollTo(0, top);
+        }
 
     });
 
@@ -241,8 +258,6 @@ $colores = $color->consultarColores();
                 $('#idT').append(`<option value="${talla}">${talla}</option>`);
                 $('#idT').selectpicker('refresh');
                 /*let tallas = JSON.parse(response);
-                console.log(tallas);
-                //console.log(response);
 
                 let template = '';
                 tallas.forEach(talla => {
@@ -267,44 +282,64 @@ $colores = $color->consultarColores();
 
     $(document).on('hide.bs.modal', '#modalColores', function() {
 
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-danger'
+        $.ajax({
+            type: "POST",
+            url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarTalla.php") ?>",
+            data: {
+                id: true
             },
-            buttonsStyling: false
-        })
+            success: function(response) {
+                if (response > 1) {
+                    const swalWithBootstrapButtons = Swal.mixin({
+                        customClass: {
+                            confirmButton: 'btn btn-success',
+                            cancelButton: 'btn btn-danger'
+                        },
+                        buttonsStyling: false
+                    })
 
-        swalWithBootstrapButtons.fire({
-            title: 'Desea agregar estos mismos colores a las demas tallas?',
-            icon: 'question',
-            showCancelButton: true,
-            cancelButtonText: ' No ',
-            confirmButtonText: '    Si ',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.value) {
+                    swalWithBootstrapButtons.fire({
+                        title: 'Desea agregar estos mismos colores a las demas tallas?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        cancelButtonText: ' No ',
+                        confirmButtonText: '    Si ',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.value) {
 
-                let colores = "";
+                            let colores = "";
 
-                $.ajax({
-                    type: "POST",
-                    url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColores.php") ?>",
-                    data: {
-                        colores
-                    }
-                });
+                            $.ajax({
+                                type: "POST",
+                                url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColores.php") ?>",
+                                data: {
+                                    colores
+                                }
+                            });
 
-                swalWithBootstrapButtons.fire(
-                    'Colores agregados!',
-                )
-            } else if (
-                /* Read more about handling dismissals below */
-                result.dismiss === Swal.DismissReason.cancel
-            ) {
+                            swalWithBootstrapButtons.fire(
+                                'Colores agregados!',
+                            )
+                        } else if (
+                            /* Read more about handling dismissals below */
+                            result.dismiss === Swal.DismissReason.cancel
+                        ) {
 
+                        }
+                    });
+                    //Do stuff here
+                } else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Colores agregados',
+                        showConfirmButton: false,
+                        timer: 800
+                    });
+                }
             }
-        })
-        //Do stuff here
+        });
+
     });
 </script>

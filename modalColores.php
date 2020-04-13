@@ -52,11 +52,7 @@ $colores = $color->consultarColores();
 			tallaId
 		},
 		success: function(response) {
-			console.log(response);
 			let colores = JSON.parse(response);
-			console.log(colores);
-			//console.log(response);
-
 			let template = '';
 			colores.forEach(color => {
 				template += `
@@ -91,12 +87,7 @@ $colores = $color->consultarColores();
 		var itemSelectorOption = $('#idCM option:selected');
         itemSelectorOption.remove();
         $('#idCM').selectpicker('refresh');
-
-		console.log(idTalla);
-		console.log(idCM);
-		console.log(colorM);
 		let cantidadCM = $("#cantidadCM").val();
-		console.log(cantidadCM);
 		$.ajax({
 			type: "POST",
 			url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColor.php") ?>",
@@ -108,11 +99,7 @@ $colores = $color->consultarColores();
 			},
 			success: function(response) {
 
-				console.log(response);
 				let colores = JSON.parse(response);
-				console.log(colores);
-				//console.log(response);
-
 				let template = '';
 				colores.forEach(color => {
 					template += `
@@ -140,7 +127,8 @@ $colores = $color->consultarColores();
 		});
 	});
 
-	/*$(document).on('click', '#btnColorM', function(e) {
+	/* Con este no funciona 
+	$(document).on('click', '#btnColorM', function(e) {
 		e.preventDefault();
 		let idCM = $("#idCM option:selected")[0].value;
 		let colorM = $("#idCM option:selected")[0].label;
@@ -203,7 +191,6 @@ $colores = $color->consultarColores();
 		var colorN = elemento.children[0].innerHTML;
 		var color = $(elemento).attr('id');
 		let talla = "<?php  echo $_GET['idTalla']; ?>";
-		console.log(colorN);
 		$.ajax({
 			type: "POST",
 			url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/eliminarColor.php") ?>",

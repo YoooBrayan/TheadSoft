@@ -23,11 +23,11 @@ if(isset($_POST['idM'])){
 
     foreach($_SESSION['tallas'] as $t){
         $_SESSION['colores'.$t->getId()] = "";
+        $_SESSION['colores'.$t->getId()] = array();
     }
 
     $_SESSION['tallas'] = "";
-
-    //$corte -> agregarColores($corte -> getTallas());
+    $_SESSION['tallas'] = array();
 
     if($corte->consultar()){
         echo true;
