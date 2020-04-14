@@ -131,52 +131,66 @@ foreach ($tallas as $t) {
     $(document).on('click', '#btnTalla', function(e) {
         e.preventDefault();
         let idT = $("#idT option:selected")[0].value;
-
-        var itemSelectorOption = $('#idT option:selected');
-        itemSelectorOption.remove();
-        $('#idT').selectpicker('refresh');
         let cantidadT = $("#cantidadT").val();
 
-        let urls = "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/modalColores.php") ?>";
+        if (cantidadT > 0) {
+            var itemSelectorOption = $('#idT option:selected');
+            itemSelectorOption.remove();
+            $('#idT').selectpicker('refresh');
+            let urls = "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/modalColores.php") ?>";
 
-        $.ajax({
-            type: "POST",
-            url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarTalla.php") ?>",
-            data: {
-                idT,
-                cantidadT
-            },
-            success: function(response) {
+            $.ajax({
+                type: "POST",
+                url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarTalla.php") ?>",
+                data: {
+                    idT,
+                    cantidadT
+                },
+                success: function(response) {
 
-                let tallas = JSON.parse(response);
+                    let tallas = JSON.parse(response);
 
-                let template = '';
-                tallas.forEach(talla => {
-                    template += `
+                    let template = '';
+                    tallas.forEach(talla => {
+                        template += `
                         <tr id='${talla.id}'>
                             <td>${talla.id}</td>
                             <td>${talla.cantidad}</td>
                             <td> 
                             <a class='fas fa-times-circle eliminar' data-toggle='tooltip' 
                             data-placement='left' title='Eliminar'> </a>
-                            <a class='fas fa-pencil-ruler colores' href='modalColores.php?idTalla=${talla.id}' data-placement='left' title='Agregar Tallas' data-toggle='modal' data-target='#modalColores'> </a>
+                            <a class='fas fa-pencil-ruler colores' href='modalColores.php?idTalla=${talla.id}&cantidad=${talla.cantidad}' data-placement='left' title='Agregar Tallas' data-toggle='modal' data-target='#modalColores'> </a>
                             </td>
                         </tr>
                     `
-                });
+                    });
 
-                $("#tallas").html(template);
+                    $("#tallas").html(template);
 
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Talla Agregada',
-                    showConfirmButton: false,
-                    timer: 800
-                });
-            }
-        });
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Talla Agregada',
+                        showConfirmButton: false,
+                        timer: 800
+                    });
+                }
+            });
+        } else {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'warning',
+                title: 'Digite Cantidad',
+                showConfirmButton: false,
+                timer: 600
+            });
+        }
+
         let tallas = "<?php echo count($_SESSION['tallas']); ?>";
+        var options = $("#idT option").length;
+        if (options == 0) {
+            $("#btnTalla").prop("disabled", true);
+        }
     });
 
     $(document).on("click", "#registrar", function(e) {
@@ -278,6 +292,11 @@ foreach ($tallas as $t) {
             }
         });
 
+        var options = $("#idT option").length;
+        if (options + 1 > 0) {
+            $("#btnTalla").prop("disabled", false);
+        }
+
     })
 
     $(document).on('hide.bs.modal', '#modalColores', function() {
@@ -289,7 +308,6 @@ foreach ($tallas as $t) {
                 id: true
             },
             success: function(response) {
-                console.log(response);
                 if (response > 1) {
                     const swalWithBootstrapButtons = Swal.mixin({
                         customClass: {

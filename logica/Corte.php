@@ -17,8 +17,9 @@ class Corte{
     private $colores = array();
     private $conexion;
     private $corteDAO;
+    private $cantidad;
 
-    function Corte($id="", $fecha_envio="", $fecha_entrega="", $observaciones="", $representante="", $modelo="", $estado="", $tareas="", $tallas="", $colores=""){
+    function Corte($id="", $fecha_envio="", $fecha_entrega="", $observaciones="", $representante="", $modelo="", $estado="", $tareas="", $tallas="", $colores="", $cantidad=""){
 
         $this -> id = $id;
         $this -> fecha_envio = $fecha_envio;
@@ -27,9 +28,10 @@ class Corte{
         $this -> conexion = new Conexion();
         $this -> corteDAO = new CorteDAO($id, $fecha_envio, $fecha_entrega, $observaciones, $representante, $modelo, "", "", $tallas);
         $this -> representante = new Representante(); 
-        $this -> modelo = new Modelo();
-        $this -> tallas = $tallas;
-        $this-> colores = $colores;
+        $this -> modelo = $modelo;
+        $this -> tallas = array();
+        $this -> colores = $colores;
+        $this -> cantidad = $cantidad;
     }
 
     function getId(){
@@ -183,5 +185,51 @@ class Corte{
         }
     }
 
+    function cortesPorEntregar(){
+        $this -> conexion -> abrir();
+        $this -> conexion -> ejecutar($this -> corteDAO -> cortesPorEntregar());
+        $resultados = array();
+        $i=0;
+        while(($registro = $this -> conexion -> extraer()) != null){
+            $modelo = new Modelo("", $registro[1]);
+            $resultados[$i] = new Corte($registro[0], $registro[2], "", "", "", $modelo, "", "", "", "", $registro[3]);
+            $i++;
+        }
+        $this -> conexion -> cerrar();
+        return $resultados;
+    }
 
+    function consultarCorte(){
+        $this -> conexion -> abrir();
+        //echo "\n" . $this -> corteDAO -> consultar() . "\n";
+        $this -> conexion -> ejecutar($this -> corteDAO -> consultarCorte());
+        if($this -> conexion -> numFilas() == 1){
+            $resultado = $this -> conexion -> extraer();
+            $modelo = new Modelo("", $resultado[1]);
+            $this -> id = $resultado[0];
+            $this-> fecha_envio = $resultado[2];
+            $this-> fecha_entrega = $resultado[3];
+            $this-> observaciones = $resultado[4];
+            $this-> cantidad = $resultado[5];
+            $this-> setModelo($modelo);
+            $this -> conexion -> cerrar();
+        } else {
+            $this -> conexion -> cerrar();
+        }
+    }
+
+    function tallas($corte){
+        $this -> conexion -> abrir();
+        $this -> conexion -> ejecutar($this -> corteDAO -> tallas($corte));
+        $i=0;
+        while(($registro = $this -> conexion -> extraer()) != null){
+            $talla = new Talla($registro[0], "", "", $registro[1]);
+            array_push($this->tallas, $talla);
+        }
+        $this -> conexion -> cerrar();
+    }
+
+    function getCantidad(){
+        return $this->cantidad;
+    }
 }

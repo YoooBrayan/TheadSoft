@@ -13,6 +13,7 @@ if (isset($_POST['idCM'])) {
     array_push($_SESSION['colores' . $talla], $color);
 
     $json = array();
+
     foreach ($_SESSION['colores' . $talla] as $c) {
         $json[] = array(
             'id' => $c->getId(),
@@ -24,11 +25,18 @@ if (isset($_POST['idCM'])) {
     echo json_encode($json);
 } else if ($_POST['tallaId']) {
     $json = array();
+    $cont = 0;
+
+    foreach ($_SESSION['colores' . $_POST['tallaId']] as $c) {
+        $cont += $c->getCantidad();
+    }
+
     foreach ($_SESSION['colores' . $_POST['tallaId']] as $c) {
         $json[] = array(
             'id' => $c->getId(),
             'nombre' => $c->getNombre(),
-            'cantidad' => $c->getCantidad()
+            'cantidad' => $c->getCantidad(),
+            'cont' => $cont
         );
     }
     echo json_encode($json);

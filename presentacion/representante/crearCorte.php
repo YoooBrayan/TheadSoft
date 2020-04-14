@@ -13,6 +13,7 @@ if(isset($_POST['idM'])){
 
     $corteid = new Corte();
     $corte = new Corte($corteid -> idCorteNuevo(), $_POST['fecha_envio'], $_POST['fecha_entrega'], $_POST['observaciones'], "", "", "", "", $_SESSION['tallas'], $_SESSION['colores']);
+    $corte -> setTallas($_SESSION['tallas']);
     $corte -> setRepresentante($representante);
     $corte -> setModelo($modelo);
 

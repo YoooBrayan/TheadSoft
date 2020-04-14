@@ -42,7 +42,6 @@ $colores = $color->consultarColores();
 </div>
 
 <script type="text/javascript">
-
 	var tallaId = "<?php echo $_GET['idTalla']; ?>";
 
 	$.ajax({
@@ -84,25 +83,28 @@ $colores = $color->consultarColores();
 		let colorM = $("#idCM option:selected")[0].label;
 		let idTalla = "<?php echo $_GET['idTalla']; ?>";
 
-		var itemSelectorOption = $('#idCM option:selected');
-        itemSelectorOption.remove();
-        $('#idCM').selectpicker('refresh');
 		let cantidadCM = $("#cantidadCM").val();
-		$.ajax({
-			type: "POST",
-			url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColor.php") ?>",
-			data: {
-				idCM,
-				colorM,
-				cantidadCM,
-				idTalla
-			},
-			success: function(response) {
 
-				let colores = JSON.parse(response);
-				let template = '';
-				colores.forEach(color => {
-					template += `
+		if (cantidadCM > 0) {
+			var itemSelectorOption = $('#idCM option:selected');
+			itemSelectorOption.remove();
+			$('#idCM').selectpicker('refresh');
+
+			$.ajax({
+				type: "POST",
+				url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColor.php") ?>",
+				data: {
+					idCM,
+					colorM,
+					cantidadCM,
+					idTalla
+				},
+				success: function(response) {
+
+					let colores = JSON.parse(response);
+					let template = '';
+					colores.forEach(color => {
+						template += `
                         <tr id='${color.id}'>
                             <td>${color.nombre}</td>
                             <td>${color.cantidad}</td>
@@ -112,19 +114,32 @@ $colores = $color->consultarColores();
                             
                         </tr>
                     `
-				});
+					});
 
-				$("#coloresM").html(template);
+					$("#coloresM").html(template);
 
-				Swal.fire({
-					position: 'top-end',
-					icon: 'success',
-					title: 'Color Agregada',
-					showConfirmButton: false,
-					timer: 800
-				});
-			}
-		});
+					Swal.fire({
+						position: 'top-end',
+						icon: 'success',
+						title: 'Color Agregada',
+						showConfirmButton: false,
+						timer: 800
+					});
+				}
+			});
+		} else {
+			Swal.fire({
+				position: 'top-end',
+				icon: 'warning',
+				title: 'Digite Cantidad',
+				showConfirmButton: false,
+				timer: 700
+			})
+		}
+		var optionsC = $("#idCM option").length;
+		if (optionsC == 0) {
+			$("#btnColorM").prop("disabled", true);
+		}
 	});
 
 	/* Con este no funciona 
@@ -190,7 +205,7 @@ $colores = $color->consultarColores();
 		var elemento = $(this)[0].parentElement.parentElement;
 		var colorN = elemento.children[0].innerHTML;
 		var color = $(elemento).attr('id');
-		let talla = "<?php  echo $_GET['idTalla']; ?>";
+		let talla = "<?php echo $_GET['idTalla']; ?>";
 		$.ajax({
 			type: "POST",
 			url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/eliminarColor.php") ?>",
@@ -202,8 +217,12 @@ $colores = $color->consultarColores();
 
 				$("#" + color).remove();
 				$('#idCM').append(`<option value="${color}">${colorN}</option>`);
-                $('#idCM').selectpicker('refresh');
+				$('#idCM').selectpicker('refresh');
 
+				var optionsC = $("#idCM option").length;
+				if (optionsC+1 > 0) {
+					$("#btnColorM").prop("disabled", false);
+				}
 			}
 		});
 	});
