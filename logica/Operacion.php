@@ -4,12 +4,12 @@ class Operacion {
     
     private $identificacion;
     private $valor;
-    private $Descripcion;
+    private $descripcion;
 
-    function Operacion($identificacion="",  $valor="",  $Descripcion="") {
+    function Operacion($identificacion="",  $valor="",  $descripcion="") {
         $this -> identificacion = $identificacion;
         $this -> valor = $valor;
-        $this -> Descripcion = $Descripcion;
+        $this -> descripcion = $descripcion;
     }
     
     function  getIdentificacion() {
@@ -29,11 +29,12 @@ class Operacion {
     }
 
     function  getDescripcion() {
-        return $this -> Descripcion;
+        return $this -> descripcion;
     }
 
-    function setDescripcion($Descripcion) {
-        $this -> Descripcion = $Descripcion;
+    function setDescripcion($descripcion) {
+        $this -> descripcion = $descripcion;
     }
+    
     
 }

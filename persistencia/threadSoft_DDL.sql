@@ -162,14 +162,23 @@ create table corte_talla_color(
 	foreign key(Color_Id) references Color(Color_Id)
 );
 
+create table Satelite(
+	satelite_Id int not null auto_increment,
+	satelite_Nombre varchar(60) not null,
+	satelite_Direccion varchar(60) not null,
+	PRIMARY KEY(satelite_Id)
+); 
+
 create table Operario(
    Operario_Id int not null,
    Operario_Nombre varchar(40) not null,
    Operario_Usuario int not null default 3,
    Operario_Correo varchar(50) not null,
    Operario_clave varchar(40) not null,
+   Operario_Satelite int not null,
    primary key(Operario_Id),
-   foreign key(Operario_Usuario) references Usuario(usuario_Id)
+   foreign key(Operario_Usuario) references Usuario(usuario_Id),
+   foreign key(Operario_Satelite) REFERENCES Satelite(satelite_Id)
 );
 
 create table Telefono_Operario(
@@ -199,6 +208,46 @@ create table Tarea_Operario(
 	foreign key(Operario_Id) references Operario(Operario_Id)
 );
 
+/*Consultas*/
+
+/*Tallas de un corte*/
+
+select ct.Talla_Id 
+from corte c join corte_Talla ct on c.corte_id = ct.corte_id
+where c.corte_id = 52
+group by ct.talla_id;
+
+/*datos de un corte*/
+
+select C.Corte_ID as ID, Modelo_Nombre as Modelo, Corte_Fecha_Envio, Corte_Fecha_Entrega, corte_observacion_prov, sum(Cantidad) as Cantidad 
+from corte c join Modelo m on c.corte_modelo = m.modelo_id join Corte_Talla ct on ct.corte_id = c.corte_id
+where c.corte_id = 52;
+
+/*colores de una talla*/
+
+select Color_Nombre, ctc.cantidad
+from corte c join corte_talla ct on ct.corte_id = c.corte_id join corte_talla_color ctc on ctc.corte_talla_id = ct.corte_talla_id join color co on co.color_id = ctc.color_id
+where c.corte_id = 52 and ct.talla_id = "CT";
+
+
+/*Vistas*/
+
+	create view CortesPorEntregar as
+	select Corte.Corte_ID as ID, Modelo_Nombre as Modelo, Corte_Fecha_Envio as "Fecha de Envio", sum(Cantidad) as Cantidad 
+	from corte, Modelo, Corte_Talla
+	where Corte.corte_Id not in
+	(
+	select corte_Id from corte_Entregado_Bodega
+	union 
+	select corte_Id from corte_Pendiente_Bodega
+	) 
+	and corte_Modelo = Modelo_Id and Corte_Talla.Corte_Id = Corte.Corte_Id group by Corte.Corte_Id;
+
+
+
+/*Funciones*/
+
+/*Devuelve id de corte a crear*/
 create function idCorteNuevo()
 returns int
 begin
@@ -211,4 +260,114 @@ set id = 1;
 end if;
 
 return id;
+end//
+
+create function ObtenerCantidadPrendasT(IdCorte int)
+returns int 	
+begin 
+declare cantidad int;
+
+select sum(Corte_Talla.Cantidad) 
+into cantidad 
+from Corte, Corte_Talla 
+where Corte.Corte_Id = Corte_Talla.Corte_Id and Corte.Corte_Id = IdCorte;
+
+IF cantidad is null then
+set cantidad = 0;
+end if;
+return cantidad;
+end
+//
+
+
+/*Procedimientos*/
+
+/*Mostrar las tareas de un corte*/
+create procedure tareasCorte(idcorte int)
+begin 
+
+	select Tarea_Id, Operacion_Descripcion
+	from Tarea, Corte, Operacion 
+	where Corte_id = Tarea_Corte and Corte_id = idcorte and Tarea_Operacion = Operacion_Id;
+	
+end//
+
+
+/*Asignar tarea de un corte a un operario validando la cantidad ingresada*/
+create procedure asignarTarea(tarea int, cantidad int, corte int, operario int)
+begin
+	
+	declare cantidadE int;
+	declare cantidadI int;
+	declare cantidadV int;
+	declare idOperario int;
+	
+	select obtenerCantidadPrendasT(corte) into cantidadE;
+	select sum(tarea_Cantidad) into cantidadI from Tarea_Operario where Tarea_Id = tarea;
+	
+	if cantidadI is null then
+	set cantidadI = 0;
+	end if;
+	
+	select sum(cantidadE-cantidadI) into cantidadV;
+	
+	select Operario_Id into idOperario from Tarea_Operario where tarea_Id = tarea and Operario_Id = operario;
+	
+	if idOperario is null then
+	set idOperario = 0;
+	end if;
+	
+	if cantidadV = 0 then
+		select "Error: Tarea Ya Asignada Completamente";
+	end if;
+	
+	if cantidad > cantidadV then
+	select "Cantidad Invalida...";
+	end if;
+	
+	
+	if cantidad <= cantidadV and Operario <> idOperario then
+	insert into tarea_Operario(tarea_Id, Operario_Id, Tarea_cantidad) values (tarea, Operario, cantidad);
+	select "Registro Exitoso...";
+	end if;
+	
+	if Operario = idOperario and cantidad <= cantidadV then
+	select tarea_Cantidad into cantidadI from tarea_Operario where tarea_id = tarea and Operario_Id = operario;
+	update tarea_Operario set Tarea_Cantidad = cantidadI+cantidad where tarea_Id = tarea and Operario_ID = operario;
+	select "Registro Exitoso...";
+	end if;
+	
+end//
+
+/*Mostrar la cantidad de una operacion realizada por un operario en un corte con su respectivo total*/
+create procedure TareasOperario	(idCorte int, IdOperario int)
+begin
+
+	select tarea_operario_id, Operacion_Descripcion as Tarea , Tarea_Cantidad as Cantidad, Operacion_Valor as "Valor de Operacion", sum(Tarea_Cantidad * Operacion_Valor) as 'Pago'
+	from Tarea, Tarea_Operario, Operario, Operacion, Corte, Modelo, Modelo_Operacion 
+	where Operario.Operario_Id = Tarea_Operario.Operario_Id and Tarea_Operario.Tarea_Id = Tarea.Tarea_Id and Tarea_Corte = Corte_Id and Corte_Modelo = Modelo.Modelo_Id and Modelo.Modelo_Id = Modelo_Operacion.Modelo_Id and Modelo_Operacion.Operacion_Id = Operacion.Operacion_Id and Tarea_Operacion = Operacion.Operacion_Id and Corte_Id = idCorte and Operario.Operario_Id = IdOperario
+	group by Tarea_Cantidad, Operacion_Descripcion, Operacion_Valor, Operario.Operario_Id, Operario_Nombre, Corte_Id, Tarea.Tarea_Id;
+
+end//
+
+/*Consultar las tareas no asignadas*/
+create procedure tareasPorAsignar(corte int)
+BEGIN
+declare cantidad int;
+
+select obtenerCantidadPrendasT(corte) into cantidad;
+
+select t.tarea_id, o.Operacion_Descripcion from tarea t join operacion o on t.tarea_operacion = o.operacion_id where tarea_corte = corte and tarea_id not in
+(
+	select t.tarea_id
+	from corte c join tarea t on t.tarea_Corte = c.Corte_id join tarea_operario tao on tao.tarea_id = t.tarea_id join operacion o on o.Operacion_Id = t.Tarea_Operacion join corte_Talla ct on ct.corte_id = c.corte_id	
+	where c.corte_id = corte and cantidad = tao.tarea_cantidad
+);
+end//
+
+/*eliminar Tarea*/
+create procedure eliminarTarea(idTarea int)
+begin
+
+	delete from tarea_Operario where tarea_Operario_Id = idTarea;
 end//

@@ -13,8 +13,9 @@ class CorteDAO
     private $tareas;
     private $tallas;
     private $colores;
+    private $cantidad;
 
-    function CorteDAO($id = "", $fecha_envio = "", $fecha_entrega = "", $observaciones = "", $representante = "", $modelo = "", $estado = "", $tareas = "", $tallas = "")
+    function CorteDAO($id = "", $fecha_envio = "", $fecha_entrega = "", $observaciones = "", $representante = "", $modelo = "", $estado = "", $tareas = "", $tallas = "", $cantidad = "")
     {
 
         $this->id = $id;
@@ -25,6 +26,7 @@ class CorteDAO
         $this->colores = new Color();
         $this->representante = new Representante();
         $this->modelo = new Modelo();
+        $this->cantidad = $cantidad;
     }
 
     function insertar()
@@ -76,7 +78,7 @@ class CorteDAO
     {
         return "select C.Corte_ID as ID, Modelo_Nombre as Modelo, Corte_Fecha_Envio, Corte_Fecha_Entrega, corte_observacion_prov, sum(Cantidad) as Cantidad 
         from corte c join Modelo m on c.corte_modelo = m.modelo_id join Corte_Talla ct on ct.corte_id = c.corte_id
-        where c.corte_id = '". $this->id ."'";
+        where c.corte_id = '" . $this->id . "'";
     }
 
     function setRepresentante($representante)
@@ -113,7 +115,16 @@ class CorteDAO
     {
         return "select ct.Talla_Id, ct.Cantidad
         from corte c join corte_Talla ct on c.corte_id = ct.corte_id
-        where c.corte_id = '". $corte ."'
+        where c.corte_id = '" . $corte . "'
         group by ct.talla_id;";
+    }
+
+    function consultarTareas()
+    {
+        return "call tareasPorAsignar('". $this->id ."')";
+    }
+
+    function setCantidad($cantidad){
+        $this->cantidad = $cantidad;
     }
 }
