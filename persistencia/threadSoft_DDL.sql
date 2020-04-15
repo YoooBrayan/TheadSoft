@@ -368,6 +368,48 @@ end//
 /*eliminar Tarea*/
 create procedure eliminarTarea(idTarea int)
 begin
-
+	declare tarea int;
+	select tarea_id from tarea_operario where tarea_Operario_Id = idTarea; 
 	delete from tarea_Operario where tarea_Operario_Id = idTarea;
 end//
+
+/*Eliminar Corte*/
+create procedure eliminarCorte(id int)
+
+begin
+	
+	declare idV int;
+	
+	Select Corte_Id into idV from Corte where corte_Id = id;
+	
+	if idV is not null then 
+	
+	delete tarea_Operario from corte, tarea, Tarea_Operario where corte_ID = tarea_corte and tarea.Tarea_ID = Tarea_Operario.Tarea_Id and Corte_Id = id;
+	
+	delete tarea  from Corte, Tarea where Corte_Id = Tarea_Corte and Corte_Id = id;
+	
+	delete Corte_Talla from Corte, Corte_Talla where Corte.Corte_Id = Corte_Talla.Corte_Id and Corte.Corte_Id = id;
+		
+	delete Corte_Pendiente_bodega from corte, Corte_Pendiente_bodega where Corte.Corte_Id = Corte_Pendiente_bodega.Corte_Id and Corte.Corte_Id = id;
+	
+	delete Corte_Entregado_bodega from corte, Corte_Entregado_bodega  where Corte.Corte_Id = Corte_Entregado_bodega.Corte_Id and Corte.Corte_Id = id;
+
+	delete from Corte where Corte_Id = id;
+	
+	rollback;
+	
+	commit;
+	
+	select "Eliminacion Exitosa...";
+	
+	end if;
+	
+	if idV is null then 
+	select "Corte No Encontrado";
+	end if;
+
+end//
+
+
+/*consultar los id de los colores de una talla por corte*/
+select corte_talla_color_id from corte_talla ct join corte_Talla_color  ctc on ctc.corte_talla_id = ct.corte_talla_id and corte_id = 47;

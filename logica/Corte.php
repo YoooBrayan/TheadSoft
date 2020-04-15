@@ -278,4 +278,35 @@ class Corte
     {
         return $this->cantidad;
     }
+
+    function eliminarColores(){
+        $this -> conexion -> abrir();
+        $this -> conexion -> ejecutar($this -> corteDAO -> coloresAEliminar());
+        $resultados = array();
+        $i=0;
+        while(($registro = $this -> conexion -> extraer()) != null){
+            $resultados[$i] = $registro[0];
+            $i++;
+        } 
+        
+        foreach($resultados as $r){
+            $this->conexion->ejecutar($this->corteDAO->eliminarColor($r));
+        }
+
+        $this -> conexion -> cerrar();
+        return $resultados;
+    }
+
+    function eliminarCorte(){
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->eliminarCorte());
+        if ($this->conexion->numFilas() == 1) {
+            $resultado = $this->conexion->extraer();
+            $this->conexion->cerrar();
+            return $resultado[0];
+        } else {
+            $this->conexion->cerrar();
+        }
+        $this->conexion->cerrar();
+    }
 }

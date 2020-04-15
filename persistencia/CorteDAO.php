@@ -127,4 +127,17 @@ class CorteDAO
     function setCantidad($cantidad){
         $this->cantidad = $cantidad;
     }
+
+    function coloresAEliminar(){
+        return "select corte_talla_color_id from corte_talla ct join corte_Talla_color  ctc on ctc.corte_talla_id = ct.corte_talla_id and corte_id = '". $this->id ."'";
+    }
+
+    function eliminarColor($id){
+        return "delete from corte_talla_color where corte_talla_color_id = '". $id ."'";
+    }
+
+    function eliminarCorte(){
+        return "call eliminarCorte('". $this->id ."')";
+    }
 }
+

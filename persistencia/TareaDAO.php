@@ -37,7 +37,7 @@ class TareaDAO{
     }
 
     function eliminarTarea(){
-        return "call eliminarTarea1('". $this->id ."')";
+        return "call eliminarTarea('". $this->id ."')";
     }
 }   
 

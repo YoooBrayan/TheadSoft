@@ -39,6 +39,7 @@ $cortesPorEntregar = $corte->cortesPorEntregar();
 									echo "<td>" . $cpe->getCantidad() . "</td>";
 									echo "<td>" . "<a href='modalCorte.php?idCorte=" . $cpe->getId() . "' data-toggle='modal' data-target='#modalCorte' ><span class='fas fa-eye' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Ver Detalles' ></span> </a>
 									<a href='index.php?pid=". base64_encode("presentacion/encargado/asignarTareas.php") ."&idCorte=" . $cpe->getId() . "'><span class='fas fa-eye' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Asignar Tarea' ></span> </a>
+									<a class='eliminar' ><span class='fas fa-times-circle' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Eliminar' ></span> </a>
 									</td>";
 									echo "</tr>";
 								}
@@ -176,4 +177,31 @@ $cortesPorEntregar = $corte->cortesPorEntregar();
 		var link = $(e.relatedTarget);
 		$(this).find(".modal-content").load(link.attr("href"));
 	});
+</script>
+
+<script>
+
+$("table").on("click", "tbody .eliminar", function(e){
+	e.preventDefault();
+
+	let elemento = $(this)[0].parentElement.parentElement;
+	let idCorte = $(elemento).attr('id');
+
+	$.ajax({
+		type: "POST",
+		url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/encargado/eliminarCorte.php"); ?>",
+		data: {idCorte},
+		success: function (response) {
+			$("#" + idCorte).remove();
+			Swal.fire({
+				position: 'top-end',
+				icon: 'success',
+				title: response,
+				showConfirmButtom: false,
+				timer: 1000
+			});
+		}
+	});
+})
+
 </script>

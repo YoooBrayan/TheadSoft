@@ -21,7 +21,7 @@ class Operario extends Persona
     function autenticar()
     {
         $this->conexion->abrir();
-        echo $this->operarioDAO->autenticar();
+        //echo $this->operarioDAO->autenticar();
         $this->conexion->ejecutar($this->operarioDAO->autenticar());
         if ($this->conexion->numFilas() == 1) {
             $resultado = $this->conexion->extraer();
