@@ -22,7 +22,7 @@ $representante -> consultar();
             <a href="#">Corte</a>
             <ul style="right: 0px;">
                 <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/representante/nuevoCorte.php")?>">Nuevo</a></li>
-                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/representante/consultarCorte.php")?>">Consultar</a></li>
+                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/representante/consultarCortes.php")?>">Consultar</a></li>
             </ul>
         </li>
         <li>

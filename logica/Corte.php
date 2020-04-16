@@ -19,8 +19,9 @@ class Corte
     private $conexion;
     private $corteDAO;
     private $cantidad;
+    private $pago;
 
-    function Corte($id = "", $fecha_envio = "", $fecha_entrega = "", $observaciones = "", $representante = "", $modelo = "", $estado = "", $tareas = "", $tallas = "", $colores = "", $cantidad = "")
+    function Corte($id = "", $fecha_envio = "", $fecha_entrega = "", $observaciones = "", $representante = "", $modelo = "", $estado = "", $tareas = "", $tallas = "", $colores = "", $cantidad = "", $pago = "")
     {
 
         $this->id = $id;
@@ -34,6 +35,8 @@ class Corte
         $this->tallas = array();
         $this->colores = $colores;
         $this->cantidad = $cantidad;
+        $this->pago = $pago;
+        $this->estado = $estado;
     }
 
     function getId()
@@ -136,6 +139,10 @@ class Corte
     function setColores($colores)
     {
         $this->colores = $colores;
+    }
+
+    function getPago(){
+        return $this->pago;
     }
 
     function idCorteNuevo()
@@ -279,25 +286,27 @@ class Corte
         return $this->cantidad;
     }
 
-    function eliminarColores(){
-        $this -> conexion -> abrir();
-        $this -> conexion -> ejecutar($this -> corteDAO -> coloresAEliminar());
+    function eliminarColores()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->coloresAEliminar());
         $resultados = array();
-        $i=0;
-        while(($registro = $this -> conexion -> extraer()) != null){
+        $i = 0;
+        while (($registro = $this->conexion->extraer()) != null) {
             $resultados[$i] = $registro[0];
             $i++;
-        } 
-        
-        foreach($resultados as $r){
+        }
+
+        foreach ($resultados as $r) {
             $this->conexion->ejecutar($this->corteDAO->eliminarColor($r));
         }
 
-        $this -> conexion -> cerrar();
+        $this->conexion->cerrar();
         return $resultados;
     }
 
-    function eliminarCorte(){
+    function eliminarCorte()
+    {
         $this->conexion->abrir();
         $this->conexion->ejecutar($this->corteDAO->eliminarCorte());
         if ($this->conexion->numFilas() == 1) {
@@ -307,6 +316,48 @@ class Corte
         } else {
             $this->conexion->cerrar();
         }
+        $this->conexion->cerrar();
+    }
+
+    function entregarCorte()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->entregarCorte());
+        if ($this->conexion->numFilas() == 1) {
+            $resultado = $this->conexion->extraer();
+            $this->conexion->cerrar();
+            return $resultado[0];
+        } else {
+            $this->conexion->cerrar();
+        }
+    }
+
+    function cantidad()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->cantidad());
+        if ($this->conexion->numFilas() == 1) {
+            $resultado = $this->conexion->extraer();
+            $this->corteDAO->setCantidad($resultado[0]);
+            $this->cantidad = $resultado[0];
+            $this->conexion->cerrar();
+        } else {
+            $this->conexion->cerrar();
+        }
+    }
+
+    function cortesEntregadosCompletos()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->cortesEntregadosCompletos());
+        $resultados = array();
+        $i = 0;
+        while (($registro = $this->conexion->extraer()) != null) {
+            $modelo = new Modelo("", $registro[1]);
+            $resultados[$i] = new Corte($registro[0], "", $registro[3], "", "", $modelo, $registro[4], "", "", "", $registro[2], $registro[5]);
+            $i++;
+        }
+        return $resultados;
         $this->conexion->cerrar();
     }
 }

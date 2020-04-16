@@ -139,5 +139,17 @@ class CorteDAO
     function eliminarCorte(){
         return "call eliminarCorte('". $this->id ."')";
     }
+
+    function entregarCorte(){
+        return "call entregarCorte('". $this->id ."', '". $this->cantidad ."')";
+    }
+
+    function cantidad(){
+        return "select obtenerCantidadPrendasT('". $this->id ."')";
+    }
+
+    function cortesEntregadosCompletos(){
+        return "select * from cortesEntregadosC";
+    }
 }
 

@@ -38,7 +38,8 @@ $cortesPorEntregar = $corte->cortesPorEntregar();
 									echo "<td>" . $cpe->getFecha_Envio() . "</td>";
 									echo "<td>" . $cpe->getCantidad() . "</td>";
 									echo "<td>" . "<a href='modalCorte.php?idCorte=" . $cpe->getId() . "' data-toggle='modal' data-target='#modalCorte' ><span class='fas fa-eye' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Ver Detalles' ></span> </a>
-									<a href='index.php?pid=". base64_encode("presentacion/encargado/asignarTareas.php") ."&idCorte=" . $cpe->getId() . "'><span class='fas fa-eye' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Asignar Tarea' ></span> </a>
+									<a href='index.php?pid=" . base64_encode("presentacion/encargado/asignarTareas.php") . "&idCorte=" . $cpe->getId() . "'><span class='fas fa-eye' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Asignar Tarea' ></span> </a>
+									<a href='modalEntregar.php?idCorte=" . $cpe->getId() . "' data-toggle='modal' data-target='#modalEntregar'><span class='fas fa-check' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Entregar' ></span> </a>
 									<a class='eliminar' ><span class='fas fa-times-circle' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Eliminar' ></span> </a>
 									</td>";
 									echo "</tr>";
@@ -172,6 +173,13 @@ $cortesPorEntregar = $corte->cortesPorEntregar();
 	</div>
 </div>
 
+<div class="modal fade" id="modalEntregar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content" id="modalContent">
+		</div>
+	</div>
+</div>
+
 <script>
 	$('body').on('show.bs.modal', '.modal', function(e) {
 		var link = $(e.relatedTarget);
@@ -180,28 +188,40 @@ $cortesPorEntregar = $corte->cortesPorEntregar();
 </script>
 
 <script>
+	$("table").on("click", "tbody .eliminar", function(e) {
+		e.preventDefault();
 
-$("table").on("click", "tbody .eliminar", function(e){
-	e.preventDefault();
+		let elemento = $(this)[0].parentElement.parentElement;
+		let idCorte = $(elemento).attr('id');
 
-	let elemento = $(this)[0].parentElement.parentElement;
-	let idCorte = $(elemento).attr('id');
-
-	$.ajax({
-		type: "POST",
-		url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/encargado/eliminarCorte.php"); ?>",
-		data: {idCorte},
-		success: function (response) {
-			$("#" + idCorte).remove();
-			Swal.fire({
-				position: 'top-end',
-				icon: 'success',
-				title: response,
-				showConfirmButtom: false,
-				timer: 1000
-			});
-		}
+		Swal.fire({
+			title: 'Esta seguro?',
+			text: "Eliminar Corte!",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Si, Eliminar!'
+		}).then((result) => {
+			if (result.value) {
+				$.ajax({
+					type: "POST",
+					url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/encargado/eliminarCorte.php"); ?>",
+					data: {
+						idCorte
+					},
+					success: function(response) {
+						$("#" + idCorte).remove();
+						Swal.fire({
+							position: 'top-end',
+							icon: 'success',
+							title: response,
+							showConfirmButtom: false,
+							timer: 1000
+						});
+					}
+				});
+			}
+		});
 	});
-})
-
 </script>
