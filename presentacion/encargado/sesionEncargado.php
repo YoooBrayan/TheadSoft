@@ -4,6 +4,9 @@
 
 <?php
 
+$_SESSION['cortes'] = array();
+array_push($_SESSION['cortes'], 0);
+
 include 'presentacion/encargado/cabeceraEncargado.php';
 
 $corte = new Corte();
@@ -33,7 +36,7 @@ $cortesPorEntregar = $corte->cortesPorEntregar();
 							<tbody>
 								<?php foreach ($cortesPorEntregar as $cpe) {
 									echo "<tr id=" . $cpe->getId() . ">";
-									echo "<td>" . $cpe->getId() . "</td>";
+									echo "<td class='check' id='" . $cpe->getId() . "'> <span id='check" . $cpe->getId() . "'  class='far fa-square'></span> " . $cpe->getId() . "</td>";
 									echo "<td>" . $cpe->getModelo()->getNombre() . "</td>";
 									echo "<td>" . $cpe->getFecha_Envio() . "</td>";
 									echo "<td>" . $cpe->getCantidad() . "</td>";
@@ -44,7 +47,7 @@ $cortesPorEntregar = $corte->cortesPorEntregar();
 									</td>";
 									echo "</tr>";
 								}
-								echo "<tr><td colspan='9'>" . count($cortesPorEntregar) . " registros encontrados</td></tr>" ?>
+								echo "<tr><td id='contador' colspan='9'>" . count($cortesPorEntregar) . " registros encontrados</td></tr>" ?>
 							</tbody>
 						</table>
 					</div>
@@ -52,120 +55,10 @@ $cortesPorEntregar = $corte->cortesPorEntregar();
 			</div>
 		</div>
 	</div>
+	<button id="entregasC" type="button" class="btn btn-secondary mt-2" hidden>Entregar Completo</button>
 </div>
 
-<br>
-<div class="container">
-	<div class="row">
-		<div class="col-12">
-			<div class="card">
-				<div style="text-align: center;" class="card-header bg-dark text-white">Cortes Entregados</div>
-				<div class="card-body">
-					<div id="resultadosProfesores">
-						<table class="table table-striped table-hover">
-							<thead>
-								<tr>
-									<th scope="col">Id</th>
-									<th scope="col">Modelo</th>
-									<th scope="col">Fecha de Envio</th>
-									<th scope="col">Cantidad</th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php
-								/*foreach ($profesores as $p) {
-        echo "<tr id=". $p -> getId() .">";
-        echo "<td>" . $p->getId() . "</td>";
-        echo "<td>" . $p->getNombre() . "</td>";
-        echo "<td>" . $p->getApellido() . "</td>";
-        echo "<td>" . $p->getCorreo() . "</td>";
-        echo "</tr>";
-    
-    }
-    echo "<tr><td colspan='9'>" . count($profesores) . " registros encontrados</td></tr>" */ ?>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
 
-<br>
-<div class="container">
-	<div class="row">
-		<div class="col-12">
-			<div class="card">
-				<div style="text-align: center;" class="card-header bg-dark text-white">Cortes Pendientes</div>
-				<div class="card-body">
-					<div id="resultadosProfesores">
-						<table class="table table-striped table-hover">
-							<thead>
-								<tr>
-									<th scope="col">Id</th>
-									<th scope="col">Modelo</th>
-									<th scope="col">Fecha de Envio</th>
-									<th scope="col">Cantidad</th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php
-								/*foreach ($profesores as $p) {
-        echo "<tr id=". $p -> getId() .">";
-        echo "<td>" . $p->getId() . "</td>";
-        echo "<td>" . $p->getNombre() . "</td>";
-        echo "<td>" . $p->getApellido() . "</td>";
-        echo "<td>" . $p->getCorreo() . "</td>";
-        echo "</tr>";
-    
-    }
-    echo "<tr><td colspan='9'>" . count($profesores) . " registros encontrados</td></tr>" */ ?>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<br>
-<div class="container">
-	<div class="row">
-		<div class="col-12">
-			<div class="card">
-				<div style="text-align: center;" class="card-header bg-dark text-white">Cortes Por Pagar</div>
-				<div class="card-body">
-					<div id="resultadosProfesores">
-						<table class="table table-striped table-hover">
-							<thead>
-								<tr>
-									<th scope="col">Id</th>
-									<th scope="col">Modelo</th>
-									<th scope="col">Fecha de Envio</th>
-									<th scope="col">Cantidad</th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php
-								/*foreach ($profesores as $p) {
-        echo "<tr id=". $p -> getId() .">";
-        echo "<td>" . $p->getId() . "</td>";
-        echo "<td>" . $p->getNombre() . "</td>";
-        echo "<td>" . $p->getApellido() . "</td>";
-        echo "<td>" . $p->getCorreo() . "</td>";
-        echo "</tr>";
-    
-    }
-    echo "<tr><td colspan='9'>" . count($profesores) . " registros encontrados</td></tr>" */ ?>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
 <div class="modal fade" id="modalCorte" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content" id="modalContent">
@@ -223,5 +116,62 @@ $cortesPorEntregar = $corte->cortesPorEntregar();
 				});
 			}
 		});
+	});
+
+	$(document).on("click", ".check", function(e) {
+
+		let elemento = $(this)[0].parentElement;
+		let idCorte = $(elemento).attr('id');
+
+		$.ajax({
+			type: "POST",
+			url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/encargado/pushPullCortes.php") ?>",
+			data: {
+				idCorte
+			},
+			success: function(response) {
+				let icon = JSON.parse(response);
+				$("#check" + idCorte).removeClass();
+				$("#check" + idCorte).addClass(icon[0].icon);
+
+				if (icon[0].count == 1) {
+					//$("#entregasC").attr("style", "display: none")
+					$("#entregasC").attr("hidden", true);
+				} else {
+					$("#entregasC").removeAttr("hidden");
+					//$("#entregasC").attr("style", "display: line-block");
+				}
+			}
+		});
+
+	});
+
+	$("#entregasC").on("click", function() {
+
+		let idCortes = "1";
+		$.ajax({
+			type: "POST",
+			url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/encargado/entregarCorte.php") ?>",
+			data: {
+				idCortes
+			},
+			success: function(response) {
+
+				let c = $("#contador").val();
+				let cortes = JSON.parse(response);
+				cortes.forEach(corte => {
+					$("#" + corte.id).remove();
+				});
+
+				swal.fire({
+					position: 'top-end',
+					icon: 'success',
+					title: 'cortes entregados',
+					timer: 1000
+				});
+
+			}
+		});
+
 	});
 </script>

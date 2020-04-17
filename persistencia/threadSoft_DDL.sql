@@ -463,6 +463,45 @@ create procedure EntregarCorte(idCorte int, Cantidad int)
 	
 	end//
 
+/*Pagar Corte*/
+create procedure pagarCorte(idcorte int)
+begin
+
+	declare id int;
+	declare cantidad int;
+	declare b int;
+	declare fechaE date;
+	set b = 0;
+	
+	select Corte_Id into id from Corte_Entregado_bodega where corte_Id = idCorte and Corte_Estado <> 1;
+	if id is not null then 
+		update Corte_Entregado_bodega set Corte_Estado = 1, Corte_Fecha_Pago = now() where corte_Id = idCorte;
+		set b = 1;
+		select "Pago Exitoso.";
+	end if;
+	
+	select Corte_Id into id from Corte_Pendiente_bodega where Corte_id = idCorte limit 1;
+	select cantidadPendientes(idCorte) into cantidad;
+	select max(corte_Fecha_Entrega) into fechaE from corte_Pendiente_bodega where corte_ID = idcorte;
+	
+	if id is not null and cantidad = 0  and b <> 1 then
+		update Corte_Pendiente_bodega set Corte_Estado = 1 where corte_id = idCorte;
+		insert into Corte_Entregado_Bodega(Corte_Id, Corte_Fecha_Entrega, Corte_Fecha_Pago, Corte_Estado) values (idcorte, fechaE, now(), 1);
+		select "Pago Exitoso..";
+	end if;
+	
+	if id is not null and cantidad <> 0 and b <> 1 then
+		update Corte_Pendiente_bodega set Corte_Estado = 2 where corte_id = idCorte;
+		select "Pago Exitoso...";
+	end if;
+
+	if id is null then
+	select "Corte No Encontrado";
+	end if;
+	
+end//
+
+
 
 /*consultar los id de los colores de una talla por corte*/
 select corte_talla_color_id from corte_talla ct join corte_Talla_color  ctc on ctc.corte_talla_id = ct.corte_talla_id and corte_id = 47;
@@ -474,10 +513,12 @@ select corte.Corte_Id as ID, Modelo_Nombre as Modelo, sum(cantidad) as Realizada
 from corte, Corte_Talla, Corte_Entregado_Bodega, Modelo
 where corte.Corte_Id = Corte_Talla.Corte_Id and Corte.Corte_Id = Corte_Entregado_Bodega.Corte_Id and Corte_Modelo = Modelo_Id and Corte_Estado <> 2 and Corte_Estado <> 4 
 group by corte.Corte_Id
+ORDER BY corte_estado desc;
 
 
 /*Vista cortes entregados Pagados*/
-select Corte_Pendiente_bodega.Corte_Id as ID, Modelo_Nombre as Modelo, sum(Corte_Cantidad_Entregada) as Realizadas, Corte_Pendiente_bodega.Corte_Fecha_Entrega as 'Fecha de Entrega', sum(Corte_Cantidad_Entregada*Modelo_Valor) as Pago
+create view cortesEntregadosP as
+select Corte_Pendiente_bodega.Corte_Id as ID, Modelo_Nombre as Modelo, sum(Corte_Cantidad_Entregada) as Realizadas, Corte_Pendiente_bodega.Corte_Fecha_Entrega as 'Fecha de Entrega', corte_estado, sum(Corte_Cantidad_Entregada*Modelo_Valor) as Pago
 from Corte_Pendiente_bodega, Modelo, Corte_Talla, Corte
 where Corte_Pendiente_bodega.Corte_Id not in
 (
@@ -485,3 +526,4 @@ select Corte_id from Corte_Entregado_Bodega
 )
 and corte.Corte_ID = Corte_Pendiente_bodega.Corte_ID and Corte_Modelo = Modelo_Id and Corte.Corte_ID = Corte_Talla.Corte_Id and Corte_Pendiente_bodega.Corte_Estado <> 3 and Corte_Pendiente_bodega.Corte_Estado <> 1
 group by Corte_Pendiente_bodega.Corte_ID
+ORDER BY corte_estado desc;

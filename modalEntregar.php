@@ -9,9 +9,9 @@
     <hr/ style="border: 1px solid">
 
     <div class="input-group mt-3" style="width: 89%">
-        <input type="text" class="form-control" placeholder="Cantidad" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <input id="cantidad" type="number" class="form-control" placeholder="Cantidad" aria-label="Recipient's username" aria-describedby="basic-addon2" min="0" oninput="validity.valid||(value='');">
         <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button">Entrega Incompleta</button>
+            <button id="entregarI" class="btn btn-outline-secondary" type="button" data-dismiss="modal">Entrega Incompleta</button>
         </div>
     </div>
 
@@ -19,7 +19,7 @@
 
 <script>
     $(document).on("click", "#entregar", function(e) {
-
+        
         let idCorte = "<?php echo $_GET['idCorte']; ?>";
 
         $.ajax({
@@ -34,7 +34,7 @@
                     Swal.fire({
                         position: 'top-end',
                         icon: 'success',
-                        title: 'Corte Entregao!',
+                        title: 'Corte Entregado!',
                         showConfirmButtom: false,
                         timer: 1000
                     });
@@ -42,7 +42,7 @@
                     Swal.fire({
                         position: 'top-end',
                         icon: 'success',
-                        title: 'Corte ya Entregao!',
+                        title: 'Corte ya Entregado!',
                         showConfirmButtom: false,
                         timer: 1000
                     });
@@ -52,26 +52,45 @@
 
     });
 
-    $(document).on("click", "#entregarI", function(e) {
-
+    $(document).on("click", "#entregarI", function(e) { 
         let idCorte = "<?php echo $_GET['idCorte']; ?>";
+        let cantidad = $("#cantidad").val();
 
         $.ajax({
             type: "POST",
             url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/encargado/entregarCorte.php"); ?>",
             data: {
-                idCorte
+                idCorte,
+                cantidad
             },
             success: function(response) {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: response,
-                    showConfirmButtom: false,
-                    timer: 1000
-                });
+                if (response == 1) {
+                    $("#" + idCorte).remove();
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Corte Entregado!',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                } else if (response == 3) {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Corte ya Pendiente!',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                }else{
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'Cantidad Invalida',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                }
             }
         });
-
     });
 </script>

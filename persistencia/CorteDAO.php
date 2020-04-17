@@ -151,5 +151,12 @@ class CorteDAO
     function cortesEntregadosCompletos(){
         return "select * from cortesEntregadosC";
     }
-}
 
+    function cortesEntregadosPendientes(){
+        return "select * from cortesEntregadosP";
+    }
+
+    function pagarCorte(){
+        return "call pagarCorte('". $this->id ."')";
+    }
+}

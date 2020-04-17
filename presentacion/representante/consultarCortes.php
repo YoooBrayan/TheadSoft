@@ -71,21 +71,12 @@ include 'presentacion/representante/cabeceraRepresentante.php';
 									<th scope="col">Modelo</th>
 									<th scope="col">Fecha de Envio</th>
 									<th scope="col">Cantidad</th>
+									<th scope="col">Estado</th>
+									<th scope="col">Pago</th>
 									<th scope="col">Servicios</th>
 								</tr>
 							</thead>
-							<tbody>
-								<?php
-								/*foreach ($profesores as $p) {
-        echo "<tr id=". $p -> getId() .">";
-        echo "<td>" . $p->getId() . "</td>";
-        echo "<td>" . $p->getNombre() . "</td>";
-        echo "<td>" . $p->getApellido() . "</td>";
-        echo "<td>" . $p->getCorreo() . "</td>";
-        echo "</tr>";
-    
-    }
-    echo "<tr><td colspan='9'>" . count($profesores) . " registros encontrados</td></tr>" */ ?>
+							<tbody id="tcp">
 							</tbody>
 						</table>
 					</div>
@@ -103,6 +94,14 @@ include 'presentacion/representante/cabeceraRepresentante.php';
 	</div>
 </div>
 
+<div class="modal fade" id="modalPagar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content" id="modalContent">
+		</div>
+	</div>
+</div>
+
+
 <script>
 	$('body').on('show.bs.modal', '.modal', function(e) {
 		var link = $(e.relatedTarget);
@@ -113,18 +112,54 @@ include 'presentacion/representante/cabeceraRepresentante.php';
 <script>
 	$("select").change(function() {
 		let tipo = $("select option:selected")[0].value;
-		if(tipo=='CE'){
+		if (tipo == 'CE') {
 			$("#CP").attr("hidden", true);
 			$("#CE").removeAttr("hidden");
 
 			$.ajax({
 				type: "POST",
-				url: "<?php echo "indexAjax.php?pid="  . base64_encode("presentacion/representante/consultarCortesAjax.php")?>",
-				data: {tipo},
-				success: function (response) {
+				url: "<?php echo "indexAjax.php?pid="  . base64_encode("presentacion/representante/consultarCortesAjax.php") ?>",
+				data: {
+					tipo
+				},
+				success: function(response) {
 					let cortes = JSON.parse(response);
 					let plantilla = '';
 
+					cortes.forEach(corte => {
+						plantilla += `
+						<tr id='${corte.id}'>
+							<td>${corte.id}</td>
+							<td>${corte.modelo}</td>
+							<td>${corte.fecha}</td>
+							<td>${corte.cantidad}</td>
+							<td id='icon${corte.id}' class="${corte.estado==1?'fas fa-dollar-sign':'fab fa-creative-commons-nc'}" data-toggle='tooltip' data-placement='left' title="${corte.estado==1?'Corte Pagado':'Corte Sin Pagar'}"></td>
+							<td id='pago${corte.id}' style='text-decoration: ${corte.estado==1?'line-through':'none'};'>${corte.pago}</td>
+							<td>
+								<a class='fas fa-eye' href='modalCorte.php?idCorte=${corte.id}' data-toggle='modal' data-target='#modalCorte' data-placement='left' title='Ver Detalles'></a>
+								<a id='iconP${corte.id}' class='fas fa-money-bill-alt' href='modalPagar.php?idCorte=${corte.id}' data-toggle='modal' data-target='#modalPagar' data-placement='left' title='Pagar' style='color: ${corte.estado==1?'green':'none'};'></a>
+								<a class='fas fa-times-circle' data-toggle='tooltip' data-placement='left' title='Eliminar'></a>
+							</td>
+						</tr>
+						`
+					});
+
+					$("#tce").html(plantilla);
+				}
+			});
+
+		} else if (tipo == 'CP') {
+			$("#CE").attr("hidden", true);
+			$("#CP").removeAttr("hidden");
+			$.ajax({
+				type: "POST",
+				url: "<?php echo "indexAjax.php?pid="  . base64_encode("presentacion/representante/consultarCortesAjax.php") ?>",
+				data: {
+					tipo
+				},
+				success: function(response) {
+					let cortes = JSON.parse(response);
+					let plantilla = '';
 					cortes.forEach(corte => {
 						plantilla += `
 						<tr id='${corte.id}'>
@@ -143,13 +178,9 @@ include 'presentacion/representante/cabeceraRepresentante.php';
 						`
 					});
 
-					$("#tce").html(plantilla);
+					$("#tcp").html(plantilla);
 				}
 			});
-
-		}else if(tipo=='CP'){
-			$("#CE").attr("hidden", true);
-			$("#CP").removeAttr("hidden");
 		}
 	})
 </script>

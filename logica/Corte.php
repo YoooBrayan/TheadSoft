@@ -145,6 +145,11 @@ class Corte
         return $this->pago;
     }
 
+    function setCantidad($cantidad){
+        $this->cantidad = $cantidad;
+        $this->corteDAO->setCantidad($cantidad);
+    }
+
     function idCorteNuevo()
     {
         $this->conexion->abrir();
@@ -359,5 +364,33 @@ class Corte
         }
         return $resultados;
         $this->conexion->cerrar();
+    }
+
+    function cortesEntregadosPendientes()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->cortesEntregadosPendientes());
+        $resultados = array();
+        $i = 0;
+        while (($registro = $this->conexion->extraer()) != null) {
+            $modelo = new Modelo("", $registro[1]);
+            $resultados[$i] = new Corte($registro[0], "", $registro[3], "", "", $modelo, $registro[4], "", "", "", $registro[2], $registro[5]);
+            $i++;
+        }
+        return $resultados;
+        $this->conexion->cerrar();
+    }
+
+    function pagarCorte()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->pagarCorte());
+        if ($this->conexion->numFilas() == 1) {
+            $resultado = $this->conexion->extraer();
+            $this->conexion->cerrar();
+            return $resultado[0];
+        } else {
+            $this->conexion->cerrar();
+        }
     }
 }
