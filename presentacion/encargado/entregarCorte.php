@@ -46,6 +46,8 @@ if (isset($_POST['idCorte'])) {
     }
     $_SESSION['cortes'] = "";
     $_SESSION['cortes'] = array();
+    array_push($_SESSION['cortes'], 0);
+    
     echo json_encode($json);
     
 }

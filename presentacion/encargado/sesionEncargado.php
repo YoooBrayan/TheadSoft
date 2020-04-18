@@ -163,6 +163,8 @@ $cortesPorEntregar = $corte->cortesPorEntregar();
 					$("#" + corte.id).remove();
 				});
 
+				$("#entregasC").attr("hidden", true);
+				
 				swal.fire({
 					position: 'top-end',
 					icon: 'success',

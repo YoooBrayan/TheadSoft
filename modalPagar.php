@@ -30,11 +30,8 @@
                 idCorte
             },
             success: function(response) {
-                console.log("1yeah");
-                console.log(response);
                 if (response == 1) {
 
-                    console.log("yeah");
                     $("#icon"+idCorte).removeClass();
                     $("#icon"+idCorte).addClass("fas fa-dollar-sign");
                     $("#iconP"+idCorte).attr("style", 'color: green');
@@ -52,7 +49,7 @@
                     Swal.fire({
                         position: 'top-end',
                         icon: 'warning',
-                        title: response,
+                        title: 'Corte ya Pagado.',
                         showConfirmButtom: false,
                         timer: 1000
                     });

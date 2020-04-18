@@ -393,4 +393,17 @@ class Corte
             $this->conexion->cerrar();
         }
     }
+
+    function removerPago()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->removerPago());
+        if ($this->conexion->numFilas() == 1) {
+            $resultado = $this->conexion->extraer();
+            $this->conexion->cerrar();
+            return $resultado[0];
+        } else {
+            $this->conexion->cerrar();
+        }
+    }
 }

@@ -471,10 +471,18 @@ begin
 	declare cantidad int;
 	declare b int;
 	declare fechaE date;
+	declare estado int;
 	set b = 0;
 	
+	select corte_estado into estado from corte_Entregado_Bodega where corte_Id = idCorte;
+
+	if estado = 1 THEN
+	select "Corte ya Pagado.";
+	set b = 1;
+	end if;
+
 	select Corte_Id into id from Corte_Entregado_bodega where corte_Id = idCorte and Corte_Estado <> 1;
-	if id is not null then 
+	if id is not null and b <> 1 then 
 		update Corte_Entregado_bodega set Corte_Estado = 1, Corte_Fecha_Pago = now() where corte_Id = idCorte;
 		set b = 1;
 		select "Pago Exitoso.";
@@ -502,6 +510,25 @@ begin
 end//
 
 
+/*removerPago*/
+create PROCEDURE removerPago(idCorte int)
+BEGIN
+
+declare estado int;
+
+select corte_estado into estado from corte_Entregado_Bodega where corte_id = idCorte; 
+if estado <> 3 THEN
+update corte_Entregado_Bodega set corte_estado = 3 where corte_id = idCorte;
+select "Pago removido.";
+end if;
+if estado = 3 then
+select "Seleccione Corte Pagado.";
+end if;
+
+if estado is null THEN
+select "Corte no Encontrado";
+end if;
+END
 
 /*consultar los id de los colores de una talla por corte*/
 select corte_talla_color_id from corte_talla ct join corte_Talla_color  ctc on ctc.corte_talla_id = ct.corte_talla_id and corte_id = 47;

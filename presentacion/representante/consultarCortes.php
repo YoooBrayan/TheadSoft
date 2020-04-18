@@ -2,6 +2,9 @@
 
 include 'presentacion/representante/cabeceraRepresentante.php';
 
+$_SESSION['cortes'] = array();
+array_push($_SESSION['cortes'], 0);
+
 ?>
 
 
@@ -37,17 +40,6 @@ include 'presentacion/representante/cabeceraRepresentante.php';
 								</tr>
 							</thead>
 							<tbody id="tce">
-								<?php
-								/*foreach ($profesores as $p) {
-        echo "<tr id=". $p -> getId() .">";
-        echo "<td>" . $p->getId() . "</td>";
-        echo "<td>" . $p->getNombre() . "</td>";
-        echo "<td>" . $p->getApellido() . "</td>";
-        echo "<td>" . $p->getCorreo() . "</td>";
-        echo "</tr>";
-    
-    }
-    echo "<tr><td colspan='9'>" . count($profesores) . " registros encontrados</td></tr>" */ ?>
 							</tbody>
 						</table>
 					</div>
@@ -55,6 +47,8 @@ include 'presentacion/representante/cabeceraRepresentante.php';
 			</div>
 		</div>
 	</div>
+	<button id="pagarC" type="button" class="btn btn-secondary mt-2" hidden>Pagar Completo</button>
+	<button id="removerPago" type="button" class="btn btn-warning mt-2 ml-2" hidden>Remover Pago</button>
 </div>
 
 <div id="CP" class="container" hidden>
@@ -129,7 +123,7 @@ include 'presentacion/representante/cabeceraRepresentante.php';
 					cortes.forEach(corte => {
 						plantilla += `
 						<tr id='${corte.id}'>
-							<td>${corte.id}</td>
+							<td class='check' id='${corte.id}' ><span id='check${corte.id}'  class='far fa-square'></span>  ${corte.id}</td>
 							<td>${corte.modelo}</td>
 							<td>${corte.fecha}</td>
 							<td>${corte.cantidad}</td>
@@ -182,5 +176,134 @@ include 'presentacion/representante/cabeceraRepresentante.php';
 				}
 			});
 		}
+	});
+
+	$(document).on("click", ".check", function(e) {
+
+		let elemento = $(this)[0].parentElement;
+		let idCorte = $(elemento).attr('id');
+
+		$.ajax({
+			type: "POST",
+			url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/encargado/pushPullCortes.php") ?>",
+			data: {
+				idCorte
+			},
+			success: function(response) {
+				let icon = JSON.parse(response);
+				$("#check" + idCorte).removeClass();
+				$("#check" + idCorte).addClass(icon[0].icon);
+
+				if (icon[0].count == 1) {
+					//$("#entregasC").attr("style", "display: none")
+					$("#pagarC").attr("hidden", true);
+					$("#removerPago").attr("hidden", true);
+				} else {
+					$("#pagarC").removeAttr("hidden");
+					$("#removerPago").removeAttr("hidden");
+					//$("#entregasC").attr("style", "display: line-block");
+				}
+			}
+		});
+
+	});
+
+	$("#pagarC").on("click", function() {
+
+		let idCortes = "1";
+		$.ajax({
+			type: "POST",
+			url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/pagarCorte.php") ?>",
+			data: {
+				idCortes
+			},
+			success: function(response) {
+				let cortes = JSON.parse(response);
+				if (cortes[0].respuesta == 'Pago Exitoso.') {
+					cortes.forEach(corte => {
+						$("#check" + corte.id).removeClass();
+						$("#check" + corte.id).addClass("far fa-square");
+						$("#icon" + corte.id).removeClass();
+						$("#icon" + corte.id).addClass("fas fa-dollar-sign");
+						$("#iconP" + corte.id).attr("style", 'color: green');
+						$("#pago" + corte.id).attr("style", 'text-decoration: line-through');
+					});
+
+					swal.fire({
+						position: 'top-end',
+						icon: 'success',
+						title: 'Pagos Existosos.',
+						timer: 1500
+					});
+				} else {
+
+					cortes.forEach(corte => {
+						$("#check" + corte.id).removeClass();
+						$("#check" + corte.id).addClass("far fa-square");
+					});
+
+					swal.fire({
+						position: 'center',
+						icon: 'warning',
+						title: cortes[0].respuesta,
+						timer: 1500
+					});
+				}
+				$("#pagarC").attr("hidden", true);
+				$("#removerPago").attr("hidden", true);
+			}
+		});
+
+	});
+
+	$(document).on("click", "#removerPago", function(e) {
+
+		let idCortes = "1";
+
+		$.ajax({
+			type: "POST",
+			url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/removerPago.php") ?>",
+			data: {
+				idCortes
+			},
+			success: function(response) {
+
+				let cortes = JSON.parse(response);
+
+				if (cortes[0].respuesta == 'Pago removido.') {
+					cortes.forEach(corte => {
+						$("#check" + corte.id).removeClass();
+						$("#check" + corte.id).addClass("far fa-square");
+						$("#icon" + corte.id).removeClass();
+						$("#icon" + corte.id).addClass("fab fa-creative-commons-nc");
+						$("#iconP" + corte.id).attr("style", 'color: black');
+						$("#pago" + corte.id).attr("style", 'text-decoration: none');
+					});
+
+					swal.fire({
+						position: 'top-end',
+						icon: 'success',
+						title: 'Pagos Removidos.',
+						timer: 1500
+					});
+				} else {
+
+					cortes.forEach(corte => {
+						$("#check" + corte.id).removeClass();
+						$("#check" + corte.id).addClass("far fa-square");
+					});
+
+					swal.fire({
+						position: 'center',
+						icon: 'warning',
+						title: cortes[0].respuesta,
+						timer: 1500
+					});
+				}
+				$("#pagarC").attr("hidden", true);
+				$("#removerPago").attr("hidden", true);
+
+			}
+		});
 	})
 </script>

@@ -159,4 +159,8 @@ class CorteDAO
     function pagarCorte(){
         return "call pagarCorte('". $this->id ."')";
     }
+
+    function removerPago(){
+        return "call removerPago('". $this->id ."')";
+    }
 }
