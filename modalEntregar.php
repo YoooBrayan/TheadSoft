@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
 
-    <button id="entregar" type="button" class="btn btn-primary">Entrega Completa</button>
+    <button id="entregar" type="button" class="btn btn-primary" data-dismiss="modal">Entrega Completa</button>
 
     <hr/ style="border: 1px solid">
 

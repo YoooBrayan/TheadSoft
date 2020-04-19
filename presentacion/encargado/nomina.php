@@ -18,7 +18,7 @@ $cortes = $corte->consultarCortes();
 	<div class="row">
 		<div class="col-12">
 			<div class="card">
-				<div style="text-align: center;" class="card-header bg-dark text-white">Cortes</div>
+				<div style="text-align: center;" class="card-header bg-dark text-white">Seleccione Cortes</div>
 				<div class="card-body">
 					<div class="table-wrapper-scroll-y my-custom-scrollbar">
 						<table class="table table-striped table-hover mb-0">
@@ -107,7 +107,7 @@ $cortes = $corte->consultarCortes();
 				nomina.forEach(operario => {
 					template += `
 					<div class='card border-dark mt-3 mb-2' style='max-width: 100%;'> 
-					<div class="card-header">${operario.operario}</div>
+					<div class="card-header">${operario.operario.Nombre}</div>
 					<div class="card-body text-dark">
 					<table class='table table-striped table-hover'>
 					<thead>
@@ -131,8 +131,13 @@ $cortes = $corte->consultarCortes();
 					</tr>`
 					});
 					template += `</tbody>
-					</table></div></div>`
+					</table>
+					<hr/ style='border: 1px solid'>
+					<p class='card-text'>Sueldo: ${operario.pago}</p>
+					</div></div>`
 				});
+
+				template += `<button id='nominaPDF' type='button' class='btn btn-dark mt-2 mb-3'>Exportar PDF</button>`;
 
 				$("#cNomina").html(template);
 			}

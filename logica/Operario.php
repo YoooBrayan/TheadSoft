@@ -115,6 +115,23 @@ class Operario extends Persona
         return $resultados;
     }
 
+    function pagoNeto($cortes)
+    {
+        $this->conexion->abrir();
+
+        $pago = 0;
+
+        foreach ($cortes as $c) {
+            $this->conexion->ejecutar($this->operarioDAO->pagoNeto($c));
+            if ($this->conexion->numFilas() == 1) {
+                $resultado = $this->conexion->extraer();
+                $pago += $resultado[0];
+            }
+        }
+        $this->conexion->cerrar();
+        return $pago;
+    } 
+
     function setTareas($tareas)
     {
         $this->tareas = $tareas;

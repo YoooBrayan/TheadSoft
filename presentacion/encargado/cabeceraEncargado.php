@@ -19,6 +19,8 @@ $operario -> consultar();
         <li><a href="index.php?pid=<?php echo base64_encode('presentacion/encargado/sesionEncargado.php') ?>">Home</a></li>
         <li><a href="index.php?pid=<?php echo base64_encode('presentacion/encargado/modelos.php') ?>">Modelos</a></li>
         <li>
+        <li><a href="index.php?pid=<?php echo base64_encode('presentacion/encargado/listaCortes.php') ?>">Cortes</a></li>
+        <li>
         <li><a href="index.php?pid=<?php echo base64_encode('presentacion/encargado/nomina.php') ?>">Nomina</a></li>
         <li>
             <a href="#">Corte</a>

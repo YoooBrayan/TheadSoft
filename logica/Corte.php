@@ -409,6 +409,7 @@ class Corte
         }
     }
 
+
     function consultarCortes()
     {
         $this->conexion->abrir();

@@ -45,9 +45,11 @@ if (isset($_POST['idCortes'])) {
                 );
             }
         }
+        $pago = $operario -> pagoNeto($_SESSION['cortes']);
         $nomina[] = array(
-            'operario' =>  $operario->getId(),
-            'nomina' => $nominaO
+            'operario' =>  $o,
+            'nomina' => $nominaO, 
+            'pago' => $pago
         );
     }
 

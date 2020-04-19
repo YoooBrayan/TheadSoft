@@ -51,4 +51,8 @@ class OperarioDAO{
     function getTareas(){
         return $this->tareas;
     }
+
+    function pagoNeto($corte){
+        return "select pagoNeto('". $this->id ."', '". $corte ."')";
+    }
 }

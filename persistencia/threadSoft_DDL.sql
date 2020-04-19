@@ -244,6 +244,12 @@ where c.corte_id = 52 and ct.talla_id = "CT";
 	and corte_Modelo = Modelo_Id and Corte_Talla.Corte_Id = Corte.Corte_Id group by Corte.Corte_Id;
 
 
+create view Cortes as
+select Corte.Corte_id as ID,  Modelo_Nombre as Modelo, Corte_Fecha_Envio as Fecha, sum(Cantidad) as Cantidad
+from Corte, Representante, Proveedor, Modelo, Talla, Corte_Talla
+where Corte_Representante = Representante_Id and Representante_Proveedor = Proveedor_Id and Corte_Modelo = Modelo_Id and Corte.Corte_id = Corte_Talla.Corte_id and Corte_Talla.Talla_Id = Talla.Talla_Id
+group by corte.corte_Id;
+
 
 /*Funciones*/
 
@@ -278,6 +284,22 @@ end if;
 return cantidad;
 end
 //
+
+/*Pago Neto*/
+create function PagoNeto(idOperario int, idCorte int)
+returns int
+begin 
+
+	declare pago int;
+	
+	select  sum(Tarea_Cantidad * Operacion_Valor) into pago
+	from Tarea, Tarea_Operario, Operario, Operacion, Corte, Modelo, Modelo_Operacion
+	where Operario.Operario_Id = Tarea_Operario.Operario_Id and Tarea_Operario.Tarea_Id = Tarea.Tarea_Id and Tarea_Corte = Corte_Id and Corte_Modelo = Modelo.Modelo_Id and Modelo_Operacion.Modelo_Id = Modelo.Modelo_Id and Modelo_Operacion.Operacion_Id = Operacion.Operacion_Id and Tarea_Operacion = Operacion.Operacion_Id and Operario.Operario_Id = idOperario and corte_id = idCorte;
+	if pago is null then
+	set pago = 0;
+	end if;
+	return pago;
+end//
 
 
 /*Procedimientos*/
