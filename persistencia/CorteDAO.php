@@ -163,4 +163,13 @@ class CorteDAO
     function removerPago(){
         return "call removerPago('". $this->id ."')";
     }
+
+    function consultarCortes(){
+        return "select C.Corte_ID as ID, Modelo_Nombre as Modelo, Corte_Fecha_Envio, sum(Cantidad) as Cantidad 
+        from corte c join Modelo m on c.corte_modelo = m.modelo_id join Corte_Talla ct on ct.corte_id = c.corte_id group by c.Corte_id";
+    }
+
+    function operariosNomina(){
+        return "call operariosNomina('". $this->id ."')";
+    }
 }

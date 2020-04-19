@@ -141,11 +141,13 @@ class Corte
         $this->colores = $colores;
     }
 
-    function getPago(){
+    function getPago()
+    {
         return $this->pago;
     }
 
-    function setCantidad($cantidad){
+    function setCantidad($cantidad)
+    {
         $this->cantidad = $cantidad;
         $this->corteDAO->setCantidad($cantidad);
     }
@@ -405,5 +407,34 @@ class Corte
         } else {
             $this->conexion->cerrar();
         }
+    }
+
+    function consultarCortes()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->consultarCortes());
+        $resultados = array();
+        $i = 0;
+        while (($registro = $this->conexion->extraer()) != null) {
+            $modelo = new Modelo("", $registro[1]);
+            $resultados[$i] = new Corte($registro[0], $registro[2], "", "", "", $modelo, "", "", "", "", $registro[3]);
+            $i++;
+        }
+        return $resultados;
+        $this->conexion->cerrar();
+    }
+
+    function operariosNomina()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->operariosNomina());
+        $resultados = array();
+        $i = 0;
+        while (($registro = $this->conexion->extraer()) != null) {
+            $resultados[$i] = new Operario($registro[0], $registro[1]);
+            $i++;
+        }
+        return $resultados;
+        $this->conexion->cerrar();
     }
 }

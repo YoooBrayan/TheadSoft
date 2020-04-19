@@ -41,8 +41,10 @@ $cortesPorEntregar = $corte->cortesPorEntregar();
 									echo "<td>" . $cpe->getFecha_Envio() . "</td>";
 									echo "<td>" . $cpe->getCantidad() . "</td>";
 									echo "<td>" . "<a href='modalCorte.php?idCorte=" . $cpe->getId() . "' data-toggle='modal' data-target='#modalCorte' ><span class='fas fa-eye' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Ver Detalles' ></span> </a>
-									<a href='index.php?pid=" . base64_encode("presentacion/encargado/asignarTareas.php") . "&idCorte=" . $cpe->getId() . "'><span class='fas fa-eye' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Asignar Tarea' ></span> </a>
+
+									<a href='index.php?pid=" . base64_encode("presentacion/encargado/asignarTareas.php") . "&idCorte=" . $cpe->getId() . "'><span class='fas fa-plus' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Asignar Tarea' ></span> </a>
 									<a href='modalEntregar.php?idCorte=" . $cpe->getId() . "' data-toggle='modal' data-target='#modalEntregar'><span class='fas fa-check' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Entregar' ></span> </a>
+
 									<a class='eliminar' ><span class='fas fa-times-circle' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Eliminar' ></span> </a>
 									</td>";
 									echo "</tr>";

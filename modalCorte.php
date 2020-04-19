@@ -25,8 +25,8 @@ $corte->tallas($_GET['idCorte']);
     <div class="card border-dark mb-3" style="max-width: 100%;">
         <div class="card-header">Fechas</div>
         <div class="card-body text-dark">
-            <p> <?php echo $corte->getFecha_Envio(); ?> </p>
-            <p> <?php echo $corte->getFecha_Entrega(); ?> </p>
+            <p> Fecha de Envio:  <?php echo $corte->getFecha_Envio(); ?> </p>
+            <p> Fecha de Entrega:  <?php echo $corte->getFecha_Entrega(); ?> </p>
         </div>
     </div>
     <div class="card border-dark mb-3" style="max-width: 100%;">

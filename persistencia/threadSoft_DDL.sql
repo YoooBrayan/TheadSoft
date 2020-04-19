@@ -530,6 +530,28 @@ select "Corte no Encontrado";
 end if;
 END
 
+create procedure OperariosNomina(corte int)
+begin
+
+select Operario.Operario_ID, Operario_Nombre
+from corte, tarea, tarea_Operario, Operario 
+where corte_ID = Tarea_Corte and Tarea.tarea_Id = Tarea_Operario.Tarea_Id and Tarea_Operario.Operario_ID = Operario.Operario_ID and corte_ID = corte
+group by Operario.Operario_Id;
+
+end //
+
+
+create procedure TareasOperarioNomina(idCorte int, IdOperario int)
+begin
+
+	select Corte.Corte_id as "Corte", Modelo_Nombre as Modelo, Operacion_Descripcion as Tarea , Tarea_Cantidad as Cantidad, Operacion_Valor as "Valor de Operacion", sum(Tarea_Cantidad * Operacion_Valor) as 'Pago'
+	from Tarea, Tarea_Operario, Operario, Operacion, Corte, Modelo, Modelo_Operacion 
+	where Operario.Operario_Id = Tarea_Operario.Operario_Id and Tarea_Operario.Tarea_Id = Tarea.Tarea_Id and Tarea_Corte = Corte_Id and Corte_Modelo = Modelo.Modelo_Id and Modelo.Modelo_Id = Modelo_Operacion.Modelo_Id and Modelo_Operacion.Operacion_Id = Operacion.Operacion_Id and Tarea_Operacion = Operacion.Operacion_Id and Corte_Id = idCorte and Operario.Operario_Id = idOperario
+	group by Tarea_Cantidad, Operacion_Descripcion, Operacion_Valor, Operario.Operario_Id, Operario_Nombre, Corte_Id, Tarea.Tarea_Id;
+
+end//
+
+
 /*consultar los id de los colores de una talla por corte*/
 select corte_talla_color_id from corte_talla ct join corte_Talla_color  ctc on ctc.corte_talla_id = ct.corte_talla_id and corte_id = 47;
 

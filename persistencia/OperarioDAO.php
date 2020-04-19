@@ -40,6 +40,10 @@ class OperarioDAO{
         return "call tareasOperario('". $corte ."', '". $this->id ."')";
     }
 
+    function tareasNomina($corte){
+        return "call tareasOperarioNomina('". $corte ."', '". $this->id ."')";
+    }
+
     function setTareas($tareas){
         $this->tareas = $tareas;
     }

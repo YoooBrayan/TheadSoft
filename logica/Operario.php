@@ -92,12 +92,37 @@ class Operario extends Persona
         return $resultados;
     }
 
-    function setTareas($tareas){
+    function tareasNomina($corte)
+    {
+        $this->conexion->abrir();
+        //echo "\n".$this->operarioDAO->tareasNomina($corte);
+        $this->conexion->ejecutar($this->operarioDAO->tareasNomina($corte));
+        $resultados = array();
+        $i = 0;
+        while (($registro = $this->conexion->extraer()) != null) {
+            
+            $resultados[$i] = array(
+                'corte' => $registro[0],
+                'modelo' => $registro[1],
+                'tarea' => $registro[2],
+                'cantidad' => $registro[3],
+                'valorU' => $registro[4],
+                'pago' => $registro[5]
+            );
+            $i++;
+        }
+        $this->conexion->cerrar();
+        return $resultados;
+    }
+
+    function setTareas($tareas)
+    {
         $this->tareas = $tareas;
         $this->operarioDAO->setTareas($tareas);
     }
 
-    function getTarea(){
+    function getTarea()
+    {
         return $this->tareas;
     }
 }
