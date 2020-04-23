@@ -57,5 +57,4 @@ class Representante extends Persona{
         $this -> conexion -> cerrar();
         
     }
-
 }

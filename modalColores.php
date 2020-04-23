@@ -1,9 +1,16 @@
 <?php
 
 require_once 'logica/Color.php';
+require_once 'logica/Modelo.php';
 
-$color = new Color();
-$colores = $color->consultarColores();
+if (isset($_GET['modelo'])) {
+
+	$modelo = new Modelo($_GET['modelo']);
+	$colores = $modelo->coloresModeloBodega($_GET['idTalla']);
+} else {
+	$color = new Color();
+	$colores = $color->consultarColores();
+}
 
 ?>
 <div class="modal-header">
@@ -16,6 +23,7 @@ $colores = $color->consultarColores();
 	<label>Seleccione Colores:</label>
 
 	<select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idCM">
+		<option value="0">Seleccione</option>
 		<?php
 		foreach ($colores as $c) {
 		?>
@@ -26,7 +34,8 @@ $colores = $color->consultarColores();
 
 	<div class="form-gruop mt-2">
 		<label>Cantidad</label>
-		<input id="cantidadCM" type="number" style="width: 61px">
+		<input id="cantidadCM" type="number" min="0" oninput="validity.valid||(value='');" style="width: 61px">
+		<label id="labelColor" class="text-danger" style="display: none">Cantidad Invalida</label>
 	</div>
 	<button id="btnColorM" type="submit" name="registrar" class="btn btn-dark mt-2 mb-2">Agregar</button>
 	<table class="table table-striped table-hover">
@@ -220,10 +229,84 @@ $colores = $color->consultarColores();
 				$('#idCM').selectpicker('refresh');
 
 				var optionsC = $("#idCM option").length;
-				if (optionsC+1 > 0) {
+				if (optionsC + 1 > 0) {
 					$("#btnColorM").prop("disabled", false);
 				}
 			}
 		});
 	});
+
+	$("#idCM").change(function() {
+
+		let modelo = "<?php echo $_GET['modelo']; ?>";
+		console.log(modelo);
+
+		if (modelo != "") {
+			let modelo = "<?php echo $_GET['modelo']; ?>";
+			let color = $("#idCM option:selected")[0].value;
+			let cantidadDC = 1;
+			let talla = "<?php echo $_GET['idTalla'] ?>";
+
+			$.ajax({
+				type: "POST",
+				url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/validarBodega.php") ?>",
+				data: {
+					modelo,
+					color,
+					cantidadDC,
+					talla
+				},
+				success: function(response) {
+					let cantidad = parseInt(response);
+					$("#cantidadCM").val(cantidad);
+				}
+			});
+		}
+	});
+
+	$("#cantidadCM").keyup(function(e) {
+		let color = $("#idCM option:selected")[0].value;
+		let modelo = "<?php echo $_GET['modelo']; ?>";
+		let cantidadC = $("#cantidadCM").val();
+		let talla = "<?php echo $_GET['idTalla'] ?>";
+		console.log(cantidadC);
+
+		if (cantidadC != "" && color != "0") {
+			$.ajax({
+				type: "POST",
+				url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/validarBodega.php") ?>",
+				data: {
+					modelo,
+					cantidadC,
+					color,
+					talla
+				},
+				success: function(response) {
+					console.log(response);
+					if (response == 1) {
+						$("#btnColorM").prop("disabled", false);
+						$("#labelColor").attr("style", "display: none")
+					} else {
+						$("#labelColor").attr("style", "display: line-block")
+						$("#btnColorM").prop("disabled", true);
+					}
+
+					/*console.log(response);
+					let datos = JSON.parse(response);
+					console.log(datos['b']);
+					if (datos['b'] == 1) {
+						console.log("entro");
+						$("#btnTalla").prop("disabled", false);
+						$("#labelTalla").attr("style", "display: none")
+					} else {
+						console.log("Noentro");
+						$("#labelTalla").attr("style", "display: line-block")
+						$("#btnTalla").prop("disabled", true);
+					}*/
+				}
+			});
+		}
+
+	});
+
 </script>

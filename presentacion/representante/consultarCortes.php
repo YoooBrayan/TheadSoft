@@ -10,11 +10,12 @@ array_push($_SESSION['cortes'], 0);
 
 <div class="container mt-3 mb-4">
 	<label class="text-white h5">Seleccione Tipo:</label>
-	<select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idT">
+	<select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;">
 
 		<option value="">Seleccione</option>
 		<option value="CE">Cortes Entregados</option>
 		<option value="CP">Cortes Pendientes</option>
+		<option value="CB">Bodega</option>
 
 	</select>
 </div>
@@ -81,6 +82,32 @@ array_push($_SESSION['cortes'], 0);
 </div>
 <br>
 
+<div id="CB" class="container" hidden>
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div style="text-align: center;" class="card-header bg-dark text-white">Cortes en Bodega</div>
+				<div class="card-body">
+					<div id="resultadosProfesores">
+						<table class="table table-striped table-hover">
+							<thead>
+								<tr>
+									<th scope="col">Modelo</th>
+									<th scope="col">Cantidad</th>
+									<th scope="col">Servicios</th>
+								</tr>
+							</thead>
+							<tbody id="tce">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
 <div class="modal fade" id="modalCorte" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content" id="modalContent">
@@ -94,7 +121,6 @@ array_push($_SESSION['cortes'], 0);
 		</div>
 	</div>
 </div>
-
 
 <script>
 	$('body').on('show.bs.modal', '.modal', function(e) {
@@ -175,6 +201,10 @@ array_push($_SESSION['cortes'], 0);
 					$("#tcp").html(plantilla);
 				}
 			});
+		} else if (tipo == 'CB') {
+			$("#CE").attr("hidden", true);
+			$("#CP").attr("hidden", true);
+			$("#CB").removeAttr("hidden");
 		}
 	});
 

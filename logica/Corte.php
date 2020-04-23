@@ -421,8 +421,8 @@ class Corte
             $resultados[$i] = new Corte($registro[0], $registro[2], "", "", "", $modelo, "", "", "", "", $registro[3]);
             $i++;
         }
-        return $resultados;
         $this->conexion->cerrar();
+        return $resultados;
     }
 
     function operariosNomina()

@@ -11,6 +11,9 @@ require_once 'logica/Super.php';
 require_once 'logica/Operario.php';
 require_once 'logica/Tarea.php';
 require_once 'logica/Operacion.php';
+require_once 'logica/Almacen.php';
+require_once 'logica/Venta.php';
+require_once 'logica/Insumo.php';
 
 if (isset($_GET["pid"])) {
 

@@ -251,6 +251,24 @@ where Corte_Representante = Representante_Id and Representante_Proveedor = Prove
 group by corte.corte_Id;
 
 
+/*muestra las tallas de un modelo entregado*/
+create view tallasModelo as 
+select c.corte_Modelo as modelo, ct.talla_id as talla, sum(ct.cantidad) as cantidad
+from corte c inner join Corte_Talla ct on c.Corte_Id = ct.Corte_Id 
+group by ct.Talla_Id, c.corte_id
+
+select modelo, talla, sum(cantidad) from tallasmodelo where modelo = 6
+group by talla//
+
+/*muestra los colores de cada talla de un modelo entregado*/
+create view coloresTallasModelo as 
+select c.corte_Modelo as modelo, ct.talla_id as talla, co.color_id, co.color_Nombre as color, sum(ctc.cantidad) as cantidad
+from corte c inner join Corte_Talla ct on c.Corte_Id = ct.Corte_Id 
+inner join Corte_Talla_Color ctc on ct.Corte_Talla_id = ctc.Corte_Talla_id 
+inner join Color co on co.Color_Id = ctc.Color_Id
+group by ctc.color_id, ct.talla_id
+order by ct.talla_id
+
 /*Funciones*/
 
 /*Devuelve id de corte a crear*/
@@ -598,3 +616,171 @@ select Corte_id from Corte_Entregado_Bodega
 and corte.Corte_ID = Corte_Pendiente_bodega.Corte_ID and Corte_Modelo = Modelo_Id and Corte.Corte_ID = Corte_Talla.Corte_Id and Corte_Pendiente_bodega.Corte_Estado <> 3 and Corte_Pendiente_bodega.Corte_Estado <> 1
 group by Corte_Pendiente_bodega.Corte_ID
 ORDER BY corte_estado desc;
+
+
+
+
+
+
+/*Consultas Almacen*/
+
+/*tabla de mercancia de un almacen Bien*/
+create procedure modelosMercancia(almacen int)
+BEGIN
+select m.modelo_id, modelo_Nombre, sum(cantidad)
+from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+modelo m on m.modelo_id = md.modelo_id
+where ma.almacen_id = almacen
+GROUP by m.modelo_id;
+END//
+
+/*datos de un modelo en un almacen*/
+create procedure modeloAlmacen(almacen int, modelo int)
+BEGIN
+select m.modelo_id, modelo_Nombre, sum(cantidad)
+from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+modelo m on m.modelo_id = md.modelo_id
+where ma.almacen_id = almacen and m.modelo_id = modelo;
+END//
+
+
+/*muestra la cantidad de cada talla agrupados por modelo y talla Bien*/
+select modelo_Nombre, talla_id, sum(cantidad)
+from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+modelo m on m.modelo_id = md.modelo_id
+GROUP by talla_id
+
+/*muestra la cantidad de cada talla de un modelo Bien*/
+create procedure tallaModeloAlmacen(modelo int, almacen int)
+begin
+select talla_id, sum(cantidad)
+from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+modelo m on m.modelo_id = md.modelo_id
+where m.modelo_id = modelo and ma.almacen_id = almacen
+GROUP by talla_id;
+end
+
+
+/*muestra lo cantidad de cada color agrupados por talla y modelo Bien*/
+create view coloresTallasModeloD as
+select m.modelo_id as modelo, talla_id as talla, color_nombre as color, sum(mtc.cantidad) as cantidad
+from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+modelo m on m.modelo_id = md.modelo_id JOIN
+modelo_Talla_color mtc on mtc.MDT_id = mdt.modelo_D_talla_id JOIN
+color c on c.color_id = mtc.color_id
+where m.modelo_id = 9
+GROUP by mtc.color_id, talla_id
+ORDER BY talla_id
+
+
+create view tallasModeloD as
+select m.modelo_id as modelo, talla_id as talla, sum(mdt.cantidad) as cantidad
+from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+modelo m on m.modelo_id = md.modelo_id
+GROUP by talla_id
+
+select modelo, talla, sum(cantidad) as cantidad from
+tallasmodeloD where modelo = 9 and talla = 'CT'//
+
+select modelo, talla, sum(cantidad) as cantidad from tallasmodelo where modelo = 9 and talla = 'P'//
+
+
+
+/*Cantidad de una talla en bodega*/
+select ifnull(sum(e.cantidad-a.cantidad), 0) from (
+	select modelo, talla, sum(cantidad) as cantidad from
+tallasmodeloD where modelo = 9 and talla = 'CT'
+) as a,
+(
+	select modelo, talla, sum(cantidad) as cantidad from tallasmodelo where modelo = 9 and talla = 'CT'
+) as e
+
+
+
+/*muestra lo cantidad de cada color agrupados por talla de un modelo Bien*/
+create procedure coloresTallaModeloAlmacen(modelo int, almacen int, talla varchar(4))
+begin
+select c.color_id, color_nombre as color, sum(mtc.cantidad) as cantidad
+from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+modelo m on m.modelo_id = md.modelo_id JOIN
+modelo_Talla_color mtc on mtc.MDT_id = mdt.modelo_D_talla_id JOIN
+color c on c.color_id = mtc.color_id
+where m.modelo_id = modelo and ma.almacen_id = almacen and talla_id = talla
+GROUP by mtc.color_id, talla_id
+ORDER BY talla_id;
+end//
+
+/*Muestra las cantidades de colores por tallas ubicadas en un almacen y retorna los almacenadas en bodega*/
+select a.talla, a.color, b.cantidad, a.cantidad, b.cantidad-a.cantidad as bodegaR
+from coloresTallasModelo b, coloresTallasModeloD a 
+GROUP by a.talla, a.color
+
+select b.color_id, b.color, b.cantidad as bodega, a.cantidad as almacen,  b.cantidad-a.cantidad as bodegaR
+from coloresTallasModelo b  join coloresTallasModeloD a on b.color = a.color
+where b.color_id = 7 and a.talla = 'CT' and a.modelo = 9
+GROUP by a.talla, b.color
+
+
+select b.color_id, b.cantidad, a.cantidad, b.cantidad-a.cantidad as bodegaR
+        from coloresTallasModelo b inner join coloresTallasModeloD a on b.color = a.color
+        where b.color_id = 1 and a.talla = 'CT' and a.modelo = 9
+		GROUP by a.talla
+
+
+
+select color_id, color from coloresTallasModelo 
+where color not in(
+	select color from coloresTallasModeloD;
+)
+
+/*las tallas disponibles de un modelo en almacen*/
+select a.talla, a.color, b.cantidad, a.cantidad, b.cantidad-a.cantidad as bodegaR
+from coloresTallasModelo b inner join coloresTallasModeloD a on b.color = a.color
+HAVING bodegaR > 11
+
+/*Modelos en bodega con sus respectivas cantidades*/
+
+/*modelos en almacen(es) */
+select m.modelo_id, modelo_Nombre, ifnull(sum(cantidad), 0)
+from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+modelo m on m.modelo_id = md.modelo_id
+where m.modelo_id = 6
+
+create procedure modeloBodega(modelo int)
+BEGIN
+
+	select m.modelo_id, modelo_Nombre, totalModeloEntregado(modelo)-ifnull(sum(cantidad), 0) as cantidad
+	from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+	modelo m on m.modelo_id = md.modelo_id
+	where m.modelo_id = modelo;
+
+END
+
+/*Total de blusas entregadas de un modelo*/
+create function totalModeloEntregado(modelo int)
+returns int
+begin
+
+declare total int;
+
+select sum(e.cantidad+p.cantidad) into total from 
+(
+			select ifnull(sum(cantidad), 0) as cantidad
+from corte_Talla ct join corte c on c.corte_id = ct.corte_id join
+corte_Entregado_Bodega ceb on ceb.corte_id = c.corte_id 
+where c.corte_modelo = modelo
+
+
+
+) as e,	
+(
+	select ifnull(sum(corte_cantidad_entregada), 0)  as cantidad
+from corte_pendiente_Bodega cpb join corte c on cpb.corte_id = c.corte_id 
+where c.corte_modelo = modelo
+) as p;
+
+if total is null then
+set total = 0;
+end if;
+return total;
+end//
