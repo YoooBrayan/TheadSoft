@@ -38,7 +38,6 @@ $tallass = array();
 
                         <label>Seleccione Tallas</label>
                         <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idT">
-                            <option value="0">Seleccione</option>
                             <?php
                             foreach ($tallas as $t) {
                             ?>
@@ -49,6 +48,7 @@ $tallass = array();
                         <div class="form-gruop mt-2">
                             <label>Cantidad</label>
                             <input id="cantidadT" type="number" min="0" oninput="validity.valid||(value='');" style="width: 61px">
+                            <label id="cantidadD"></label>
                             <label id="labelTalla" class="text-danger" style="display: none">Cantidad Invalida</label>
                         </div>
 
@@ -99,6 +99,28 @@ $tallass = array();
 </script>
 
 <script>
+    $(document).ready(function() {
+        let modelo = "<?php echo $_GET['idModelo']; ?>";
+        let talla = $("#idT option:selected")[0].value;
+        let cantidadD = 1;
+
+        $.ajax({
+            type: "POST",
+            url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/validarBodega.php") ?>",
+            data: {
+                modelo,
+                talla,
+                cantidadD
+            },
+            success: function(response) {
+                let cantidad = parseInt(response);
+                //$("#cantidadT").val(cantidad);
+                $("#cantidadD").html(cantidad);
+
+            }
+        });
+    })
+
     $("#idT").change(function() {
 
         let modelo = "<?php echo $_GET['idModelo']; ?>";
@@ -115,7 +137,9 @@ $tallass = array();
             },
             success: function(response) {
                 let cantidad = parseInt(response);
-                $("#cantidadT").val(cantidad);
+                //$("#cantidadT").val(cantidad);
+                $("#cantidadD").html(cantidad);
+
             }
         });
     })
@@ -136,7 +160,7 @@ $tallass = array();
                     talla
                 },
                 success: function(response) {
-                    console.log(response);
+                    
                     if (response == 1) {
                         $("#btnTalla").prop("disabled", false);
                         $("#labelTalla").attr("style", "display: none")
@@ -145,18 +169,6 @@ $tallass = array();
                         $("#btnTalla").prop("disabled", true);
                     }
 
-                    /*console.log(response);
-                    let datos = JSON.parse(response);
-                    console.log(datos['b']);
-                    if (datos['b'] == 1) {
-                        console.log("entro");
-                        $("#btnTalla").prop("disabled", false);
-                        $("#labelTalla").attr("style", "display: none")
-                    } else {
-                        console.log("Noentro");
-                        $("#labelTalla").attr("style", "display: line-block")
-                        $("#btnTalla").prop("disabled", true);
-                    }*/
                 }
             });
         }
@@ -286,10 +298,9 @@ $tallass = array();
                 idM
             },
             success: function(response) {
-                console.log(response);
                 if (response) {
                     window.history.back();
-                } 
+                }
             }
         });
 

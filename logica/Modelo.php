@@ -179,10 +179,18 @@ class Modelo
         $resultado = "";
         if ($this->conexion->numFilas() == 1) {
             $resultado = $this->conexion->extraer();
-            $this->conexion->cerrar();
+            if ($resultado[0] == 0) {
+                $this->conexion->ejecutar($this->modeloDAO->modeloTallaBodegaS($talla));
+                $resultado = "";
+                if ($this->conexion->numFilas() == 1) {
+                    $resultado = $this->conexion->extraer();
+                    $this->conexion->cerrar();
+                    return $resultado[0];
+                }
+                return $resultado[0];
+                $this->conexion->cerrar();
+            }
             return $resultado[0];
-        } else {
-            $this->conexion->cerrar();
         }
     }
 
@@ -200,6 +208,34 @@ class Modelo
         return $resultados;
     }
 
+    function colorTallaModeloBodegaA($color, $talla)
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->modeloDAO->colorTallaModeloBodegaA($color, $talla));
+        $resultado = "";
+        if ($this->conexion->numFilas() == 1) {
+            $this->conexion->ejecutar($this->modeloDAO->colorTallaModeloBodega($color, $talla));
+            $resultado = "";
+            if ($this->conexion->numFilas() == 1) {
+                $resultado = $this->conexion->extraer();
+                $this->conexion->cerrar();
+                return $resultado[0];
+            } 
+            return $resultado[0];
+            $this->conexion->cerrar();
+        } else {
+            $this->conexion->ejecutar($this->modeloDAO->colorTallaModeloBodegaS($color, $talla));
+            $resultado = "";
+            if ($this->conexion->numFilas() == 1) {
+                $resultado = $this->conexion->extraer();
+                $this->conexion->cerrar();
+                return $resultado[0];
+            }
+        }
+        return $resultado;
+    }
+
+
     function colorTallaModeloBodega($color, $talla)
     {
         $this->conexion->abrir();
@@ -208,16 +244,16 @@ class Modelo
         if ($this->conexion->numFilas() == 1) {
             $resultado = $this->conexion->extraer();
             $this->conexion->cerrar();
-            return $resultado[1];
+            return $resultado[0];
         } else {
             $this->conexion->ejecutar($this->modeloDAO->colorTallaModeloBodegaS($color, $talla));
             $resultado = "";
             if ($this->conexion->numFilas() == 1) {
                 $resultado = $this->conexion->extraer();
                 $this->conexion->cerrar();
-                return $resultado[1];
+                return $resultado[0];
             }
-            return $resultado[1];
+            return $resultado[0];
             $this->conexion->cerrar();
         }
         return $resultado;
@@ -231,7 +267,7 @@ class Modelo
         if ($this->conexion->numFilas() == 1) {
             $resultado = $this->conexion->extraer();
             $this->conexion->cerrar();
-            return $resultado[1];
+            return $resultado[0];
         } else {
             $this->conexion->cerrar();
         }

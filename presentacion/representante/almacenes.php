@@ -150,6 +150,8 @@ $modelos = $modelos->consultarModelos();
 
 		let modelo = $("#idM option:selected")[0].value;
 		let almacen = $("#idA option:selected")[0].value;
+		console.log("almacen: " + almacen);
+		window.scrollTo(0, 855);
 
 		let url = "<?php echo "index.php?pid=" . base64_encode("presentacion/representante/importarModelo.php") ?>";
 

@@ -29,11 +29,11 @@ if (isset($_POST['cantidadT'])) {
     echo $modelo->modeloTallaBodega($_POST['talla']);
 } else if (isset($_POST['cantidadDC'])) {
     $modelo = new Modelo($_POST['modelo']);
-    echo $modelo->colorTallaModeloBodega($_POST['color'], $_POST['talla']);
+    echo $modelo->colorTallaModeloBodegaA($_POST['color'], $_POST['talla']);
 } else if (isset($_POST['cantidadC'])) {
 
     $modelo = new Modelo($_POST['modelo']);
-    $cantidad = $modelo->colorTallaModeloBodega($_POST['color'], $_POST['talla']);
+    $cantidad = $modelo->colorTallaModeloBodegaA($_POST['color'], $_POST['talla']);
 
     if ($_POST['cantidadC'] <= $cantidad) {
         //$b = 1;

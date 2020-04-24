@@ -44,7 +44,6 @@ $cortes = $corte->consultarCortes();
 
 									<a href='index.php?pid=" . base64_encode("presentacion/encargado/asignarTareas.php") . "&idCorte=" . $c->getId() . "'><span class='fas fa-plus' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Asignar Tarea' ></span> </a>
 									
-									<a class='eliminar' ><span class='fas fa-times-circle' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Eliminar' ></span> </a>
 									</td>";
                                     echo "</tr>";
                                 }
@@ -82,7 +81,7 @@ $cortes = $corte->consultarCortes();
 </script>
 
 <script>
-    $("table").on("click", "tbody .eliminar", function(e) {
+    /*$("table").on("click", "tbody .eliminar", function(e) {
         e.preventDefault();
 
         let elemento = $(this)[0].parentElement.parentElement;
@@ -100,7 +99,7 @@ $cortes = $corte->consultarCortes();
             if (result.value) {
                 $.ajax({
                     type: "POST",
-                    url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/encargado/eliminarCorte.php"); ?>",
+                    url: "<?php // echo "indexAjax.php?pid=" . base64_encode("presentacion/encargado/eliminarCorte.php"); ?>",
                     data: {
                         idCorte
                     },
@@ -117,7 +116,7 @@ $cortes = $corte->consultarCortes();
                 });
             }
         });
-    });
+    });*/
 
     $(document).on("click", ".check", function(e) {
 

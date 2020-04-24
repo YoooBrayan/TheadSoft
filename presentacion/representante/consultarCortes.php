@@ -158,7 +158,7 @@ array_push($_SESSION['cortes'], 0);
 							<td>
 								<a class='fas fa-eye' href='modalCorte.php?idCorte=${corte.id}' data-toggle='modal' data-target='#modalCorte' data-placement='left' title='Ver Detalles'></a>
 								<a id='iconP${corte.id}' class='fas fa-money-bill-alt' href='modalPagar.php?idCorte=${corte.id}' data-toggle='modal' data-target='#modalPagar' data-placement='left' title='Pagar' style='color: ${corte.estado==1?'green':'none'};'></a>
-								<a class='fas fa-times-circle' data-toggle='tooltip' data-placement='left' title='Eliminar'></a>
+								<a class='eliminar' ><span class='fas fa-times-circle' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Eliminar' ></span> </a>
 							</td>
 						</tr>
 						`
@@ -192,7 +192,7 @@ array_push($_SESSION['cortes'], 0);
 							<td>
 								<a class='fas fa-eye' href='modalCorte.php?idCorte=${corte.id}' data-toggle='modal' data-target='#modalCorte' data-placement='left' title='Ver Detalles'></a>
 								<a class='fas fa-money-bill-alt' data-toggle='tooltip' data-placement='left' title='Pagar'></a>
-								<a class='fas fa-times-circle' data-toggle='tooltip' data-placement='left' title='Eliminar'></a>
+								<a class='eliminar' ><span class='fas fa-times-circle' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Eliminar' ></span> </a>
 							</td>
 						</tr>
 						`
@@ -335,5 +335,43 @@ array_push($_SESSION['cortes'], 0);
 
 			}
 		});
-	})
+	});
+
+	$("table").on("click", "tbody .eliminar", function(e) {
+		console.log("CLick Eliminar")
+		e.preventDefault();
+
+		let elemento = $(this)[0].parentElement.parentElement;
+		let idCorte = $(elemento).attr('id');
+
+		Swal.fire({
+			title: 'Esta seguro?',
+			text: "Eliminar Corte!",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Si, Eliminar!'
+		}).then((result) => {
+			if (result.value) {
+				$.ajax({
+					type: "POST",
+					url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/eliminarCorte.php"); ?>",
+					data: {
+						idCorte
+					},
+					success: function(response) {
+						$("#" + idCorte).remove();
+						Swal.fire({
+							position: 'top-end',
+							icon: 'success',
+							title: response,
+							showConfirmButtom: false,
+							timer: 1000
+						});
+					}
+				});
+			}
+		});
+	});
 </script>

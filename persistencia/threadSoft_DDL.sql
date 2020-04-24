@@ -266,8 +266,12 @@ select c.corte_Modelo as modelo, ct.talla_id as talla, co.color_id, co.color_Nom
 from corte c inner join Corte_Talla ct on c.Corte_Id = ct.Corte_Id 
 inner join Corte_Talla_Color ctc on ct.Corte_Talla_id = ctc.Corte_Talla_id 
 inner join Color co on co.Color_Id = ctc.Color_Id
-group by ctc.color_id, ct.talla_id
-order by ct.talla_id
+where corte_modelo = 3 and ct.talla_id = 'G'
+group by co.color_id, ct.talla_id
+order by c.corte_modelo, ct.talla_id
+
+
+select m.modelo_id, ct.Talla_id, c.color_id, color_nombre, cantidad
 
 /*Funciones*/
 
@@ -595,6 +599,16 @@ end//
 /*consultar los id de los colores de una talla por corte*/
 select corte_talla_color_id from corte_talla ct join corte_Talla_color  ctc on ctc.corte_talla_id = ct.corte_talla_id and corte_id = 47;
 
+select sum(e.realizadas+p.realizadas) from (
+	select sum(realizadas) as realizadas From CortesEntregadosC where modelo = 'Triangulo 2'
+) as e,
+(
+	select sum(realizadas) as realizadas From CortesEntregadosP where modelo = 'Triangulo 2'
+) as p
+
+
+
+
 
 /**cortes entregados*/
 create view CortesEntregadosC as
@@ -663,19 +677,46 @@ end
 
 /*muestra lo cantidad de cada color agrupados por talla y modelo Bien*/
 create view coloresTallasModeloD as
-select m.modelo_id as modelo, talla_id as talla, color_nombre as color, sum(mtc.cantidad) as cantidad
-from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
-modelo m on m.modelo_id = md.modelo_id JOIN
-modelo_Talla_color mtc on mtc.MDT_id = mdt.modelo_D_talla_id JOIN
-color c on c.color_id = mtc.color_id
-where m.modelo_id = 9
-GROUP by mtc.color_id, talla_id
-ORDER BY talla_id
+	select m.modelo_id as modelo, talla_id as talla, color_nombre as color, sum(mtc.cantidad) as cantidad
+	from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+	modelo m on m.modelo_id = md.modelo_id JOIN
+	modelo_Talla_color mtc on mtc.MDT_id = mdt.modelo_D_talla_id JOIN
+	color c on c.color_id = mtc.color_id
+	where m.modelo_id = 3 and mdt.talla_id = 'P'
+	GROUP by mtc.color_id, talla_id
+	ORDER BY talla_id
+
+
+select sum(b.cantidad-a.cantidad) from 
+(
+	select sum(ctc.cantidad) as cantidad
+	from corte c inner join Corte_Talla ct on c.Corte_Id = ct.Corte_Id 
+	inner join Corte_Talla_Color ctc on ct.Corte_Talla_id = ctc.Corte_Talla_id 
+	inner join Color co on co.Color_Id = ctc.Color_Id
+	where corte_modelo = 3 and ct.talla_id = 'P' and ctc.Color_id = 7
+	group by co.color_id, ct.talla_id
+	order by c.corte_modelo, ct.talla_id
+
+) as b,
+(
+	select  sum(mtc.cantidad) as cantidad
+	from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+	modelo m on m.modelo_id = md.modelo_id JOIN
+	modelo_Talla_color mtc on mtc.MDT_id = mdt.modelo_D_talla_id JOIN
+	color c on c.color_id = mtc.color_id
+	where m.modelo_id = 3 and mdt.talla_id = 'P' and mtc.Color_id = 7
+	GROUP by mtc.color_id, talla_id
+	ORDER BY talla_id
+) as a;
+
+
+
+
 
 
 create view tallasModeloD as
 select m.modelo_id as modelo, talla_id as talla, sum(mdt.cantidad) as cantidad
-from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuidHo_id = mdt.modelo_distribuido_id join 
 modelo m on m.modelo_id = md.modelo_id
 GROUP by talla_id
 
@@ -717,7 +758,7 @@ GROUP by a.talla, a.color
 
 select b.color_id, b.color, b.cantidad as bodega, a.cantidad as almacen,  b.cantidad-a.cantidad as bodegaR
 from coloresTallasModelo b  join coloresTallasModeloD a on b.color = a.color
-where b.color_id = 7 and a.talla = 'CT' and a.modelo = 9
+where b.color_id = 1 and a.talla = 'CT' and a.modelo = 9
 GROUP by a.talla, b.color
 
 
