@@ -27,6 +27,7 @@ INSERT INTO `modelo_operacion` VALUES (1,2,1),(2,2,2),(3,2,3),(4,2,4),(5,2,5),(6
 INSERT INTO `estado` VALUES (1,'Entregado y Pagado'),(2,'Incompleto y Pagado'),(3,'Entregado y Sin Pagar'),(4,'Incompleto y Sin Pagar')
 
 insert into almacen(almacen_nombre) values ("Madrugon")//
+insert into almacen(almacen_nombre) values ("20 de Julio")//
 
 INSERT INTO modelo_Distribuido VALUES (1, 9);
 

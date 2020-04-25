@@ -2,6 +2,8 @@
 
 include 'presentacion/representante/cabeceraRepresentante.php';
 
+$_SESSION['almacen'] = "";
+
 $_SESSION['cortes'] = array();
 array_push($_SESSION['cortes'], 0);
 
@@ -28,6 +30,8 @@ $modelos = $modelos->consultarModelos();
 		?>
 
 	</select>
+	<a id="btnVenta" hidden class="btn btn-info" href="index.php?pid=<?php echo base64_encode("presentacion/representante/agregarVenta.php") ?>">Añadir Venta</a>
+	<a class="btn btn-info" style="float: right" href="index.php?pid=<?php echo base64_encode("presentacion/representante/registrarAlmacen.php") ?>">Nuevo Almacen</a>
 </div>
 
 
@@ -114,6 +118,7 @@ $modelos = $modelos->consultarModelos();
 		console.log("cambio: " + almacen);
 
 		if (almacen != "0") {
+			$("#btnVenta").removeAttr("hidden");
 			$("#inventario").removeAttr("hidden");
 			$("#importar").removeAttr("hidden");
 
@@ -149,8 +154,6 @@ $modelos = $modelos->consultarModelos();
 	$("#idM").change(function() {
 
 		let modelo = $("#idM option:selected")[0].value;
-		let almacen = $("#idA option:selected")[0].value;
-		console.log("almacen: " + almacen);
 		window.scrollTo(0, 855);
 
 		let url = "<?php echo "index.php?pid=" . base64_encode("presentacion/representante/importarModelo.php") ?>";
@@ -167,7 +170,7 @@ $modelos = $modelos->consultarModelos();
 					<td>${modelo.modelo}</td>
 					<td>${modelo.cantidad}</td>
 					<td>
-						<a id='importar' class='fas fa-eye' href='${url+"&idModelo="+modelo.id+"&modelo="+modelo.modelo+"&almacen="+almacen}'  data-placement='left' title='Importar'></a>
+						<a id='importar' class='fas fa-eye' href='${url+"&idModelo="+modelo.id+"&modelo="+modelo.modelo}'  data-placement='left' title='Importar'></a>
 					</td>
 				</tr>`;
 
@@ -177,7 +180,21 @@ $modelos = $modelos->consultarModelos();
 
 	});
 
-	$(document).on("click", "#importar", function(){
+	$("table").on("click", "#importarM #importar", function(e) {
+
+		let elemento = $(this)[0].parentElement.parentElement;
+		let cantidad = elemento.children[1].innerHTML;
+
+		if (cantidad == "0") {
+			e.preventDefault();
+			Swal.fire({
+				position: 'center',
+				title: 'Modelo Agotado',
+				icon: 'warning',
+				timer: 1000
+			})
+		}
+
 		$("#idA").val('0');
 		$("#idM").val('0');
 	})

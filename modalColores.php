@@ -167,7 +167,7 @@ if (isset($_GET['modelo'])) {
 			});
 		} else {
 			Swal.fire({
-				position: 'top-end',
+				position: 'center',
 				icon: 'warning',
 				title: 'Digite Cantidad',
 				showConfirmButton: false,

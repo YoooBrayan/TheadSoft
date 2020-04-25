@@ -288,7 +288,7 @@ $tallass = array();
     $(document).on("click", "#importar", function(e) {
         e.preventDefault();
         let idM = "<?php echo $_GET['idModelo'] ?>"
-        let idAlmacen = "<?php echo $_GET['almacen']; ?>";
+        let idAlmacen = "<?php echo $_SESSION['almacen']; ?>";
 
         $.ajax({
             type: "POST",

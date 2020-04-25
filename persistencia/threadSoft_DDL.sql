@@ -797,6 +797,18 @@ BEGIN
 
 END
 
+
+create procedure modeloBodegaT(modelo int)
+BEGIN
+
+	select m.modelo_id, modelo_Nombre, totalModeloEntregado(modelo)-ifnull(sum(cantidad), 0) as cantidad
+	from modelo_distribuido md join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+	modelo m on m.modelo_id = md.modelo_id
+	where m.modelo_id = modelo;
+
+END
+
+
 /*Total de blusas entregadas de un modelo*/
 create function totalModeloEntregado(modelo int)
 returns int

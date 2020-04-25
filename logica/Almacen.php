@@ -163,6 +163,20 @@ class Almacen
         }
     }
 
+    function validarAlmacen()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->almacenDAO->validarAlmacen());
+        if ($this->conexion->numFilas() == 1) {
+            $resultado = $this->conexion->extraer();
+            return true;
+        } else {
+            $this->conexion->cerrar();
+            return false;
+        }
+    }
+
+
     function distribuirModelo($id)
     {
         $this->conexion->abrir();
@@ -176,6 +190,12 @@ class Almacen
         $this->conexion->abrir();
         echo "\n".$this->almacenDAO->distribuirAlmacen($modelo);
         $this->conexion->ejecutar($this->almacenDAO->distribuirAlmacen($modelo));
+        $this->conexion->cerrar();
+    }
+
+    function registrar(){
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->almacenDAO->registrar());
         $this->conexion->cerrar();
     }
 }

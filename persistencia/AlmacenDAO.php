@@ -105,4 +105,12 @@ class AlmacenDAO
     {
         return "insert into modelo_almacen(modelo_Distribuido_id, almacen_id) values ('" . $modelo . "', '" . $this->id . "')";
     }
+
+    function registrar(){
+        return "insert into almacen(almacen_nombre) values ('". $this->lugar ."')";
+    }
+
+    function validarAlmacen(){
+        return "select almacen_nombre from almacen where almacen_nombre = '". $this->lugar ."'";
+    }
 }
