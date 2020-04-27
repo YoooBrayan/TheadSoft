@@ -1,6 +1,7 @@
 <?php 
 
 require_once "logica/Modelo.php";
+require_once "logica/Color.php";
 
 session_start();
 
@@ -20,26 +21,50 @@ session_start();
     foreach($_SESSION['carrito'] as $c){ 
         
         echo "
-        <button class='btn btn-primary mb-2' type='button' data-toggle='collapse' data-target='#collapseExample". $c -> getId() ."' aria-expanded='false' aria-controls='collapseExample'>
-        ". $c -> getNombre() ."
+        <div d-flex flex-row>
+        <button class='btn btn-primary mb-2 mt-2 col-11' type='button' data-toggle='collapse' data-target='#collapseExample". $c -> getId() ."' aria-expanded='false' aria-controls='collapseExample'> ". $c -> getNombre() ."
         </button>
+        <button class='btn btn-danger ml-3' style='transform: translatey(-1px);'><i class='fas fa-times'></i></button>
+        </div>
 
         <div class='collapse' id='collapseExample". $c -> getId() ."'>
         <div class='card card-body'>
         <div class='d-flex flex-column'>
+        <center><p>Tallas</p></center>
         ";
 
 
           foreach($c -> getTalla() as $t){
-            echo "<button w-20 p-3 class='mb-2' data-toggle='collapse' data-target='#collapseExampleC". $t -> getId() ."'> ". $t -> getId() ." </button>
+            echo "<button style='width: 15%;' class='mt-1 mb-2' data-toggle='collapse' data-target='#collapseExampleC". $t -> getId() . $c -> getId() . "'> ". $t -> getId() ." </button>
             
-            <div class='collapse' id='collapseExampleC".$t->getId()."'>
+            <div class='collapse' id='collapseExampleC".$t->getId(). $c -> getId() ."'>
             <div class='card card-body'>
-                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
-            </div>
-            </div>
-            
+            <center><p>Colores</p></center>
+            <table class='table table-striped table-hover'>
+                        <thead>
+                            <tr>   
+                                <th>Color</td>
+                                <th>Cantidad</td>
+                            </tr>
+                        </thead>
             ";
+
+                foreach($t->getColores() as $co){
+                    echo "
+                        <tbody>
+                            <tr>   
+                                <th>". $co -> getNombre() ."</td>
+                                <th>". $co -> getCantidad() ."</td>
+                            </tr>
+                        </tbody>
+                    ";
+                }
+
+
+            echo "
+            </table>
+            </div>
+            </div>";
           }
 
           
