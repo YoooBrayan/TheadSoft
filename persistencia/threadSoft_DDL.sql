@@ -208,6 +208,41 @@ create table Tarea_Operario(
 	foreign key(Operario_Id) references Operario(Operario_Id)
 );
 
+create table Venta(
+	venta_id int not null auto_increment,
+	venta_fecha date not null,
+	PRIMARY KEY(venta_id)
+);
+
+create table modelo_vendido(
+	modelo_vendido_id int not null auto_increment,
+	modelo_almacen_id int not null,
+	venta_id int not null,
+	PRIMARY KEY(modelo_vendido_id),
+	foreign KEY(modelo_almacen_id) REFERENCES modelo_almacen(modelo_almacen_id),
+	foreign KEY(venta_id) REFERENCES venta(venta_id)
+);
+
+create table modelo_venta_talla(
+	modelo_venta_talla_id int not null auto_increment,
+	modelo_vendido_id int not null,
+	talla_id VARCHAR(4) not null, 
+	PRIMARY KEY(modelo_venta_talla_id),
+	FOREIGN KEY(modelo_vendido_id) REFERENCES Modelo_vendido(modelo_vendido_id),
+	FOREIGN key(talla_id) REFERENCES Talla(talla_id)
+);
+
+create table venta_talla_Color(
+	venta_talla_color_id int not null auto_increment,
+	modelo_venta_Talla_id int not null,
+	color_id int not null,
+	cantidad int not null,
+	PRIMARY key(venta_talla_color_id),
+	foreign key(modelo_venta_talla_id) REFERENCES modelo_venta_talla(modelo_venta_Talla_id),
+	foreign key(color_id) REFERENCES color(color_id)
+);
+
+
 /*Consultas*/
 
 /*Tallas de un corte*/
@@ -638,7 +673,7 @@ ORDER BY corte_estado desc;
 
 /*Consultas Almacen*/
 
-/*tabla de mercancia de un almacen Bien*/
+/* tabla de mercancia de un almacen Bien */
 create procedure modelosMercancia(almacen int)
 BEGIN
 select m.modelo_id, modelo_Nombre, sum(cantidad)
@@ -648,7 +683,8 @@ where ma.almacen_id = almacen
 GROUP by m.modelo_id;
 END//
 
-/*datos de un modelo en un almacen*/
+
+/* datos de un modelo en un almacen */
 create procedure modeloAlmacen(almacen int, modelo int)
 BEGIN
 select m.modelo_id, modelo_Nombre, sum(cantidad)
@@ -658,13 +694,13 @@ where ma.almacen_id = almacen and m.modelo_id = modelo;
 END//
 
 
-/*muestra la cantidad de cada talla agrupados por modelo y talla Bien*/
+/* muestra la cantidad de cada talla agrupados por modelo y talla Bien */
 select modelo_Nombre, talla_id, sum(cantidad)
 from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
 modelo m on m.modelo_id = md.modelo_id
 GROUP by talla_id
 
-/*muestra la cantidad de cada talla de un modelo Bien*/
+/*muestra la cantidad de cada talla de un modelo Bien cambio*/
 create procedure tallaModeloAlmacen(modelo int, almacen int)
 begin
 select talla_id, sum(cantidad)
@@ -837,3 +873,69 @@ set total = 0;
 end if;
 return total;
 end//
+
+
+
+
+
+/* Consultas de Ventas */
+
+/* cosulta de cantidad de una talla de un modelo almacenado en un almacen  almacen-vendidas */
+
+select sum(a.cantidad-v.cantidad) from 
+(
+	select ifnull(sum(cantidad), 0) as cantidad from
+	venta_talla_Color vtc join 
+	modelo_venta_Talla mvt on vtc.modelo_venta_talla_id = mvt.modelo_venta_Talla_id JOIN
+	modelo_vendido mv on mv.modelo_vendido_id = mvt.modelo_vendido_id JOIN
+	modelo_almacen ma on ma.modelo_almacen_id = mv.modelo_almacen_id
+	where ma.modelo_distribuido_id = 26 and talla_id = 'CT' and ma.almacen_id = 1
+
+) as v,
+(
+	select ifnull(sum(mdt.cantidad), 0) as cantidad
+            from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+            modelo m on m.modelo_id = md.modelo_id
+            where m.modelo_id = 26 and mdt.talla_id = 'CT' and ma.almacen_id = 1
+            GROUP by talla_id
+) as a;
+
+
+/*mostrar la cantidad de blusas vendidas por talla*/
+select ifnull(sum(cantidad), 0) as cantidad from 
+	venta_talla_Color vtc join 
+	modelo_venta_Talla mvt on vtc.modelo_venta_talla_id = mvt.modelo_venta_Talla_id JOIN
+	modelo_vendido mv on mv.modelo_vendido_id = mvt.modelo_vendido_id JOIN
+	modelo_almacen ma on ma.modelo_almacen_id = mv.modelo_almacen_id
+	where ma.modelo_distribuido_id = 26 and talla_id = 'CT' and ma.almacen_id = 1
+
+/* consultar colores de un modelo en almacen */
+select co.color_id, color_nombre from
+	modelo_almacen ma join 
+	modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id JOIN
+	modelo_distribuido_talla mdt on mdt.modelo_distribuido_id = md.modelo_distribuido_id join
+	modelo_talla_color mtc on mtc.mdt_id = mdt.modelo_D_talla_id JOIN
+	color co on co.color_id = mtc.Color_id
+	where ma.almacen_id = 1 and md.modelo_id = 9 and talla_id = 'CT'
+	GROUP by co.color_id
+
+
+/* cosultar la cantidad de un color de un modelo almacenado en un almacen por talla almacen-vendidas */
+
+select sum(a.cantidad-v.cantidad) from 
+(
+	select ifnull(sum(cantidad), 0) as cantidad from
+	venta_talla_Color vtc join 
+	modelo_venta_Talla mvt on vtc.modelo_venta_talla_id = mvt.modelo_venta_Talla_id JOIN
+	modelo_vendido mv on mv.modelo_vendido_id = mvt.modelo_vendido_id JOIN
+	modelo_almacen ma on ma.modelo_almacen_id = mv.modelo_almacen_id
+	where ma.modelo_distribuido_id = 9 and talla_id = 'G' and ma.almacen_id = 1 and vtc.Color_id = 8
+
+) as v,
+(
+	select ifnull(sum(mtc.cantidad), 0) as cantidad
+            from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+            modelo m on m.modelo_id = md.modelo_id join
+			modelo_talla_Color mtc on mdt.modelo_d_talla_id = mtc.mdt_id
+            where m.modelo_id = 9 and mdt.talla_id = 'G' and ma.almacen_id = 1 and mtc.color_id = 8
+) as a;

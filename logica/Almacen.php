@@ -136,17 +136,13 @@ class Almacen
         $this->conexion->abrir();
         $this->conexion->ejecutar($this->almacenDAO->coloresTallaModeloAlmacen($talla));
 
-        $resultado = array();
+        $resultados = array();
         $i = 0;
         while (($registro = $this->conexion->extraer()) != null) {
-            $resultado[$i] = array(
-                'id' => $registro[0],
-                'color' => $registro[1],
-                'cantidad' => $registro[2]
-            );
+            $resultados[$i] = new Color($registro[0], $registro[1]);
             $i++;
         }
-        return $resultado;
+        return $resultados;
         $this->conexion->cerrar();
     }
 
@@ -180,7 +176,7 @@ class Almacen
     function distribuirModelo($id)
     {
         $this->conexion->abrir();
-        echo "\n".$this->almacenDAO->distribuirModelo($id);
+        echo "\n" . $this->almacenDAO->distribuirModelo($id);
         $this->conexion->ejecutar($this->almacenDAO->distribuirModelo($id));
         $this->conexion->cerrar();
     }
@@ -188,14 +184,41 @@ class Almacen
     function distribuirAlmacen($modelo)
     {
         $this->conexion->abrir();
-        echo "\n".$this->almacenDAO->distribuirAlmacen($modelo);
+        echo "\n" . $this->almacenDAO->distribuirAlmacen($modelo);
         $this->conexion->ejecutar($this->almacenDAO->distribuirAlmacen($modelo));
         $this->conexion->cerrar();
     }
 
-    function registrar(){
+    function registrar()
+    {
         $this->conexion->abrir();
         $this->conexion->ejecutar($this->almacenDAO->registrar());
         $this->conexion->cerrar();
+    }
+
+    function tallasModelo($modelo, $talla)
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->almacenDAO->tallasModelo($modelo, $talla));
+        if ($this->conexion->numFilas() == 1) {
+            $resultado = $this->conexion->extraer();
+            return $resultado[0];
+        } else {
+            $this->conexion->cerrar();
+            return "";
+        }
+    }
+
+    function colorTallaModeloAlmacen($talla, $color)
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->almacenDAO->colorTallaModeloAlmacen($talla, $color));
+        if ($this->conexion->numFilas() == 1) {
+            $resultado = $this->conexion->extraer();
+            return $resultado[0];
+        } else {
+            $this->conexion->cerrar();
+            return "";
+        }
     }
 }

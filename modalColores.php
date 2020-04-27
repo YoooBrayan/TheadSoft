@@ -2,14 +2,25 @@
 
 require_once 'logica/Color.php';
 require_once 'logica/Modelo.php';
+require_once 'logica/Almacen.php';
+
 
 $modeloId = "";
+$modeloV = "";
 
 if (isset($_GET['modelo'])) {
 
 	$modeloId = $_GET['modelo'];
 	$modelo = new Modelo($_GET['modelo']);
 	$colores = $modelo->coloresModeloBodega($_GET['idTalla']);
+} else if (isset($_GET['modeloV'])) {
+
+	session_start();
+	$modeloV = $_GET['modeloV'];
+	$modelo = new Modelo($_GET['modeloV']);
+	$almacen = new Almacen($_SESSION['almacen'], "", $modelo);
+
+	$colores = $almacen->coloresTallaModeloAlmacen($_GET['idTalla']);
 } else {
 	$color = new Color();
 	$colores = $color->consultarColores();
@@ -101,6 +112,31 @@ if (isset($_GET['modelo'])) {
 				url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/validarBodega.php") ?>",
 				data: {
 					modelo,
+					color,
+					cantidadDC,
+					talla
+				},
+				success: function(response) {
+					let cantidad = parseInt(response);
+					//$("#cantidadCM").val(cantidad);
+					$("#cantidadDC").html(cantidad);
+				}
+			});
+		}
+
+		let modeloV = "<?php echo $modeloV; ?>";
+
+		if (modeloV != "") {
+			let modelo = "<?php echo $modeloId; ?>";
+			let color = $("#idCM option:selected")[0].value;
+			let cantidadDC = 1;
+			let talla = "<?php echo $_GET['idTalla'] ?>";
+
+			$.ajax({
+				type: "POST",
+				url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/tallasColoresVenta.php") ?>",
+				data: {
+					modeloV,
 					color,
 					cantidadDC,
 					talla
@@ -338,4 +374,79 @@ if (isset($_GET['modelo'])) {
 
 		});
 	}
+
+	if ("<?php echo $modeloV; ?>" != "") {
+		$("#idCM").change(function() {
+
+			let modelo = "<?php echo $modeloV; ?>";
+
+			if (modelo != "") {
+				let modeloV = "<?php echo $modeloV; ?>";
+				let color = $("#idCM option:selected")[0].value;
+				let cantidadDC = 1;
+				let talla = "<?php echo $_GET['idTalla'] ?>";
+
+				$.ajax({
+					type: "POST",
+					url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/tallasColoresVenta.php") ?>",
+					data: {
+						modeloV,
+						color,
+						cantidadDC,
+						talla
+					},
+					success: function(response) {
+						let cantidad = parseInt(response);
+						//$("#cantidadCM").val(cantidad);
+						$("#cantidadDC").html(cantidad);
+					}
+				});
+			}
+		});
+
+		$("#cantidadCM").keyup(function(e) {
+
+			let color = $("#idCM option:selected")[0].value;
+			let modeloV = "<?php echo $modeloV; ?>";
+			let cantidadC = $("#cantidadCM").val();
+			let talla = "<?php echo $_GET['idTalla'] ?>";
+
+			if (cantidadC != "" && color != "0") {
+				$.ajax({
+					type: "POST",
+					url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/tallasColoresVenta.php") ?>",
+					data: {
+						modeloV,
+						cantidadC,
+						color,
+						talla
+					},
+					success: function(response) {
+						if (response == 1) {
+							$("#btnColorM").prop("disabled", false);
+							$("#labelColor").attr("style", "display: none")
+						} else {
+							$("#labelColor").attr("style", "display: line-block")
+							$("#btnColorM").prop("disabled", true);
+						}
+
+						/*console.log(response);
+						let datos = JSON.parse(response);
+						console.log(datos['b']);
+						if (datos['b'] == 1) {
+							console.log("entro");
+							$("#btnTalla").prop("disabled", false);
+							$("#labelTalla").attr("style", "display: none")
+						} else {
+							console.log("Noentro");
+							$("#labelTalla").attr("style", "display: line-block")
+							$("#btnTalla").prop("disabled", true);
+						}*/
+					}
+				});
+			}
+
+		});
+	}
+	
 </script>

@@ -37,6 +37,10 @@ class Modelo
         $this->talla = $talla;
     }
 
+    function getTalla(){
+        return $this->talla;
+    }
+
     function setColor($color)
     {
         $this->color = $color;
@@ -303,5 +307,15 @@ class Modelo
         }
 
         $this->conexion->cerrar();
+    }
+
+    public function __get($prop)
+    {
+        return $this->$prop;
+    }
+
+    public function __isset($prop) : bool
+    {
+        return isset($this->$prop);
     }
 }

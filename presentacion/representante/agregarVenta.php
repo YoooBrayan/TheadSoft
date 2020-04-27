@@ -9,20 +9,22 @@ $_SESSION['carrito'] = array();
 
 $representante->proveedor();
 
-$modelos = new Modelo("", "", "", $representante->getProveedor());
-$modelos = $modelos->consultarModelos();
-$talla = new Talla();
-$tallas = $talla->consultarTallas();
-$color = new Color();
-$colores = $color->consultarColores();
+$almacen = new Almacen($_SESSION['almacen']);
 
-$tallass = array();
+$modelos = $almacen->modelosMercancia();
+
+//$modelos = new Modelo("", "", "", $representante->getProveedor());
+//$modelos = $modelos->consultarModelos();
+//$tallas = $almacen -> tallaModeloAlmacen();
+//$color = new Color();
+//$colores = $color->consultarColores();
+
+/*$tallass = array();
 
 foreach ($tallas as $t) {
     array_push($tallass, $t->getId());
-}
+}*/
 
-$cantidad = 3;
 
 ?>
 <br>
@@ -42,21 +44,15 @@ $cantidad = 3;
                         <div class="form-group">
                             <label>Seleccione Modelo</label>
                             <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idM">
+
+                                <option value="0">Seleccione</option>
                                 <?php
                                 foreach ($modelos as $m) {
                                 ?>
-                                    <option value="<?php echo $m->getId() ?>"><?php echo $m->getNombre();  ?></option>
+                                    <option value="<?php echo $m['id'] ?>"><?php echo $m['modelo'];  ?></option>
                                 <?php }
                                 ?>
                             </select>
-                        </div>
-                        <div class="form-group">
-                            <input id="fechaEnvio" onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha de Envio" name="fechaEnvio" required="required">
-                            <label class="text-danger" hidden>Seleccione Fecha</label>
-                        </div>
-                        <div class="form-group">
-                            <input id="fechaEntrega" onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha de Entrega" name="fechaEntrega" required="required">
-                            <label class="text-danger" hidden>Seleccione Fecha</label>
                         </div>
 
                         <hr/ style="border: 1px solid">
@@ -75,6 +71,8 @@ $cantidad = 3;
                         <div class="form-gruop mt-2">
                             <label>Cantidad</label>
                             <input id="cantidadT" type="number" min="0" oninput="validity.valid||(value='');" style="width: 61px">
+                            <label id="cantidadD"></label>
+                            <label id="labelTalla" class="text-danger" style="display: none">Cantidad Invalida</label>
                         </div>
 
                         <button id="btnTalla" type="submit" name="registrar" class="btn btn-dark mt-2 mb-2">Agregar</button>
@@ -115,6 +113,13 @@ $cantidad = 3;
     </div>
 </div>
 
+<div class="modal fade" id="modalColores" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" id="modalContent">
+        </div>
+    </div>
+</div>
+
 <script>
     $('body').on('show.bs.modal', '.modal', function(e) {
         var link = $(e.relatedTarget);
@@ -124,15 +129,102 @@ $cantidad = 3;
 
 
 <script>
-    $(document).ready(function() {
-        $(".editor").summernote({});
-        let tallas = "<?php echo count($_SESSION['tallas']); ?>";
+    $("#idM").change(function() {
+
+        let modelo = $("#idM option:selected")[0].value;
+
+        if (modelo != 0) {
+            $.ajax({
+                type: "POST",
+                url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/tallasColoresVenta.php") ?>",
+                data: {
+                    modelo
+                },
+                success: function(response) {
+                    $("#idT option").remove();
+                    let tallas = JSON.parse(response);
+                    tallas.forEach(
+                        talla => {
+                            $('#idT').append(`<option value="${talla.talla}">${talla.talla}</option>`)
+                        }
+                    );
+                    $('#idT').selectpicker('refresh');
+
+                    $("#cantidadD").html(tallas[0].cantidad);
+                }
+            });
+        } else {
+            $("#cantidadD").html("");
+            $("#idT option").remove();
+        }
+
     });
 
+    $("#idT").change(function() {
+
+        let modelo = $("#idM option:selected")[0].value;
+        let talla = $("#idT option:selected")[0].value;
+        let cantidadD = 1;
+
+        $.ajax({
+            type: "POST",
+            url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/tallasColoresVenta.php") ?>",
+            data: {
+                modelo,
+                talla,
+                cantidadD
+            },
+            success: function(response) {
+                let cantidad = parseInt(response);
+                //$("#cantidadT").val(cantidad);
+                $("#cantidadD").html(cantidad);
+
+            }
+        });
+    });
+
+    $("#cantidadT").keyup(function(e) {
+
+        let talla = $("#idT option:selected")[0].value;
+        let modelo1 = $("#idM option:selected")[0].value;
+        let cantidadT = $("#cantidadT").val();
+
+        if (cantidadT != "" && talla != "0") {
+            $.ajax({
+                type: "POST",
+                url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/tallasColoresVenta.php") ?>",
+                data: {
+                    modelo1,
+                    cantidadT,
+                    talla
+                },
+                success: function(response) {
+                    if (response == 1) {
+                        $("#btnTalla").prop("disabled", false);
+                        $("#labelTalla").attr("style", "display: none")
+                    } else {
+                        $("#labelTalla").attr("style", "display: line-block")
+                        $("#btnTalla").prop("disabled", true);
+                    }
+
+                }
+            });
+        }
+
+    });
+
+
+    /*$(document).ready(function() {
+        let tallas = "<?php // echo count($_SESSION['tallas']); 
+                        ?>";
+    });*/
+
     $(document).on('click', '#btnTalla', function(e) {
+
         e.preventDefault();
         let idT = $("#idT option:selected")[0].value;
         let cantidadT = $("#cantidadT").val();
+        let modelo1 = $("#idM option:selected")[0].value;
 
         if (cantidadT > 0) {
             var itemSelectorOption = $('#idT option:selected');
@@ -160,7 +252,7 @@ $cantidad = 3;
                             <td> 
                             <a class='fas fa-times-circle eliminar' data-toggle='tooltip' 
                             data-placement='left' title='Eliminar'> </a>
-                            <a class='fas fa-pencil-ruler colores' href='modalColores.php?idTalla=${talla.id}&cantidad=${talla.cantidad}' data-placement='left' title='Agregar Tallas' data-toggle='modal' data-target='#modalColores'> </a>
+                            <a class='fas fa-pencil-ruler colores' href='modalColores.php?idTalla=${talla.id}&cantidad=${talla.cantidad}&modeloV=${modelo1}' data-placement='left' title='Agregar Tallas' data-toggle='modal' data-target='#modalColores'> </a>
                             </td>
                         </tr>
                     `
@@ -194,18 +286,20 @@ $cantidad = 3;
         }
     });
 
-    $(document).on("click", "#registrar", function(e) {
+    /*$(document).on("click", "#registrar", function(e) {
         e.preventDefault();
         let idM = $("#idM option:selected")[0].value;
         let fecha_envio = $("#fechaEnvio").val();
         let fecha_entrega = $("#fechaEntrega").val();
         let observaciones = $($("#editor").summernote("code")).text();
-        let idR = <?php echo $_SESSION['id']; ?>
+        let idR = <?php // echo $_SESSION['id']; 
+                    ?>
 
         if (fecha_envio != "" && fecha_entrega != "") {
             $.ajax({
                 type: "POST",
-                url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/crearCorte.php") ?>",
+                url: "<?php // echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/crearCorte.php") 
+                        ?>",
                 data: {
                     idR,
                     idM,
@@ -224,7 +318,8 @@ $cantidad = 3;
 
                         $("#idT option").remove();
 
-                        const tallass = <?php echo json_encode($tallass); ?>;
+                        const tallass = <?php // echo json_encode($tallass); 
+                                        ?>;
                         tallass.forEach(
                             talla => {
                                 $('#idT').append(`<option value="${talla}">${talla}</option>`)
@@ -254,7 +349,7 @@ $cantidad = 3;
             window.scrollTo(0, top);
         }
 
-    });
+    });*/
 
     $("table").on("click", "#tallas .eliminar", function(event) {
         event.preventDefault();
@@ -300,81 +395,31 @@ $cantidad = 3;
 
     })
 
-    $(document).on("click", "#btnCarrito", function() {
+    $(document).on("click", "#btnCarrito", function(e) {
+
+        e.preventDefault();
+        let idModelo = $("#idM option:selected")[0].value;
+        let modelo = $("#idM option:selected")[0].innerHTML;
 
         $.ajax({
             type: "POST",
             url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarCarrito.php") ?>",
             data: {
-                id: true
+                idModelo,
+                modelo
             },
             success: function(response) {
                 $("#cantidadCarrito").html(response);
                 window.scrollTo(0, top);
+                $("#idT option").remove();
+                $("#cantidadT").val("");
+                $("#cantidadD").html("");
+                $("#tallas tr").remove();
+                var itemSelectorOption = $('#idM option:selected');
+                itemSelectorOption.remove();
+                $('#idM').selectpicker('refresh');
+
             }
         });
-    })
-
-    $(document).on('hide.bs.modal', '#modalColores', function() {
-
-        $.ajax({
-            type: "POST",
-            url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarTalla.php") ?>",
-            data: {
-                id: true
-            },
-            success: function(response) {
-                if (response > 1) {
-                    const swalWithBootstrapButtons = Swal.mixin({
-                        customClass: {
-                            confirmButton: 'btn btn-success',
-                            cancelButton: 'btn btn-danger'
-                        },
-                        buttonsStyling: false
-                    })
-
-                    swalWithBootstrapButtons.fire({
-                        title: 'Desea agregar estos mismos colores a las demas tallas?',
-                        icon: 'question',
-                        showCancelButton: true,
-                        cancelButtonText: ' No ',
-                        confirmButtonText: '    Si ',
-                        reverseButtons: true
-                    }).then((result) => {
-                        if (result.value) {
-
-                            let colores = "";
-
-                            $.ajax({
-                                type: "POST",
-                                url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/agregarColores.php") ?>",
-                                data: {
-                                    colores
-                                }
-                            });
-
-                            swalWithBootstrapButtons.fire(
-                                'Colores agregados!',
-                            )
-                        } else if (
-                            /* Read more about handling dismissals below */
-                            result.dismiss === Swal.DismissReason.cancel
-                        ) {
-
-                        }
-                    });
-                    //Do stuff here
-                } else {
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Colores agregados',
-                        showConfirmButton: false,
-                        timer: 800
-                    });
-                }
-            }
-        });
-
     });
 </script>
