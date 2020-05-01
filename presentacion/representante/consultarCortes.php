@@ -5,6 +5,11 @@ include 'presentacion/representante/cabeceraRepresentante.php';
 $_SESSION['cortes'] = array();
 array_push($_SESSION['cortes'], 0);
 
+$representante->proveedor();
+
+$modelos = new Modelo("", "", "", $representante->getProveedor());
+$modelos = $modelos->consultarModelos();
+
 ?>
 
 
@@ -88,19 +93,28 @@ array_push($_SESSION['cortes'], 0);
 			<div class="card">
 				<div style="text-align: center;" class="card-header bg-dark text-white">Cortes en Bodega</div>
 				<div class="card-body">
-					<div id="resultadosProfesores">
-						<table class="table table-striped table-hover">
-							<thead>
-								<tr>
-									<th scope="col">Modelo</th>
-									<th scope="col">Cantidad</th>
-									<th scope="col">Servicios</th>
-								</tr>
-							</thead>
-							<tbody id="tce">
-							</tbody>
-						</table>
-					</div>
+					<label class="text-dark h5 m-3">Seleccione Modelo:</label>
+					<select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idM">
+
+						<option value="">Seleccione</option>
+						<?php
+						foreach ($modelos as $m) {
+							echo "<option value=" . $m->getId() . ">" . $m->getNombre() . "</option>";
+						}
+						?>
+
+					</select>
+					<table class="table table-striped table-hover">
+						<thead>
+							<tr>
+								<th scope="col">Modelo</th>
+								<th scope="col">Cantidad</th>
+								<th scope="col">Servicios</th>
+							</tr>
+						</thead>
+						<tbody id="tcb">
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>
@@ -117,6 +131,13 @@ array_push($_SESSION['cortes'], 0);
 
 <div class="modal fade" id="modalPagar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-sm">
+		<div class="modal-content" id="modalContent">
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modalModeloBodega" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content" id="modalContent">
 		</div>
 	</div>
@@ -374,4 +395,30 @@ array_push($_SESSION['cortes'], 0);
 			}
 		});
 	});
+
+	$("#idM").change(function(){
+
+		let modelo = $("#idM option:selected")[0].value;
+		console.log(modelo);
+
+		$.ajax({
+			type: "POST",
+			url: "<?php echo "indexAjax.php?pid="  . base64_encode("presentacion/representante/modeloBodega.php") ?>",
+			data: {
+				modelo
+			},
+			success: function(response) {
+				let modelo = JSON.parse(response);
+				let plantilla = `<tr id='${modelo.id}'>
+					<td>${modelo.modelo}</td>
+					<td>${modelo.cantidad}</td>
+					<td>
+						<a id='modeloB' class='fas fa-eye' href='modalModeloBodega.php?idModelo=${modelo.id}&cantidad=${modelo.cantidad}' data-toggle='modal' data-target='#modalModeloBodega'  data-placement='left' title='Ver Detalles'></a>
+					</td>
+				</tr>`;
+
+				$("#tcb").html(plantilla);
+			}
+		});
+	})
 </script>

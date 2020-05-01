@@ -78,6 +78,8 @@ class Talla{
         return $this -> cantidad;
     }
 
+    // Los siguientes metodos se utilizan para obtener los atributos privados en un array_column o un metodo de array.
+    
     public function __get($prop)
     {
         return $this->$prop;

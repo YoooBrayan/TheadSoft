@@ -37,7 +37,8 @@ class Modelo
         $this->talla = $talla;
     }
 
-    function getTalla(){
+    function getTalla()
+    {
         return $this->talla;
     }
 
@@ -224,7 +225,7 @@ class Modelo
                 $resultado = $this->conexion->extraer();
                 $this->conexion->cerrar();
                 return $resultado[0];
-            } 
+            }
             return $resultado[0];
             $this->conexion->cerrar();
         } else {
@@ -280,7 +281,6 @@ class Modelo
     function idModeloTalla($modeloD)
     {
         $this->conexion->abrir();
-        echo "\n" . $this->modeloDAO->idModeloTalla($modeloD);
         $this->conexion->ejecutar($this->modeloDAO->idModeloTalla($modeloD));
         $resultado = $this->conexion->extraer();
         return $resultado[0];
@@ -292,16 +292,12 @@ class Modelo
 
         foreach ($this->talla as $t) {
             $this->modeloDAO->setTalla($t);
-            echo "\n" . $this->modeloDAO->agregarTallaModeloD();
             $this->conexion->ejecutar($this->modeloDAO->agregarTallaModeloD());
             $idTalla = $this->idModeloTalla($this->id);
-
-            echo "\n Cantidad: " . count($t->getColores());
 
             foreach ($t->getColores() as $c) {
 
                 //echo "\n" . $this->corteDAO->agregarColores($idTalla, $c->getId(), $c->getCantidad()) . "\n";
-                echo "\n Entro \n" . $this->modeloDAO->agregarColorTallaModeloD($idTalla, $c->getId(), $c->getCantidad());
                 $this->conexion->ejecutar($this->modeloDAO->agregarColorTallaModeloD($idTalla, $c->getId(), $c->getCantidad()));
             }
         }
@@ -309,12 +305,75 @@ class Modelo
         $this->conexion->cerrar();
     }
 
+    function consultarModelo()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->modeloDAO->consultarModelo());
+
+
+        if ($this->conexion->numFilas() == 1) {
+            $resultado = $this->conexion->extraer();
+            $this->id = $resultado[0];
+            $this->nombre = $resultado[1];
+        }
+        $this->conexion->cerrar();
+    }
+
+    function coloresTallaModeloBodega($talla)
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->modeloDAO->coloresTallaModeloBodega($talla));
+        $resultados = array();
+        $i = 0;
+        while (($registro = $this->conexion->extraer()) != null) {
+            $resultados[$i] = new Color($registro[0], $registro[1]);
+            $i++;
+        }
+        return $resultados;
+    }
+
+    function modeloBodegaA()
+    {
+
+        $tallas = array();
+        $tallasM = array();
+        $iT = 0;
+
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->modeloDAO->tallasModeloBodegaA());
+        while (($registro = $this->conexion->extraer()) != null) {
+            $tallas[$iT] = $registro[0];
+            $iT++;
+        }
+
+        foreach ($tallas as $t) {
+            $cantidad = $this->modeloTallaBodega($t);
+
+            //$coloresT = array();
+
+            $colores = $this->coloresTallaModeloBodega($t);
+
+            foreach ($colores as $c) {
+                $cantidadC = $this->colorTallaModeloBodega($c->getId(), $t);
+                $c->setCantidad($cantidadC);
+            }
+
+            $talla = new Talla($t, "", "", $cantidad);
+            $talla->setColores($colores);
+            array_push($tallasM, $talla);
+        }
+
+        $this->talla = $tallasM;
+    }
+
+    // Los siguientes metodos se utilizan para obtener los atributos privados en un array_column o un metodo de array.
+
     public function __get($prop)
     {
         return $this->$prop;
     }
 
-    public function __isset($prop) : bool
+    public function __isset($prop): bool
     {
         return isset($this->$prop);
     }

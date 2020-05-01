@@ -46,3 +46,22 @@ insert into modelo_almacen(modelo_Distribuido_id, almacen_id) values (2, 1)//
 insert into modelo_Distribuido_talla(modelo_Distribuido_id, talla_id, cantidad) values (2, 'G', 8), (2, 'CT', 16)//
 
 insert into modelo_talla_color(MDT_id, color_id, cantidad) values (3, 7, 4), (3, 8, 4), (4, 2, 4), (4, 1, 4), (2, 7, 4), (2, 10, 4)//
+
+
+/**************** Insercion de venta ****************/
+
+insert into venta(venta_fecha) values (now());
+
+select modelo_almacen_id from modelo_Almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id where modelo_id = 9 and almacen_id = 1 limit 1;
+
+select venta_id from venta order by venta_id desc limit 1;
+
+insert into modelo_vendido(modelo_almacen_id, venta_id) values (1, venta_id);
+
+select modelo_vendido_id from modelo_vendido order by modelo_vendido_id desc limit 1;
+
+insert into modelo_venta_talla(modelo_vendido_id, talla_id) values (modeloVendidoID, talla);
+
+select modelo_venta_talla_id from modelo_venta_talla order by modelo_venta_talla_id desc limit 1;
+
+insert into venta_talla_Color(modelo_venta_talla_id, color_id, cantidad) values (modeloVentaTallaId, color, cantidad);

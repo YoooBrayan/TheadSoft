@@ -41,7 +41,13 @@ $modelos = $modelos->consultarModelos();
 			<div class="card">
 				<div style="text-align: center;" class="card-header bg-dark text-white">Mercancia</div>
 				<div class="card-body">
-					<div id="resultadosProfesores">
+					<label class="text-dark h5 m-3">Seleccione Modelo:</label>
+					<select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idMA">
+
+						<option value="">Seleccione</option>
+
+					</select>
+					<div class="mt-5">
 						<table class="table table-striped table-hover">
 							<thead>
 								<tr>
@@ -58,6 +64,7 @@ $modelos = $modelos->consultarModelos();
 			</div>
 		</div>
 	</div>
+</div>
 </div>
 
 <div id="importar" class="container mt-3" hidden>
@@ -131,20 +138,13 @@ $modelos = $modelos->consultarModelos();
 				success: function(response) {
 					let mercancia = JSON.parse(response);
 					let plantilla = '';
-
 					mercancia.forEach(modelo => {
-						plantilla += `
-						<tr id='${modelo.id}'>
-							<td>${modelo.modelo}</td>
-							<td>${modelo.cantidad}</td>
-							<td>
-								<a class='fas fa-eye' href='modalModeloAlmacen.php?idModelo=${modelo.id}&idAlmacen=${almacen}' data-toggle='modal' data-target='#modalCorte' data-placement='left' title='Ver Detalles'></a>
-							</td>
-						</tr>
-						`
+						$("#idMA").append(new Option(modelo.modelo, modelo.id));
 					});
 
-					$("#mercancia").html(plantilla);
+					$("#idMA").selectpicker("refresh");
+
+					//$("#mercancia").html(plantilla);
 				}
 			});
 		}
@@ -180,6 +180,37 @@ $modelos = $modelos->consultarModelos();
 
 	});
 
+	$("#idMA").change(function() {
+
+		let modelo = $("#idMA option:selected")[0].value;
+		window.scrollTo(0, 855);
+
+
+		$.ajax({
+			type: "POST",
+			url: "<?php echo "indexAjax.php?pid="  . base64_encode("presentacion/representante/mercanciaAlmacen.php") ?>",
+			data: {
+				modelo
+			},
+			success: function(response) {
+				console.log(response);
+				let modelo = JSON.parse(response);
+				console.log(modelo);
+				let plantilla = `
+				<tr id='${modelo.id}'>
+					<td>${modelo.modelo}</td>
+					<td>${modelo.cantidad}</td>
+					<td>
+						<a class='fas fa-eye' href='modalModeloAlmacen.php?idModelo=${modelo.id}' data-toggle='modal' data-target='#modalCorte' data-placement='left' title='Ver Detalles'></a>
+					</td>
+				</tr>`;
+
+				$("#mercancia").html(plantilla);
+			}
+		});
+
+	});
+
 	$("table").on("click", "#importarM #importar", function(e) {
 
 		let elemento = $(this)[0].parentElement.parentElement;
@@ -197,5 +228,9 @@ $modelos = $modelos->consultarModelos();
 
 		$("#idA").val('0');
 		$("#idM").val('0');
-	})
+	});
+
+	$("#btnVenta").click(function() {
+		$("#idA").val('0');
+	});
 </script>

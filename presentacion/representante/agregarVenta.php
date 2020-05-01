@@ -189,7 +189,7 @@ foreach ($tallas as $t) {
         let modelo1 = $("#idM option:selected")[0].value;
         let cantidadT = $("#cantidadT").val();
 
-        if (cantidadT != "" && talla != "0") {
+        if (cantidadT != "" && talla != "0" && modelo1 != "0") {
             $.ajax({
                 type: "POST",
                 url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/tallasColoresVenta.php") ?>",

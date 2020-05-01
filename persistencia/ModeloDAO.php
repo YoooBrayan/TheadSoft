@@ -73,11 +73,13 @@ class ModeloDAO
             from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
             modelo m on m.modelo_id = md.modelo_id
             where m.modelo_id = '". $this->id ."' and mdt.talla_id = '". $talla  ."'
-            GROUP by talla_id
 
         ) as a,
         (
-            select modelo, talla, sum(cantidad) as cantidad from tallasmodelo where modelo = '" . $this->id . "' and talla = '" . $talla . "'
+            select ifnull(sum(ct.cantidad), 0)  as cantidad
+            from corte c inner join Corte_Talla ct on c.Corte_Id = ct.Corte_Id JOIN
+            corte_Entregado_Bodega ceb on ceb.corte_id = c.corte_id
+            where corte_modelo = '" . $this->id . "' and ct.talla_id = '" . $talla . "'
         ) as e";
     }
 
@@ -105,26 +107,22 @@ class ModeloDAO
     {
         return "select sum(b.cantidad-a.cantidad) from 
         (
-            select sum(ctc.cantidad) as cantidad
-            from corte c inner join Corte_Talla ct on c.Corte_Id = ct.Corte_Id 
+            select co.color_id as id, color_nombre as color, ifnull(sum(ctc.cantidad), 0) as cantidad
+            from corte c inner join Corte_Talla ct on c.Corte_Id = ct.Corte_Id join corte_Entregado_bodega ceb on ceb.corte_id = c.Corte_id     
             inner join Corte_Talla_Color ctc on ct.Corte_Talla_id = ctc.Corte_Talla_id 
             inner join Color co on co.Color_Id = ctc.Color_Id
             where corte_modelo = '". $this->id ."' and ct.talla_id = '". $talla ."' and ctc.Color_id = '". $color ."'
-            group by co.color_id, ct.talla_id
-            order by c.corte_modelo, ct.talla_id
         
         ) as b,
         (
-            select  sum(mtc.cantidad) as cantidad
+            select c.color_id, c.color_nombre, ifnull(sum(mtc.cantidad), 0) as cantidad
             from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
             modelo m on m.modelo_id = md.modelo_id JOIN
             modelo_Talla_color mtc on mtc.MDT_id = mdt.modelo_D_talla_id JOIN
             color c on c.color_id = mtc.color_id
             where m.modelo_id = '". $this->id ."' and mdt.talla_id = '". $talla ."' and mtc.Color_id = '". $color ."'
-            GROUP by mtc.color_id, talla_id
-            ORDER BY talla_id
         ) as a
-        ";
+";
     }
 
     function colorTallaModeloBodegaA($color, $talla)
@@ -163,4 +161,28 @@ class ModeloDAO
     {
         return "select modelo_d_talla_id from modelo_distribuido_talla where modelo_Distribuido_id = '" . $modeloD . "' and talla_id = '" . $this->talla->getId() . "'";
     }
+
+    function consultarModelo(){
+        return "select modelo_id, modelo_nombre from modelo where modelo_id = '". $this->id ."'";
+    }
+
+    function tallasModeloBodegaA(){
+        return "select talla_id from corte_Entregado_Bodega ceb JOIN
+        corte c on c.corte_id = ceb.corte_id JOIN
+        corte_Talla ct on ct.Corte_id = c.Corte_id
+        where c.corte_modelo = '". $this->id ."'
+        GROUP by talla_id";
+    }
+    
+    function coloresTallaModeloBodega($talla){
+        return "select co.color_id, color_nombre from corte_Entregado_Bodega ceb JOIN
+        corte c on c.corte_id = ceb.corte_id JOIN
+        corte_Talla ct on ct.Corte_id = c.Corte_id JOIN
+        corte_Talla_color ctc on ctc.Corte_Talla_id = ct.Corte_Talla_id JOIN
+        color co on co.color_id = ctc.Color_id
+        where c.corte_modelo = '". $this->id ."' and talla_id = '". $talla ."'
+        GROUP BY co.color_id
+        ";
+    }    
+
 }

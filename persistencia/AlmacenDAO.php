@@ -157,4 +157,26 @@ class AlmacenDAO
             where m.modelo_id =  '". $this->modelos->getId() ."' and mdt.talla_id = '". $talla ."' and ma.almacen_id = '". $this->id ."' and mtc.color_id = '". $color ."'
         ) as a";
     }
+
+    function modeloMercanciaAlmacen($modelo){
+        return "select a.id, a.modelo, sum(a.cantidad-v.cantidad) from 
+        (
+            select md.modelo_id, ifnull(sum(cantidad), 0) as cantidad from modelo_Distribuido md JOIN
+            modelo_almacen ma on ma.modelo_distribuido_id = md.modelo_distribuido_id JOIN
+            modelo_vendido mv on mv.modelo_almacen_id = ma.modelo_almacen_id JOIN
+            modelo_venta_talla mvt on mvt.modelo_vendido_id = mv.modelo_vendido_id JOIN
+            venta_talla_Color vtc on vtc.modelo_Venta_Talla_id = mvt.modelo_venta_Talla_id
+            where md.modelo_id = '". $modelo ."' and ma.almacen_id = '". $this->id ."'
+        
+        ) as v,
+        (
+            select  m.modelo_id as id, m.modelo_nombre as modelo, ifnull(sum(mdt.cantidad), 0) as cantidad
+            from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+            modelo m on m.modelo_id = md.modelo_id
+            where m.modelo_id = '". $modelo ."' and ma.almacen_id = '". $this->id ."'
+        ) as a;
+        
+        ";
+    }
 }
+

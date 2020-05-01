@@ -221,4 +221,24 @@ class Almacen
             return "";
         }
     }
+
+    function modeloMercanciaAlmacen($modelo){
+
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->almacenDAO->modeloMercanciaAlmacen($modelo));
+        $resultado = array();
+        if ($this->conexion->numFilas() == 1) {
+            $registros = $this->conexion->extraer();
+            $resultado = array(
+                'id' => $registros[0],
+                'modelo' => $registros[1],
+                'cantidad' => $registros[2]
+            );
+
+            return $resultado;
+        } else {
+            $this->conexion->cerrar();
+            return "";
+        }
+    }
 }

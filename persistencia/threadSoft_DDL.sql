@@ -874,30 +874,33 @@ end if;
 return total;
 end//
 
-
-
-
+select talla_id, ifnull(sum(cantidad), 0) as cantidad from modelo_Distribuido md JOIN
+modelo_almacen ma on ma.modelo_distribuido_id = md.modelo_distribuido_id JOIN
+modelo_vendido mv on mv.modelo_almacen_id = ma.modelo_almacen_id JOIN
+modelo_venta_talla mvt on mvt.modelo_vendido_id = mv.modelo_vendido_id JOIN
+venta_talla_Color vtc on vtc.modelo_Venta_Talla_id = mvt.modelo_venta_Talla_id
+where md.modelo_id = 3 and ma.almacen_id = 1
+GROUP by talla_id
 
 /* Consultas de Ventas */
 
 /* cosulta de cantidad de una talla de un modelo almacenado en un almacen  almacen-vendidas */
 
-select sum(a.cantidad-v.cantidad) from 
+select a.id, a.modelo, sum(a.cantidad-v.cantidad) from 
 (
-	select ifnull(sum(cantidad), 0) as cantidad from
-	venta_talla_Color vtc join 
-	modelo_venta_Talla mvt on vtc.modelo_venta_talla_id = mvt.modelo_venta_Talla_id JOIN
-	modelo_vendido mv on mv.modelo_vendido_id = mvt.modelo_vendido_id JOIN
-	modelo_almacen ma on ma.modelo_almacen_id = mv.modelo_almacen_id
-	where ma.modelo_distribuido_id = 26 and talla_id = 'CT' and ma.almacen_id = 1
+	select md.modelo_id, ifnull(sum(cantidad), 0) as cantidad from modelo_Distribuido md JOIN
+	modelo_almacen ma on ma.modelo_distribuido_id = md.modelo_distribuido_id JOIN
+	modelo_vendido mv on mv.modelo_almacen_id = ma.modelo_almacen_id JOIN
+	modelo_venta_talla mvt on mvt.modelo_vendido_id = mv.modelo_vendido_id JOIN
+	venta_talla_Color vtc on vtc.modelo_Venta_Talla_id = mvt.modelo_venta_Talla_id
+	where md.modelo_id = 3 and ma.almacen_id = 1
 
 ) as v,
 (
-	select ifnull(sum(mdt.cantidad), 0) as cantidad
+	select  m.modelo_id as id, m.modelo_nombre as modelo, ifnull(sum(mdt.cantidad), 0) as cantidad
             from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
             modelo m on m.modelo_id = md.modelo_id
-            where m.modelo_id = 26 and mdt.talla_id = 'CT' and ma.almacen_id = 1
-            GROUP by talla_id
+            where m.modelo_id = 3 and ma.almacen_id = 1
 ) as a;
 
 
@@ -939,3 +942,43 @@ select sum(a.cantidad-v.cantidad) from
 			modelo_talla_Color mtc on mdt.modelo_d_talla_id = mtc.mdt_id
             where m.modelo_id = 9 and mdt.talla_id = 'G' and ma.almacen_id = 1 and mtc.color_id = 8
 ) as a;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*Consultas para mostrar los datos de un modelo en bodega*/
+
+/*Tallas de un modelo en bodega 1 */
+
+select talla_id from corte_Entregado_Bodega ceb JOIN
+corte c on c.corte_id = ceb.corte_id JOIN
+corte_Talla ct on ct.Corte_id = c.Corte_id
+where c.corte_modelo = 9
+GROUP by talla_id
+
+/*colores de una talla de un modelo en bodega 2 */
+
+select co.color_id, color_nombre from corte_Entregado_Bodega ceb JOIN
+corte c on c.corte_id = ceb.corte_id JOIN
+corte_Talla ct on ct.Corte_id = c.Corte_id JOIN
+corte_Talla_color ctc on ctc.Corte_Talla_id = ct.Corte_Talla_id JOIN
+color co on co.color_id = ctc.Color_id
+where c.corte_modelo = 9 and talla_id = 'CT'
+GROUP BY co.color_id
+
