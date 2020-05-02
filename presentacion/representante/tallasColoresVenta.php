@@ -5,15 +5,16 @@ session_start();
 
 if (isset($_POST['cantidadD'])) {
 
-    $almacen = new Almacen($_SESSION['almacen']);
-    echo $almacen->tallasModelo($_POST['modelo'], $_POST['talla']);
+    $modelo = new Modelo($_POST['modelo']);
+    $almacen = new Almacen($_SESSION['almacen'], "", $modelo);
+    echo $almacen->tallaModeloAlmacen($_POST['talla']);
 } else if (isset($_POST['modelo'])) {
 
     $modelo = new Modelo($_POST['modelo']);
 
     $almacen = new Almacen($_SESSION['almacen'], "", $modelo);
 
-    echo json_encode($almacen->tallaModeloAlmacen());
+    echo json_encode($almacen->tallasModeloAlmacenV());
     
 } else if (isset($_POST['cantidadT'])) {
     $almacen = new Almacen($_SESSION['almacen']);

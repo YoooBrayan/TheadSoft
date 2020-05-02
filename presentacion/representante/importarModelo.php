@@ -298,6 +298,7 @@ $tallass = array();
                 idM
             },
             success: function(response) {
+                console.log(response);
                 if (response) {
                     window.history.back();
                 }

@@ -61,6 +61,7 @@ foreach ($tallas as $t) {
 
                         <label>Seleccione Tallas</label>
                         <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idT">
+
                             <?php
                             foreach ($tallas as $t) {
                             ?>
@@ -143,6 +144,9 @@ foreach ($tallas as $t) {
                 success: function(response) {
                     $("#idT option").remove();
                     let tallas = JSON.parse(response);
+
+                    $("#idT").append(`<option value="0">Seleccione</option>`);
+
                     tallas.forEach(
                         talla => {
                             $('#idT').append(`<option value="${talla.talla}">${talla.talla}</option>`)
@@ -166,21 +170,25 @@ foreach ($tallas as $t) {
         let talla = $("#idT option:selected")[0].value;
         let cantidadD = 1;
 
-        $.ajax({
-            type: "POST",
-            url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/tallasColoresVenta.php") ?>",
-            data: {
-                modelo,
-                talla,
-                cantidadD
-            },
-            success: function(response) {
-                let cantidad = parseInt(response);
-                //$("#cantidadT").val(cantidad);
-                $("#cantidadD").html(cantidad);
+        if (talla != 0) {
+            $.ajax({
+                type: "POST",
+                url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/tallasColoresVenta.php") ?>",
+                data: {
+                    modelo,
+                    talla,
+                    cantidadD
+                },
+                success: function(response) {
+                    let cantidad = parseInt(response);
+                    //$("#cantidadT").val(cantidad);
+                    $("#cantidadD").html(cantidad);
 
-            }
-        });
+                }
+            });
+        }else{
+            $("#cantidadD").html("");
+        }
     });
 
     $("#cantidadT").keyup(function(e) {
@@ -271,7 +279,7 @@ foreach ($tallas as $t) {
             });
         } else {
             Swal.fire({
-                position: 'top-end',
+                position: 'center',
                 icon: 'warning',
                 title: 'Digite Cantidad',
                 showConfirmButton: false,
@@ -418,6 +426,13 @@ foreach ($tallas as $t) {
                 var itemSelectorOption = $('#idM option:selected');
                 itemSelectorOption.remove();
                 $('#idM').selectpicker('refresh');
+
+                Swal.fire({
+                    position: 'top-start',
+                    icon: 'success',
+                    title: 'Modelo Agregado al Carrito',
+                    timer: '1599'
+                });
 
             }
         });

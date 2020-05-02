@@ -13,13 +13,13 @@ $modelo = new Modelo($_GET['idModelo']);
 $modeloAlmacen = new Almacen($_SESSION['almacen'], "", $modelo);
 
 $model = $modeloAlmacen-> modeloAlmacen();
-$tallas = $modeloAlmacen-> tallaModeloAlmacen();
+//$tallas = $modeloAlmacen-> tallaModeloAlmacen();
 
 ?>
 
 
 <div class="modal-header">
-    <h5 class="modal-title">Modelo: <?php echo $model['modelo'] . "<br>Cantidad: " . $model['cantidad']; ?><span style="color:brown; margin-left: 259px;"></span></h5>
+    <h5 class="modal-title">Modelo: <?php echo $modeloAlmacen -> getModelos() -> getNombre() . "<br>Cantidad: " . $modeloAlmacen -> getModelos() -> getCantidad(); ?><span style="color:brown; margin-left: 259px;"></span></h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
 </div>
 <div class="modal-body">
@@ -30,10 +30,10 @@ $tallas = $modeloAlmacen-> tallaModeloAlmacen();
 
             <?php 
 
-            foreach ($tallas as $t) { ?>
+            foreach ($modeloAlmacen-> getModelos() -> getTalla() as $t) { ?>
 
                 <div class="card border-dark mb-3" style="max-width: 100%;">
-                    <div class="card-header"><?php echo $t['talla'] . "<br>Cantidad: " . $t['cantidad']?></div>
+                    <div class="card-header"><?php echo "Talla: " . $t -> getId() . "<br>Cantidad: " . $t -> getCantidad(); ?></div>
                     <div class="card-body text-dark">
 
                         <table class="table table-striped table-hover">
@@ -45,10 +45,10 @@ $tallas = $modeloAlmacen-> tallaModeloAlmacen();
                             </thead>
                             <?php  ?>
                             <tbody id="colores">
-                                <?php foreach ($modeloAlmacen->coloresTallaModeloAlmacen($t['talla']) as $c) {
-                                    echo "<tr id=" . $c['id'] . ">";
-                                    echo "<td>" . $c['color'] . "</td>";
-                                    echo "<td>" . $c['cantidad'] . "</td>";
+                                <?php foreach ($t -> getColores() as $c) {
+                                    echo "<tr id=" . $c->getId() . ">";
+                                    echo "<td>" . $c->getNombre() . "</td>";
+                                    echo "<td>" . $c->getCantidad() . "</td>";
                                     echo "</tr>";
                                 }
                                 

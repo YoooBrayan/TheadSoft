@@ -81,14 +81,52 @@ class AlmacenDAO
         where c.corte_id = '" . $corte . "' and ct.talla_id = '" . $this->id . "'";
     }
 
-    function tallasModeloAlmacen()
+    function tallaModeloAlmacen($talla)
+    {
+        return "select sum(a.cantidad-v.cantidad) from 
+        (
+            select sum(cantidad) as cantidad
+            from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+            modelo m on m.modelo_id = md.modelo_id
+            where m.modelo_id = '" . $this->modelos->getId() . "' and ma.almacen_id = '". $this->id ."' and talla_id = '" . $talla . "'
+        ) as a,
+        (
+            select ifnull(sum(cantidad), 0) as cantidad 
+            from modelo_distribuido md join modelo_almacen ma on md.modelo_distribuido_id = ma.modelo_distribuido_id join
+            modelo_vendido mv on mv.modelo_almacen_id = ma.modelo_almacen_id JOIN
+            modelo_venta_talla mvt on mv.modelo_vendido_id = mvt.modelo_vendido_id join
+            venta_talla_Color vtc on vtc.modelo_venta_Talla_id = mvt.modelo_venta_Talla_id
+            where ma.almacen_id = '" . $this->id . "' and md.modelo_id = '" . $this->modelos->getId() . "' and talla_id = '" . $talla . "'
+        ) as v
+        ";
+    }
+
+    /*function tallasModeloAlmacen()
     {
         return "call tallaModeloAlmacen('" . $this->modelos->getId() . "', '" . $this->id . "')";
+    }*/
+
+    function tallasModeloAlmacen()
+    {
+        return "select talla_id
+        from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+        modelo m on m.modelo_id = md.modelo_id
+        where m.modelo_id = '" . $this->modelos->getId() . "' and ma.almacen_id = '" . $this->id . "'";
     }
+
+    /*function coloresTallaModeloAlmacen($talla)
+    {
+        return "call coloresTallaModeloAlmacen('" . $this->modelos->getId() . "', '" . $this->id . "', '" . $talla . "')";
+    }*/
 
     function coloresTallaModeloAlmacen($talla)
     {
-        return "call coloresTallaModeloAlmacen('" . $this->modelos->getId() . "', '" . $this->id . "', '" . $talla . "')";
+        return "select c.color_id, color_nombre as color
+        from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+        modelo m on m.modelo_id = md.modelo_id JOIN
+        modelo_Talla_color mtc on mtc.MDT_id = mdt.modelo_D_talla_id JOIN
+        color c on c.color_id = mtc.color_id
+        where m.modelo_id = '". $this->modelos->getId() ."' and ma.almacen_id = '". $this->id ."' and talla_id = '". $talla ."'";
     }
 
     function idModeloDistribuido()
@@ -138,27 +176,30 @@ class AlmacenDAO
         ";
     }
 
-    function colorTallaModeloAlmacen($talla, $color){
+    function colorTallaModeloAlmacen($talla, $color)
+    {
         return "select sum(a.cantidad-v.cantidad) from 
         (
-            select ifnull(sum(cantidad), 0) as cantidad from
-            venta_talla_Color vtc join 
-            modelo_venta_Talla mvt on vtc.modelo_venta_talla_id = mvt.modelo_venta_Talla_id JOIN
-            modelo_vendido mv on mv.modelo_vendido_id = mvt.modelo_vendido_id JOIN
-            modelo_almacen ma on ma.modelo_almacen_id = mv.modelo_almacen_id
-            where ma.modelo_distribuido_id = '". $this->modelos->getId() ."' and talla_id = '". $talla ."' and ma.almacen_id = '". $this->id ."' and vtc.Color_id = '". $color ."'
-        
-        ) as v,
-        (
-            select ifnull(sum(mtc.cantidad), 0) as cantidad
+            select sum(mtc.cantidad) as cantidad
             from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
-            modelo m on m.modelo_id = md.modelo_id join
-            modelo_talla_Color mtc on mdt.modelo_d_talla_id = mtc.mdt_id
-            where m.modelo_id =  '". $this->modelos->getId() ."' and mdt.talla_id = '". $talla ."' and ma.almacen_id = '". $this->id ."' and mtc.color_id = '". $color ."'
-        ) as a";
+            modelo m on m.modelo_id = md.modelo_id JOIN
+            modelo_Talla_color mtc on mtc.MDT_id = mdt.modelo_D_talla_id JOIN
+            color c on c.color_id = mtc.color_id
+            where m.modelo_id = '". $this->modelos->getId() ."' and ma.almacen_id = '". $this->id ."' and talla_id = '". $talla ."' and c.color_id = '". $color ."'
+        
+        ) as a,
+        (
+            select ifnull(sum(cantidad), 0) as cantidad 
+            from modelo_distribuido md join modelo_almacen ma on md.modelo_distribuido_id = ma.modelo_distribuido_id join
+            modelo_vendido mv on mv.modelo_almacen_id = ma.modelo_almacen_id JOIN
+            modelo_venta_talla mvt on mv.modelo_vendido_id = mvt.modelo_vendido_id join
+            venta_talla_Color vtc on vtc.modelo_venta_Talla_id = mvt.modelo_venta_Talla_id
+            where ma.almacen_id = '". $this->id ."' and md.modelo_id = '". $this->modelos->getId() ."' and talla_id = '". $talla ."' and color_id = '". $color ."'
+        ) as v";
     }
 
-    function modeloMercanciaAlmacen($modelo){
+    function modeloMercanciaAlmacen($modelo)
+    {
         return "select a.id, a.modelo, sum(a.cantidad-v.cantidad) from 
         (
             select md.modelo_id, ifnull(sum(cantidad), 0) as cantidad from modelo_Distribuido md JOIN
@@ -166,17 +207,16 @@ class AlmacenDAO
             modelo_vendido mv on mv.modelo_almacen_id = ma.modelo_almacen_id JOIN
             modelo_venta_talla mvt on mvt.modelo_vendido_id = mv.modelo_vendido_id JOIN
             venta_talla_Color vtc on vtc.modelo_Venta_Talla_id = mvt.modelo_venta_Talla_id
-            where md.modelo_id = '". $modelo ."' and ma.almacen_id = '". $this->id ."'
+            where md.modelo_id = '" . $modelo . "' and ma.almacen_id = '" . $this->id . "'
         
         ) as v,
         (
             select  m.modelo_id as id, m.modelo_nombre as modelo, ifnull(sum(mdt.cantidad), 0) as cantidad
             from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
             modelo m on m.modelo_id = md.modelo_id
-            where m.modelo_id = '". $modelo ."' and ma.almacen_id = '". $this->id ."'
+            where m.modelo_id = '" . $modelo . "' and ma.almacen_id = '" . $this->id . "'
         ) as a;
         
         ";
     }
 }
-

@@ -288,11 +288,12 @@ group by corte.corte_Id;
 
 /*muestra las tallas de un modelo entregado*/
 create view tallasModelo as 
-select c.corte_Modelo as modelo, ct.talla_id as talla, sum(ct.cantidad) as cantidad
-from corte c inner join Corte_Talla ct on c.Corte_Id = ct.Corte_Id 
-group by ct.Talla_Id, c.corte_id
+select c.corte_id, c.corte_Modelo as modelo, ct.talla_id as talla, sum(ct.cantidad) as cantidad
+from corte c inner join Corte_Talla ct on c.Corte_Id = ct.Corte_Id JOIN
+corte_Entregado_Bodega ceb on ceb.corte_id = c.corte_id
+where corte_modelo = 9 and ct.talla_id = 'G'
 
-select modelo, talla, sum(cantidad) from tallasmodelo where modelo = 6
+select modelo, talla, sum(cantidad) from tallasmodelo where modelo = 9 and talla = 'CT'
 group by talla//
 
 /*muestra los colores de cada talla de un modelo entregado*/
@@ -687,11 +688,87 @@ END//
 /* datos de un modelo en un almacen */
 create procedure modeloAlmacen(almacen int, modelo int)
 BEGIN
-select m.modelo_id, modelo_Nombre, sum(cantidad)
-from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
-modelo m on m.modelo_id = md.modelo_id
-where ma.almacen_id = almacen and m.modelo_id = modelo;
+select modelo_id, modelo_Nombre, cantidadModeloAlmacen(almacen, modelo)
+from modelo
+where modelo_id = modelo;
 END//
+
+
+/*cantidad de blusas de un modelo en almacen restando ventas*/
+create function cantidadModeloAlmacen(almacen int, modelo int)
+RETURNS int
+begin 
+
+declare cantidadT int;
+
+select ifnull(sum(a.cantidad-v.cantidad), 0)  into cantidadT from 
+(
+	select ifnull(sum(cantidad), 0) as cantidad
+	from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+	modelo m on m.modelo_id = md.modelo_id
+	where ma.almacen_id = almacen and m.modelo_id = modelo
+
+) as a,
+(
+	select ifnull(sum(cantidad), 0) as cantidad 
+	from modelo_distribuido md join modelo_almacen ma on md.modelo_distribuido_id = ma.modelo_distribuido_id join
+	modelo_vendido mv on mv.modelo_almacen_id = ma.modelo_almacen_id JOIN
+	modelo_venta_talla mvt on mv.modelo_vendido_id = mvt.modelo_vendido_id join
+	venta_talla_Color vtc on vtc.modelo_venta_Talla_id = mvt.modelo_venta_Talla_id
+	where ma.almacen_id = almacen and md.modelo_id = modelo
+) as v;
+
+return cantidadT;
+
+end//
+
+
+
+
+/* talla de un modelo en un almacen restando las ventas*/
+select sum(a.cantidad-v.cantidad) from 
+(
+	select m.modelo_id, modelo_Nombre, sum(cantidad) as cantidad
+	from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+	modelo m on m.modelo_id = md.modelo_id
+	where ma.almacen_id = 1 and m.modelo_id = 9 and talla_id = 'CT'
+
+) as a,
+(
+	select sum(cantidad) as cantidad 
+	from modelo_distribuido md join modelo_almacen ma on md.modelo_distribuido_id = ma.modelo_distribuido_id join
+	modelo_vendido mv on mv.modelo_almacen_id = ma.modelo_almacen_id JOIN
+	modelo_venta_talla mvt on mv.modelo_vendido_id = mvt.modelo_vendido_id join
+	venta_talla_Color vtc on vtc.modelo_venta_Talla_id = mvt.modelo_venta_Talla_id
+	where ma.almacen_id = 1 and md.modelo_id = 9 and talla_id = 'CT'
+) as v
+
+
+/* color de una talla de un modelo en un almacen restando las ventas*/
+select sum(a.cantidad-v.cantidad) from 
+(
+	select m.modelo_id, modelo_Nombre, sum(mtc.cantidad) as cantidad
+	from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+	modelo_Talla_color mtc on mtc.mdt_id = mdt.modelo_D_talla_id JOIN
+	modelo m on m.modelo_id = md.modelo_id
+	where ma.almacen_id = 1 and m.modelo_id = 9 and talla_id = 'CT' and color_id = 1
+
+) as a,
+(
+	select sum(cantidad) as cantidad 
+	from modelo_distribuido md join modelo_almacen ma on md.modelo_distribuido_id = ma.modelo_distribuido_id join
+	modelo_vendido mv on mv.modelo_almacen_id = ma.modelo_almacen_id JOIN
+	modelo_venta_talla mvt on mv.modelo_vendido_id = mvt.modelo_vendido_id join
+	venta_talla_Color vtc on vtc.modelo_venta_Talla_id = mvt.modelo_venta_Talla_id
+	where ma.almacen_id = 1 and md.modelo_id = 9 and talla_id = 'CT' and vtc.color_id = 1
+
+) as v
+
+
+
+
+
+
 
 
 /* muestra la cantidad de cada talla agrupados por modelo y talla Bien */
@@ -709,6 +786,38 @@ modelo m on m.modelo_id = md.modelo_id
 where m.modelo_id = modelo and ma.almacen_id = almacen
 GROUP by talla_id;
 end
+
+/*muestra las  tallas de un modelo en almacen*/
+select talla_id
+from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+modelo m on m.modelo_id = md.modelo_id
+where m.modelo_id = 9 and ma.almacen_id = 1
+GROUP by talla_id;
+
+
+
+/*muestra la cantidad de una talla de un modelo Bien en almacen menos ventas*/
+
+select sum(a.cantidad-v.cantidad) from 
+(
+	select sum(cantidad) as cantidad
+	from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+	modelo m on m.modelo_id = md.modelo_id
+	where m.modelo_id = 9 and ma.almacen_id = 1 and talla_id = 'CT'
+) as a,
+(
+	select ifnull(sum(cantidad), 0) as cantidad 
+	from modelo_distribuido md join modelo_almacen ma on md.modelo_distribuido_id = ma.modelo_distribuido_id join
+	modelo_vendido mv on mv.modelo_almacen_id = ma.modelo_almacen_id JOIN
+	modelo_venta_talla mvt on mv.modelo_vendido_id = mvt.modelo_vendido_id join
+	venta_talla_Color vtc on vtc.modelo_venta_Talla_id = mvt.modelo_venta_Talla_id
+	where ma.almacen_id = 1 and md.modelo_id = 9 and talla_id = 'CT'
+) as v
+
+
+
+
+
 
 
 /*muestra lo cantidad de cada color agrupados por talla y modelo Bien*/
@@ -786,6 +895,40 @@ where m.modelo_id = modelo and ma.almacen_id = almacen and talla_id = talla
 GROUP by mtc.color_id, talla_id
 ORDER BY talla_id;
 end//
+
+
+/*muestra los colores de una talla de un modelo en almacen */
+select c.color_id, color_nombre as color
+from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+modelo m on m.modelo_id = md.modelo_id JOIN
+modelo_Talla_color mtc on mtc.MDT_id = mdt.modelo_D_talla_id JOIN
+color c on c.color_id = mtc.color_id
+where m.modelo_id = 9 and ma.almacen_id = 1 and talla_id = 'G'
+
+
+/*muestra la cantidad de un color de una talla de un modelo en almacen menos las ventas*/
+select sum(a.cantidad-v.cantidad) from 
+(
+	select sum(mtc.cantidad) as cantidad
+	from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
+	modelo m on m.modelo_id = md.modelo_id JOIN
+	modelo_Talla_color mtc on mtc.MDT_id = mdt.modelo_D_talla_id JOIN
+	color c on c.color_id = mtc.color_id
+	where m.modelo_id = 9 and ma.almacen_id = 1 and talla_id = 'CT' and c.color_id = 1
+
+) as a,
+(
+	select ifnull(sum(cantidad), 0) as cantidad 
+	from modelo_distribuido md join modelo_almacen ma on md.modelo_distribuido_id = ma.modelo_distribuido_id join
+	modelo_vendido mv on mv.modelo_almacen_id = ma.modelo_almacen_id JOIN
+	modelo_venta_talla mvt on mv.modelo_vendido_id = mvt.modelo_vendido_id join
+	venta_talla_Color vtc on vtc.modelo_venta_Talla_id = mvt.modelo_venta_Talla_id
+	where ma.almacen_id = 1 and md.modelo_id = 9 and talla_id = 'CT' and color_id = 1
+) as v
+
+
+
+
 
 /*Muestra las cantidades de colores por tallas ubicadas en un almacen y retorna los almacenadas en bodega*/
 select a.talla, a.color, b.cantidad, a.cantidad, b.cantidad-a.cantidad as bodegaR

@@ -18,6 +18,7 @@ class Modelo
     private $modeloDAO;
     private $talla;
     private $color;
+    private $cantidad;
 
     function Modelo($id = "", $nombre = "", $valor = "", $proveedor = "", $talla = "")
     {
@@ -95,6 +96,16 @@ class Modelo
     function setOperaciones($operaciones)
     {
         $this->operaciones = $operaciones;
+    }
+
+    function setCantidad($cantidad)
+    {
+        $this->cantidad = $cantidad;
+    }
+
+    function getCantidad()
+    {
+        return $this->cantidad;
     }
 
     function consultarModelos()

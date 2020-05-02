@@ -100,20 +100,51 @@ class Almacen
         $this->conexion->abrir();
         $this->conexion->ejecutar($this->almacenDAO->modeloAlmacen());
 
-        $resultado = array();
+        $tallasM = array();
 
         while (($registro = $this->conexion->extraer()) != null) {
-            $resultado =  array(
-                'id' => $registro[0],
-                'modelo' => $registro[1],
-                'cantidad' => $registro[2]
-            );
+            $this->modelos->setId($registro[0]);
+            $this->modelos->setNombre($registro[1]);
+            $this->modelos->setCantidad($registro[2]);
         }
+
+        $tallas = $this->tallasModeloAlmacen();
+
+        foreach($tallas as $t){
+            $cantidadT = $this->tallaModeloAlmacen($t->getId());
+            $t -> setCantidad($cantidadT);
+
+            $colores = $this->coloresTallaModeloAlmacen($t->getId());
+
+            foreach($colores as $c){
+                $cantidadC = $this->colorTallaModeloAlmacen($t -> getId(), $c -> getId());
+                $c -> setCantidad($cantidadC);
+            }
+
+            $t -> setColores($colores);
+            array_push($tallasM, $t);
+        }
+
+        $this->modelos->setTalla($tallasM);
         $this->conexion->cerrar();
-        return $resultado;
     }
 
-    function tallaModeloAlmacen()
+    function tallasModeloAlmacen()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->almacenDAO->tallasModeloAlmacen());
+
+        $resultado = array();
+        $i = 0;
+        while (($registro = $this->conexion->extraer()) != null) {
+            $resultado[$i] = new Talla($registro[0]);
+            $i++;
+        }
+        return $resultado;
+        $this->conexion->cerrar();
+    }
+
+    function tallasModeloAlmacenV()
     {
         $this->conexion->abrir();
         $this->conexion->ejecutar($this->almacenDAO->tallasModeloAlmacen());
@@ -122,8 +153,7 @@ class Almacen
         $i = 0;
         while (($registro = $this->conexion->extraer()) != null) {
             $resultado[$i] = array(
-                'talla' => $registro[0],
-                'cantidad' => $registro[1]
+                'talla' => $registro[0]
             );
             $i++;
         }
@@ -155,6 +185,7 @@ class Almacen
             $resultado = $this->conexion->extraer();
             return $resultado[0];
         } else {
+            return 1;
             $this->conexion->cerrar();
         }
     }
@@ -217,12 +248,13 @@ class Almacen
             $resultado = $this->conexion->extraer();
             return $resultado[0];
         } else {
-            $this->conexion->cerrar();
+            //$this->conexion->cerrar();
             return "";
         }
     }
 
-    function modeloMercanciaAlmacen($modelo){
+    function modeloMercanciaAlmacen($modelo)
+    {
 
         $this->conexion->abrir();
         $this->conexion->ejecutar($this->almacenDAO->modeloMercanciaAlmacen($modelo));
@@ -238,6 +270,21 @@ class Almacen
             return $resultado;
         } else {
             $this->conexion->cerrar();
+            return "";
+        }
+    }
+
+    function tallaModeloAlmacen($talla)
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->almacenDAO->tallaModeloAlmacen($talla));
+
+        if ($this->conexion->numFilas() == 1) {
+            $registros = $this->conexion->extraer();
+            $resultado = $registros[0];
+            return $resultado;
+        } else {
+            //$this->conexion->cerrar();
             return "";
         }
     }
