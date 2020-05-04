@@ -67,6 +67,40 @@ $modelos = $modelos->consultarModelos();
 </div>
 </div>
 
+
+<div id="ventas" class="container mt-3" hidden>
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div style="text-align: center;" class="card-header bg-dark text-white">Ventas</div>
+				<div class="card-body">
+					<label class="text-dark h5 m-3">Seleccione Fecha Inicial:</label>
+					<input id="fechaInicio" onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha Inicial" name="fechaVenta">
+					<label class="text-dark h5 m-3">Seleccione Fecha Final:</label>
+					<input id="fechaFinal" onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha Final" name="fechaVenta">
+					<div class="mt-5">
+						<table class="table table-striped table-hover">
+							<thead>
+								<tr>
+									<th scope="col">Venta</th>
+									<th scope="col">Fecha</th>
+									<th scope="col">Modelos</th>
+									<th scope="col">Cantidad</th>
+									<th scope="col">Valor</th>
+									<th scope="col">Servicios</th>
+								</tr>
+							</thead>
+							<tbody id="ventasT">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+
 <div id="importar" class="container mt-3" hidden>
 	<div class="row">
 		<div class="col-12">
@@ -111,6 +145,14 @@ $modelos = $modelos->consultarModelos();
 	</div>
 </div>
 
+<div class="modal fade" id="modalModelosVenta" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" id="modalContent">
+		</div>
+	</div>
+</div>
+
+
 <script>
 	$('body').on('show.bs.modal', '.modal', function(e) {
 		var link = $(e.relatedTarget);
@@ -121,13 +163,19 @@ $modelos = $modelos->consultarModelos();
 <script>
 	$("#idA").change(function() {
 
+		$("#ventasT tr").remove();
+		$("#importarM tr").remove();
+		$("#mercancia tr").remove();
+		$("#fechaInicio").val("");
+		$("#fechaFinal").val("");
+
 		let almacen = $("#idA option:selected")[0].value;
-		console.log("cambio: " + almacen);
 
 		if (almacen != "0") {
 			$("#btnVenta").removeAttr("hidden");
 			$("#inventario").removeAttr("hidden");
 			$("#importar").removeAttr("hidden");
+			$("#ventas").removeAttr("hidden");
 
 			$.ajax({
 				type: "POST",
@@ -183,7 +231,7 @@ $modelos = $modelos->consultarModelos();
 	$("#idMA").change(function() {
 
 		let modelo = $("#idMA option:selected")[0].value;
-		window.scrollTo(0, 855);
+		//window.scrollTo(0, 855);
 
 
 		$.ajax({
@@ -232,5 +280,127 @@ $modelos = $modelos->consultarModelos();
 
 	$("#btnVenta").click(function() {
 		$("#idA").val('0');
+	});
+
+	$("#fechaInicio").change(function() {
+
+		let fechaInicio = document.getElementById("fechaInicio").value;
+		let fechaFinal = document.getElementById("fechaFinal").value;
+
+		if(fechaFinal==""){
+			fechaFinal = document.getElementById("fechaInicio").value;
+		}
+
+		let plantilla = '';
+
+		$.ajax({
+			type: "POST",
+			url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/ventas.php") ?>",
+			data: {
+				fechaInicio,
+				fechaFinal
+			},
+			success: function(response) {
+				let datos = JSON.parse(response);
+				console.log(datos);
+
+				datos.forEach(venta => {
+					plantilla += `
+						<tr id='${venta.id}'>
+							<td>${venta.id}</td>
+							<td>${venta.fecha}</td>
+							<td>
+								<a class='fas fa-eye' data-toggle='tooltip' class='tooltipLink' data-placement='left' title='`;
+
+					venta.modelo.forEach(modelos => {
+						plantilla += modelos.nombre + `\n`
+					})
+
+					plantilla += `'></a>
+							</td>
+							<td>${venta.cantidad}</td>
+							<td>
+							<a class='fas fa-eye' href='modalModelosVenta.php?idVenta=${venta.id}' data-toggle='modal' data-target='#modalModelosVenta' data-placement='left' title='Ver Detalles'></a>
+							</td>
+							<td>${venta.valor}</td>
+						</tr>
+						`
+
+				});
+				//<tr><td colspan='6'>${venta.total}</td></tr>
+				plantilla += "<tr><th scope='row'>Total</th><td colspan='4' ></td><td>" + datos[0].total + "</td></tr>";
+
+				$("#ventasT").html(plantilla);
+			}
+		});
+
+	});
+
+	$("#fechaFinal").change(function() {
+
+		let fechaInicio = document.getElementById("fechaInicio").value;
+		//let fechaFinal = document.getElementById("fechaFinal").value;
+
+		if (fechaInicio == "") {
+			Swal.fire({
+				position: 'center',
+				icon: 'danger',
+				title: 'Seleccione Fecha de Inicio',
+				timer: 1999
+			});
+		} else {
+			//let fechaInicio = document.getElementById("fechaInicio").value;
+			let fechaFinal = document.getElementById("fechaFinal").value;
+
+			console.log(fechaInicio);
+			console.log(fechaFinal);
+
+			//let dateControl = document.querySelector('input[type="date"]');
+			//let fecha = dateControl.value;
+			let plantilla = '';
+
+			$.ajax({
+				type: "POST",
+				url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/ventas.php") ?>",
+				data: {
+					fechaInicio,
+					fechaFinal
+				},
+				success: function(response) {
+					console.log(response);
+					let datos = JSON.parse(response);
+					console.log(datos);
+
+					datos.forEach(venta => {
+						plantilla += `
+				<tr id='${venta.id}'>
+					<td>${venta.id}</td>
+					<td>${venta.fecha}</td>
+					<td>
+						<a class='fas fa-eye' data-toggle='tooltip' class='tooltipLink' data-placement='left' title='`;
+
+						venta.modelo.forEach(modelos => {
+							plantilla += modelos.nombre + `\n`
+						})
+
+						plantilla += `'></a>
+					</td>
+					<td>${venta.cantidad}</td>
+					<td>
+					<a class='fas fa-eye' href='modalModelosVenta.php?idVenta=${venta.id}' data-toggle='modal' data-target='#modalModelosVenta' data-placement='left' title='Ver Detalles'></a>
+					</td>
+					<td>${venta.valor}</td>
+				</tr>
+				`
+
+					});
+					//<tr><td colspan='6'>${venta.total}</td></tr>
+					plantilla += "<tr><th scope='row'>Total</th><td colspan='4' ></td><td>" + datos[0].total + "</td></tr>";
+
+					$("#ventasT").html(plantilla);
+				}
+			});
+		}
+
 	});
 </script>

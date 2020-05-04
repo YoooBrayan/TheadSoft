@@ -194,6 +194,7 @@ foreach ($tallas as $t) {
     });
 
     $(document).on("click", "#registrar", function(e) {
+        
         e.preventDefault();
         let idM = $("#idM option:selected")[0].value;
         let fecha_envio = $("#fechaEnvio").val();

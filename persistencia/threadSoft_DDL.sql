@@ -861,7 +861,7 @@ select sum(b.cantidad-a.cantidad) from
 
 create view tallasModeloD as
 select m.modelo_id as modelo, talla_id as talla, sum(mdt.cantidad) as cantidad
-from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuidHo_id = mdt.modelo_distribuido_id join 
+from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
 modelo m on m.modelo_id = md.modelo_id
 GROUP by talla_id
 
@@ -1125,3 +1125,90 @@ color co on co.color_id = ctc.Color_id
 where c.corte_modelo = 9 and talla_id = 'CT'
 GROUP BY co.color_id
 
+
+
+
+/*Consultas de Ventas*/
+
+/*Consultar las ventas con sus respecticas cantidades*/
+select v.venta_id, venta_fecha, sum(cantidad) as cantidad, sum(cantidad*m.modelo_valor)
+from venta v join modelo_vendido mv on v.venta_id = mv.venta_id JOIN
+modelo_venta_Talla mvt on mvt.modelo_vendido_id = mv.modelo_vendido_id JOIN
+venta_talla_Color vtc on vtc.modelo_Venta_Talla_id = mvt.modelo_Venta_Talla_id join
+modelo_almacen ma on ma.modelo_almacen_id = mv.modelo_almacen_id JOIN
+modelo_distribuido md on md.modelo_distribuido_id = ma.modelo_distribuido_id JOIN
+modelo m on m.modelo_id = md.modelo_id
+where venta_fecha BETWEEN '2020-05-01' AND '2020-05-03'
+GROUP BY v.venta_id
+
+/*ventas de un dia*/
+
+create FUNCTION ventasAlmacen(almacen int, fechaI date, fechaF date)
+returns INT
+BEGIN
+
+declare total int;
+
+select sum(cantidad*m.modelo_valor) INTO total
+from venta v join modelo_vendido mv on v.venta_id = mv.venta_id JOIN
+modelo_venta_Talla mvt on mvt.modelo_vendido_id = mv.modelo_vendido_id JOIN
+venta_talla_Color vtc on vtc.modelo_Venta_Talla_id = mvt.modelo_Venta_Talla_id join
+modelo_almacen ma on ma.modelo_almacen_id = mv.modelo_almacen_id JOIN
+modelo_distribuido md on md.modelo_distribuido_id = ma.modelo_distribuido_id JOIN
+modelo m on m.modelo_id = md.modelo_id
+where venta_fecha BETWEEN fechaI and fechaF and ma.almacen_id = almacen;
+
+return total;
+
+
+/*consultar los modelos de una venta*/
+select m.modelo_id, modelo_nombre 
+from modelo m join modelo_Distribuido md on  m.modelo_id = md.modelo_id JOIN
+modelo_almacen ma on ma.modelo_distribuido_id = md.modelo_distribuido_id JOIN
+modelo_vendido mv  on mv.modelo_almacen_id = ma.modelo_almacen_id JOIN
+venta v on v.venta_id = mv.venta_id 
+where v.venta_id = 8
+
+
+/* consultar tallas de un modelo de una venta */
+select talla_id 
+from venta v join modelo_vendido mv on v.venta_id = mv.venta_id JOIN
+modelo_venta_Talla mvt on mvt.modelo_vendido_id = mv.modelo_vendido_id JOIN
+modelo_almacen ma on ma.modelo_almacen_id = mv.modelo_almacen_id JOIN
+modelo_distribuido md on md.modelo_distribuido_id = ma.modelo_distribuido_id JOIN
+modelo m on m.modelo_id = md.modelo_id
+where v.venta_id = 8 and m.modelo_id = 3
+GROUP BY talla_id;
+
+
+/*consultar la cantidad de un talla de un modelo vendido*/
+select sum(cantidad)
+from venta v join modelo_vendido mv on v.venta_id = mv.venta_id JOIN
+modelo_venta_Talla mvt on mvt.modelo_vendido_id = mv.modelo_vendido_id JOIN
+venta_talla_Color vtc on vtc.modelo_venta_Talla_id = mvt.modelo_venta_Talla_id JOIN
+modelo_almacen ma on ma.modelo_almacen_id = mv.modelo_almacen_id JOIN
+modelo_distribuido md on md.modelo_distribuido_id = ma.modelo_distribuido_id JOIN
+modelo m on m.modelo_id = md.modelo_id
+where v.venta_id = 8 and m.modelo_id = 9 and talla_id = 'G'
+
+
+/*consultar los colores de una talla de un modelo vendido*/
+select c.color_id, color_Nombre
+from venta v join modelo_vendido mv on v.venta_id = mv.venta_id JOIN
+modelo_venta_Talla mvt on mvt.modelo_vendido_id = mv.modelo_vendido_id JOIN
+venta_talla_Color vtc on vtc.modelo_venta_Talla_id = mvt.modelo_venta_Talla_id JOIN
+Color c on c.color_id = vtc.Color_id JOIN
+modelo_almacen ma on ma.modelo_almacen_id = mv.modelo_almacen_id JOIN
+modelo_distribuido md on md.modelo_distribuido_id = ma.modelo_distribuido_id JOIN
+modelo m on m.modelo_id = md.modelo_id
+where v.venta_id = 8 and m.modelo_id = 9 and talla_id = 'CT'
+
+/*consultar la cantidad de un color de una talla de un modelo vendido*/
+select sum(cantidad)
+from venta v join modelo_vendido mv on v.venta_id = mv.venta_id JOIN
+modelo_venta_Talla mvt on mvt.modelo_vendido_id = mv.modelo_vendido_id JOIN
+venta_talla_Color vtc on vtc.modelo_venta_Talla_id = mvt.modelo_venta_Talla_id JOIN
+modelo_almacen ma on ma.modelo_almacen_id = mv.modelo_almacen_id JOIN
+modelo_distribuido md on md.modelo_distribuido_id = ma.modelo_distribuido_id JOIN
+modelo m on m.modelo_id = md.modelo_id
+where v.venta_id = 8 and m.modelo_id = 9 and talla_id = 'P' and color_id = 8

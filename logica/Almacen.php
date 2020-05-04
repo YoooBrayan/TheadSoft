@@ -8,8 +8,8 @@ class Almacen
 
     private $id;
     private $lugar;
-    private $modelos;
-    private $ventas;
+    private $modelos = array();
+    private $ventas = array();
     private $insumos;
     private $almacenDAO;
     private $conexion;
@@ -278,6 +278,39 @@ class Almacen
     {
         $this->conexion->abrir();
         $this->conexion->ejecutar($this->almacenDAO->tallaModeloAlmacen($talla));
+
+        if ($this->conexion->numFilas() == 1) {
+            $registros = $this->conexion->extraer();
+            $resultado = $registros[0];
+            return $resultado;
+        } else {
+            //$this->conexion->cerrar();
+            return "";
+        }
+    }
+
+    function ventas($fechaI, $fechaF){
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->almacenDAO->ventas($fechaI, $fechaF));
+        
+        $modelos = array();
+
+        while(($registro = $this->conexion->extraer()) != null)
+        {
+            $venta = new Venta($registro[0], $registro[1], $registro[2], $registro[3]);
+            $venta -> setModelos($venta -> modelosVenta());
+
+            array_push($modelos, $venta);
+        }
+
+        $this->ventas = $modelos;
+        $this->conexion->cerrar();
+    }
+
+    function ventasAlmacen($fechaI, $fechaF)
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->almacenDAO->ventasAlmacen($fechaI, $fechaF));
 
         if ($this->conexion->numFilas() == 1) {
             $registros = $this->conexion->extraer();

@@ -219,4 +219,21 @@ class AlmacenDAO
         
         ";
     }
+
+    function ventas($fechaI, $fechaF){
+        return "select v.venta_id, venta_fecha, sum(cantidad) as cantidad, sum(cantidad*m.modelo_valor)
+        from venta v join modelo_vendido mv on v.venta_id = mv.venta_id JOIN
+        modelo_venta_Talla mvt on mvt.modelo_vendido_id = mv.modelo_vendido_id JOIN
+        venta_talla_Color vtc on vtc.modelo_Venta_Talla_id = mvt.modelo_Venta_Talla_id join
+        modelo_almacen ma on ma.modelo_almacen_id = mv.modelo_almacen_id JOIN
+        modelo_distribuido md on md.modelo_distribuido_id = ma.modelo_distribuido_id JOIN
+        modelo m on m.modelo_id = md.modelo_id
+        where venta_fecha BETWEEN '". $fechaI ."' AND '". $fechaF ."' and ma.almacen_id = '". $this->id ."'
+        GROUP BY v.venta_id
+        ";
+    }
+
+    function ventasAlmacen($fechaI, $fechaF){
+        return "select ventasAlmacen('". $this->id ."', '". $fechaI ."', '". $fechaF ."')";
+    }
 }
