@@ -4,8 +4,8 @@ if (isset($_POST['idModelo'])) {
 
     session_start();
 
-
     $modelo = new Modelo($_POST['idModelo'], $_POST['modelo']);
+    $modelo -> valorModelo();
 
     foreach ($_SESSION['tallas'] as $t) {
         $t->setColores($_SESSION['colores' . $t->getId()]);

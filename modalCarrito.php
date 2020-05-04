@@ -5,6 +5,17 @@ require_once "logica/Color.php";
 
 session_start();
 
+$total = 0;
+
+foreach($_SESSION['carrito'] as $m){
+    $cantidadM = 0;
+
+    foreach($m -> getTalla() as $t){
+        $cantidadM += $t->getCantidad();
+    }
+    $total += $cantidadM*$m->getValor();
+}
+
 ?>
 
 <div class="modal-header">
@@ -74,19 +85,12 @@ session_start();
         </div>
         </div>";
 
-
-            /*echo "
-        <div class='card border-dark mb-3' style='max-width: 100%;'>
-        <div class='card-header'>Modelo</div>
-        <div class='card-body text-dark'>
-
-            <p class='card-text'> " . $c -> getNombre() . " </p>
-        </div>
-        </div> ";*/
         }
 
         ?>
     </div>
+    <br>
+    <label>Total: <?php echo $total ?> </label>
     <br>
     <button id="registrar" type="submit" name="registrar" class="btn btn-dark">Registrar Venta</button>
 

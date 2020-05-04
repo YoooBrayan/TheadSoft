@@ -377,6 +377,17 @@ class Modelo
         $this->talla = $tallasM;
     }
 
+    function valorModelo()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->modeloDAO->valorModelo());
+        if ($this->conexion->numFilas() == 1) {
+            $resultado = $this->conexion->extraer();
+            $this->valor = $resultado[0];
+        }
+        $this->conexion->cerrar();
+    }
+
     // Los siguientes metodos se utilizan para obtener los atributos privados en un array_column o un metodo de array.
 
     public function __get($prop)
