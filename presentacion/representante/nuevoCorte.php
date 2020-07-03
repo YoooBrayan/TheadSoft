@@ -14,6 +14,9 @@ $tallas = $talla->consultarTallas();
 $color = new Color();
 $colores = $color->consultarColores();
 
+$satelite = new Satelite();
+$satelites = $satelite -> listaSatelites();
+
 $tallass = array();
 
 foreach ($tallas as $t) {
@@ -33,6 +36,17 @@ foreach ($tallas as $t) {
                     <form action=<?php echo "index.php?pid=" . base64_encode("presentacion/representante/registrarCorte.php") ?> method="post">
                         <hr/ style="border: 1px solid">
                         <h6>Nuevo corte</h6>
+                        <div class="form-group">
+                            <label>Seleccione Satelite</label>
+                            <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idS">
+                                <?php
+                                foreach ($satelites as $s) {
+                                ?>
+                                    <option value="<?php echo $s->getId() ?>"><?php echo $s->getNombre();  ?></option>
+                                <?php }
+                                ?>
+                            </select>
+                        </div>
                         <div class="form-group">
                             <label>Seleccione Modelo</label>
                             <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idM">
@@ -197,6 +211,7 @@ foreach ($tallas as $t) {
         
         e.preventDefault();
         let idM = $("#idM option:selected")[0].value;
+        let idS = $("#idS option:selected")[0].value;
         let fecha_envio = $("#fechaEnvio").val();
         let fecha_entrega = $("#fechaEntrega").val();
         let observaciones = $($("#editor").summernote("code")).text();
@@ -209,6 +224,7 @@ foreach ($tallas as $t) {
                 data: {
                     idR,
                     idM,
+                    idS,
                     fecha_envio,
                     fecha_entrega,
                     observaciones

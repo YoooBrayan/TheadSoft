@@ -2,20 +2,21 @@
 
 class OperarioDAO{
 
-    private $id, $nombre, $correo, $clave, $usuario;
+    private $id, $nombre, $correo, $clave, $usuario, $satelite;
     private $tareas = array();
 
-    function OperarioDAO($id="", $nombre="", $correo="", $clave="", $usuario="", $tareas=""){
+    function OperarioDAO($id="", $nombre="", $correo="", $clave="", $usuario="", $tareas="", $satelite=""){
         $this->id = $id;
         $this->nombre = $nombre;
         $this->correo = $correo;
         $this->clave = $clave;
+        $this->satelite = $satelite;
         $this -> tareas = new Tarea();
     }
 
     function autenticar()
     {
-        return "select operario_Id, operario_usuario from operario where operario_correo = '" . $this->correo .  "' and operario_clave = sha1('" . $this->clave . "') ";
+        return "select operario_Id, operario_usuario, operario_satelite from operario where operario_correo = '" . $this->correo .  "' and operario_clave = sha1('" . $this->clave . "') ";
     }
 
     function consultar()
@@ -23,8 +24,8 @@ class OperarioDAO{
         return "select operario_nombre, operario_correo from operario where operario_id = '" . $this->id . "' ";
     }
 
-    function consultarTodos(){
-        return "select * from Operarios";
+    function consultarTodos($satelite){
+        return "select * from Operarios where operario_satelite = '". $satelite ."'";
     }
 
     function insertar()

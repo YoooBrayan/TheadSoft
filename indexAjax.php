@@ -14,6 +14,7 @@ require_once 'logica/Operacion.php';
 require_once 'logica/Almacen.php';
 require_once 'logica/Venta.php';
 require_once 'logica/Insumo.php';
+require_once 'logica/Satelite.php';
 
 if (isset($_GET["pid"])) {
 

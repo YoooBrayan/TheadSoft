@@ -4,7 +4,7 @@ if (isset($_POST['tipo'])) {
 
     if ($_POST['tipo'] == "CE") {
         $corte = new Corte();
-        $cortes = $corte->cortesEntregadosCompletos();
+        $cortes = $corte->cortesEntregadosCompletosR();
 
         $json = array();
         foreach ($cortes as $c) {
@@ -13,6 +13,7 @@ if (isset($_POST['tipo'])) {
                 'modelo' => $c->getModelo()->getNombre(),
                 'fecha' => $c->getFecha_Entrega(),
                 'cantidad' => $c->getCantidad(),
+                'satelite' => $c->getSatelite(),
                 'pago' => $c->getPago(),
                 'estado' => $c->getEstado(),
             );
@@ -21,7 +22,7 @@ if (isset($_POST['tipo'])) {
         echo json_encode($json);
     } else {
         $corte = new Corte();
-        $cortes = $corte->cortesEntregadosPendientes();
+        $cortes = $corte->cortesEntregadosPendientesR();
 
         $json = array();
         foreach ($cortes as $c) {
@@ -30,6 +31,7 @@ if (isset($_POST['tipo'])) {
                 'modelo' => $c->getModelo()->getNombre(),
                 'fecha' => $c->getFecha_Entrega(),
                 'cantidad' => $c->getCantidad(),
+                'satelite' => $c->getSatelite(),
                 'pago' => $c->getPago(),
                 'estado' => $c->getEstado(),
             );

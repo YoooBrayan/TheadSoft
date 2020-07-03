@@ -14,8 +14,9 @@ class CorteDAO
     private $tallas;
     private $colores;
     private $cantidad;
+    private $satelite;
 
-    function CorteDAO($id = "", $fecha_envio = "", $fecha_entrega = "", $observaciones = "", $representante = "", $modelo = "", $estado = "", $tareas = "", $tallas = "", $cantidad = "")
+    function CorteDAO($id = "", $fecha_envio = "", $fecha_entrega = "", $observaciones = "", $representante = "", $modelo = "", $estado = "", $tareas = "", $tallas = "", $cantidad = "", $satelite = "")
     {
 
         $this->id = $id;
@@ -27,11 +28,12 @@ class CorteDAO
         $this->representante = new Representante();
         $this->modelo = new Modelo();
         $this->cantidad = $cantidad;
+        $this->satelite = $satelite;
     }
 
     function insertar()
     {
-        return "call nuevoCorte('" . $this->id . "', '" . $this->representante->getId() . "', '" . $this->modelo->getId() . "', '" . $this->fecha_envio . "', '" . $this->fecha_entrega . "', '" . $this->observaciones . "')";
+        return "call nuevoCorte('" . $this->id . "', '" . $this->representante->getId() . "', '" . $this->modelo->getId() . "', '" . $this->fecha_envio . "', '" . $this->fecha_entrega . "', '" . $this->observaciones . "', '". $this->satelite ."')";
     }
 
     function idCorteNuevo()
@@ -106,7 +108,12 @@ class CorteDAO
         $this->id = $id;
     }
 
-    function cortesPorEntregar()
+    function cortesPorEntregar($satelite)
+    {
+        return "select id, modelo, 'fecha de envio', cantidad from cortesPorEntregar where corte_satelite = '" . $satelite . "'";
+    }
+
+    function cortesPorEntregarR()
     {
         return "select * from cortesPorEntregar";
     }
@@ -148,11 +155,19 @@ class CorteDAO
         return "select obtenerCantidadPrendasT('". $this->id ."')";
     }
 
-    function cortesEntregadosCompletos(){
+    function cortesEntregadosCompletos($satelite){
+        return "select id, modelo, realizadas 'fecha de entrega', corte_estado, 'total pago' from cortesEntregadosC where corte_satelite = '" . $satelite . "'";
+    }
+
+    function cortesEntregadosPendientes($satelite){
+        return "select id, modelo, realizadas 'fecha de entrega', corte_estado, pago from cortesEntregadosP where corte_satelite = '" . $satelite . "'";
+    }
+
+    function cortesEntregadosCompletosR(){
         return "select * from cortesEntregadosC";
     }
 
-    function cortesEntregadosPendientes(){
+    function cortesEntregadosPendientesR(){
         return "select * from cortesEntregadosP";
     }
 
@@ -164,9 +179,11 @@ class CorteDAO
         return "call removerPago('". $this->id ."')";
     }
 
-    function consultarCortes(){
+    function consultarCortes($satelite){
         return "select C.Corte_ID as ID, Modelo_Nombre as Modelo, Corte_Fecha_Envio, sum(Cantidad) as Cantidad 
-        from corte c join Modelo m on c.corte_modelo = m.modelo_id join Corte_Talla ct on ct.corte_id = c.corte_id group by c.Corte_id";
+        from corte c join Modelo m on c.corte_modelo = m.modelo_id join Corte_Talla ct on ct.corte_id = c.corte_id = '". $satelite ."'
+        where corte_satelite 
+        group by c.Corte_id";
     }
 
     function operariosNomina(){

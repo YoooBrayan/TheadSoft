@@ -186,7 +186,7 @@ foreach ($tallas as $t) {
 
                 }
             });
-        }else{
+        } else {
             $("#cantidadD").html("");
         }
     });
@@ -234,7 +234,7 @@ foreach ($tallas as $t) {
         let cantidadT = $("#cantidadT").val();
         let modelo1 = $("#idM option:selected")[0].value;
 
-        if (cantidadT > 0) {
+        if (cantidadT > 0 && idT != 0) {
             var itemSelectorOption = $('#idT option:selected');
             itemSelectorOption.remove();
             $('#idT').selectpicker('refresh');
@@ -277,6 +277,15 @@ foreach ($tallas as $t) {
                     });
                 }
             });
+        } else if (idT == 0) {
+            Swal.fire({
+                position: 'center',
+                icon: 'warning',
+                title: 'Seleccione Talla',
+                showConfirmButton: false,
+                timer: 600
+            });
+
         } else {
             Swal.fire({
                 position: 'center',

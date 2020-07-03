@@ -8,7 +8,7 @@ include 'presentacion/representante/cabeceraRepresentante.php';
 
 $corte = new Corte();
 
-$cortesPorEntregar = $corte->cortesPorEntregar();
+$cortesPorEntregar = $corte->cortesPorEntregarR();
 
 ?>
 
@@ -27,6 +27,7 @@ $cortesPorEntregar = $corte->cortesPorEntregar();
 									<th scope="col">Modelo</th>
 									<th scope="col">Fecha de Envio</th>
 									<th scope="col">Cantidad</th>
+									<th scope="col">Satelite</th>
 									<th scope="col">Servicios</th>
 								</tr>
 							</thead>
@@ -37,6 +38,7 @@ $cortesPorEntregar = $corte->cortesPorEntregar();
 									echo "<td>" . $cpe->getModelo()->getNombre() . "</td>";
 									echo "<td>" . $cpe->getFecha_Envio() . "</td>";
 									echo "<td>" . $cpe->getCantidad() . "</td>";
+									echo "<td>" . $cpe->getSatelite() . "</td>";
 									echo "<td>" . "<a href='modalCorte.php?idCorte=" . $cpe->getId() . "' data-toggle='modal' data-target='#modalCorte' ><span class='fas fa-eye' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Ver Detalles' ></span> </a>
 									</td>";
 									echo "</tr>";

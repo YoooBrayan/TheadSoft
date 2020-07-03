@@ -108,7 +108,7 @@ class ModeloDAO
         return "select sum(b.cantidad-a.cantidad) from 
         (
             select co.color_id as id, color_nombre as color, ifnull(sum(ctc.cantidad), 0) as cantidad
-            from corte c inner join Corte_Talla ct on c.Corte_Id = ct.Corte_Id join corte_Entregado_bodega ceb on ceb.corte_id 
+            from corte c inner join Corte_Talla ct on c.Corte_Id = ct.Corte_Id join corte_Entregado_bodega ceb on ceb.corte_id = c.corte_id
             inner join Corte_Talla_Color ctc on ct.Corte_Talla_id = ctc.Corte_Talla_id 
             inner join Color co on co.Color_Id = ctc.Color_Id
             where corte_modelo = '". $this->id ."' and ct.talla_id = '". $talla ."' and ctc.Color_id = '". $color ."'

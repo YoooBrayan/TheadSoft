@@ -75,6 +75,7 @@ create table Corte(
    foreign key(Corte_Modelo) references Modelo(Modelo_Id)
 );
 
+alter table corte add column corte_satelite int not null;
 
 create table Estado(
 	Estado_Id int not null,
@@ -172,7 +173,7 @@ create table Satelite(
 create table Operario(
    Operario_Id int not null,
    Operario_Nombre varchar(40) not null,
-   Operario_Usuario int not null default 3,
+   Operario_Usuario int not null default 4,
    Operario_Correo varchar(50) not null,
    Operario_clave varchar(40) not null,
    Operario_Satelite int not null,
@@ -245,6 +246,24 @@ create table venta_talla_Color(
 
 /*Consultas*/
 
+/*Procedimieto para generar tareas de un corte o Nuevo Corte*/
+delimiter //
+create procedure NuevoCorte(id int, CorteRepresentante int, CorteTipoPrenda int, CorteFechaEnvio date, CorteFechaEntrega date, CorteObservacionProv varchar(60), Corte_Satelite int)
+begin
+
+insert into Corte(Corte_Id, Corte_Representante, Corte_Modelo, Corte_Fecha_Envio, Corte_Fecha_Entrega, Corte_Observacion_Prov, Corte_Satelite) values 
+	(id, CorteRepresentante, CorteTipoPrenda, CorteFechaEnvio, CorteFechaEntrega, CorteObservacionProv, Corte_Satelite);
+
+insert into Tarea(Tarea_Corte, Tarea_Operacion) 
+select id, Operacion.Operacion_Id 
+from Corte, Modelo, Modelo_Operacion, Operacion 
+where Corte_Modelo = Modelo.Modelo_Id and Modelo.Modelo_Id = Modelo_Operacion.Modelo_Id and Modelo_Operacion.Operacion_Id = Operacion.Operacion_Id and Corte_id = id;
+
+end//
+
+delimiter ;
+
+
 /*Tallas de un corte*/
 
 select ct.Talla_Id 
@@ -268,7 +287,7 @@ where c.corte_id = 52 and ct.talla_id = "CT";
 /*Vistas*/
 
 	create view CortesPorEntregar as
-	select Corte.Corte_ID as ID, Modelo_Nombre as Modelo, Corte_Fecha_Envio as "Fecha de Envio", sum(Cantidad) as Cantidad 
+	select corte_satelite, Corte.Corte_ID as ID, Modelo_Nombre as Modelo, Corte_Fecha_Envio as "Fecha de Envio", sum(Cantidad) as Cantidad 
 	from corte, Modelo, Corte_Talla
 	where Corte.corte_Id not in
 	(
@@ -307,7 +326,11 @@ group by co.color_id, ct.talla_id
 order by c.corte_modelo, ct.talla_id
 
 
-select m.modelo_id, ct.Talla_id, c.color_id, color_nombre, cantidad
+create view operarios as
+select Operario_Id as 'ID', Operario_Nombre as 'Nombre', Operario_Correo as 'Correo', Operario_Satelite
+from Operario
+order by Operario_Id;
+
 
 /*Funciones*/
 
@@ -648,7 +671,7 @@ select sum(e.realizadas+p.realizadas) from (
 
 /**cortes entregados*/
 create view CortesEntregadosC as
-select corte.Corte_Id as ID, Modelo_Nombre as Modelo, sum(cantidad) as Realizadas, Corte_Entregado_Bodega.Corte_fecha_Entrega as "Fecha de Entrega", corte_estado, sum(cantidad*Modelo_Valor) as "Total Pago"
+select corte_satelite, corte.Corte_Id as ID, Modelo_Nombre as Modelo, sum(cantidad) as Realizadas, Corte_Entregado_Bodega.Corte_fecha_Entrega as "Fecha de Entrega", corte_estado, sum(cantidad*Modelo_Valor) as "Total Pago"
 from corte, Corte_Talla, Corte_Entregado_Bodega, Modelo
 where corte.Corte_Id = Corte_Talla.Corte_Id and Corte.Corte_Id = Corte_Entregado_Bodega.Corte_Id and Corte_Modelo = Modelo_Id and Corte_Estado <> 2 and Corte_Estado <> 4 
 group by corte.Corte_Id
@@ -657,7 +680,7 @@ ORDER BY corte_estado desc;
 
 /*Vista cortes entregados Pagados*/
 create view cortesEntregadosP as
-select Corte_Pendiente_bodega.Corte_Id as ID, Modelo_Nombre as Modelo, sum(Corte_Cantidad_Entregada) as Realizadas, Corte_Pendiente_bodega.Corte_Fecha_Entrega as 'Fecha de Entrega', corte_estado, sum(Corte_Cantidad_Entregada*Modelo_Valor) as Pago
+select corte_satelite, Corte_Pendiente_bodega.Corte_Id as ID, Modelo_Nombre as Modelo, sum(Corte_Cantidad_Entregada) as Realizadas, Corte_Pendiente_bodega.Corte_Fecha_Entrega as 'Fecha de Entrega', corte_estado, sum(Corte_Cantidad_Entregada*Modelo_Valor) as Pago
 from Corte_Pendiente_bodega, Modelo, Corte_Talla, Corte
 where Corte_Pendiente_bodega.Corte_Id not in
 (

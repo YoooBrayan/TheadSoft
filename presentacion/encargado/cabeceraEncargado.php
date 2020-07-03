@@ -1,5 +1,5 @@
 <?php 
-$operario = new Operario($_SESSION['id']);
+$operario = new Operario($_SESSION['id']['id']);
 $operario -> consultar();
 
 ?>

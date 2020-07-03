@@ -155,6 +155,7 @@ $modelos = $modelos->consultarModelos();
 		let tipo = $("select option:selected")[0].value;
 		if (tipo == 'CE') {
 			$("#CP").attr("hidden", true);
+			$("#CB").attr("hidden", true);
 			$("#CE").removeAttr("hidden");
 
 			$.ajax({
@@ -191,6 +192,7 @@ $modelos = $modelos->consultarModelos();
 
 		} else if (tipo == 'CP') {
 			$("#CE").attr("hidden", true);
+			$("#CB").attr("hidden", true);
 			$("#CP").removeAttr("hidden");
 			$.ajax({
 				type: "POST",

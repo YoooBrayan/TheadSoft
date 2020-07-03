@@ -169,6 +169,8 @@ $modelos = $modelos->consultarModelos();
 		$("#fechaInicio").val("");
 		$("#fechaFinal").val("");
 
+		$("#idMA").empty().append('<option selected="selected" value="0">Seleccione</option>');
+
 		let almacen = $("#idA option:selected")[0].value;
 
 		if (almacen != "0") {

@@ -20,8 +20,9 @@ class Corte
     private $corteDAO;
     private $cantidad;
     private $pago;
+    private $satelite;
 
-    function Corte($id = "", $fecha_envio = "", $fecha_entrega = "", $observaciones = "", $representante = "", $modelo = "", $estado = "", $tareas = "", $tallas = "", $colores = "", $cantidad = "", $pago = "")
+    function Corte($id = "", $fecha_envio = "", $fecha_entrega = "", $observaciones = "", $representante = "", $modelo = "", $estado = "", $tareas = "", $tallas = "", $colores = "", $cantidad = "", $pago = "", $satelite = "")
     {
 
         $this->id = $id;
@@ -29,7 +30,7 @@ class Corte
         $this->fecha_entrega = $fecha_entrega;
         $this->observaciones = $observaciones;
         $this->conexion = new Conexion();
-        $this->corteDAO = new CorteDAO($id, $fecha_envio, $fecha_entrega, $observaciones, $representante, $modelo, "", "", $tallas);
+        $this->corteDAO = new CorteDAO($id, $fecha_envio, $fecha_entrega, $observaciones, $representante, $modelo, "", "", $tallas, "", $satelite);
         $this->representante = new Representante();
         $this->modelo = $modelo;
         $this->tallas = array();
@@ -37,6 +38,7 @@ class Corte
         $this->cantidad = $cantidad;
         $this->pago = $pago;
         $this->estado = $estado;
+        $this->satelite = $satelite;
     }
 
     function getId()
@@ -226,15 +228,30 @@ class Corte
         }
     }
 
-    function cortesPorEntregar()
+    function cortesPorEntregar($satelite)
     {
         $this->conexion->abrir();
-        $this->conexion->ejecutar($this->corteDAO->cortesPorEntregar());
+        $this->conexion->ejecutar($this->corteDAO->cortesPorEntregar($satelite));
         $resultados = array();
         $i = 0;
         while (($registro = $this->conexion->extraer()) != null) {
             $modelo = new Modelo("", $registro[1]);
             $resultados[$i] = new Corte($registro[0], $registro[2], "", "", "", $modelo, "", "", "", "", $registro[3]);
+            $i++;
+        }
+        $this->conexion->cerrar();
+        return $resultados;
+    }
+
+    function cortesPorEntregarR()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->cortesPorEntregarR());
+        $resultados = array();
+        $i = 0;
+        while (($registro = $this->conexion->extraer()) != null) {
+            $modelo = new Modelo("", $registro[2]);
+            $resultados[$i] = new Corte($registro[1], $registro[3], "", "", "", $modelo, "", "", "", "", $registro[4], "", $registro[0]);
             $i++;
         }
         $this->conexion->cerrar();
@@ -291,6 +308,11 @@ class Corte
     function getCantidad()
     {
         return $this->cantidad;
+    }
+
+    function getSatelite()
+    {
+        return $this->satelite;
     }
 
     function eliminarColores()
@@ -353,10 +375,10 @@ class Corte
         }
     }
 
-    function cortesEntregadosCompletos()
+    function cortesEntregadosCompletos($satelite)
     {
         $this->conexion->abrir();
-        $this->conexion->ejecutar($this->corteDAO->cortesEntregadosCompletos());
+        $this->conexion->ejecutar($this->corteDAO->cortesEntregadosCompletos($satelite));
         $resultados = array();
         $i = 0;
         while (($registro = $this->conexion->extraer()) != null) {
@@ -368,15 +390,45 @@ class Corte
         $this->conexion->cerrar();
     }
 
-    function cortesEntregadosPendientes()
+    function cortesEntregadosPendientes($satelite)
     {
         $this->conexion->abrir();
-        $this->conexion->ejecutar($this->corteDAO->cortesEntregadosPendientes());
+        $this->conexion->ejecutar($this->corteDAO->cortesEntregadosPendientes($satelite));
         $resultados = array();
         $i = 0;
         while (($registro = $this->conexion->extraer()) != null) {
             $modelo = new Modelo("", $registro[1]);
             $resultados[$i] = new Corte($registro[0], "", $registro[3], "", "", $modelo, $registro[4], "", "", "", $registro[2], $registro[5]);
+            $i++;
+        }
+        return $resultados;
+        $this->conexion->cerrar();
+    }
+
+    function cortesEntregadosCompletosR()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->cortesEntregadosCompletosR());
+        $resultados = array();
+        $i = 0;
+        while (($registro = $this->conexion->extraer()) != null) {
+            $modelo = new Modelo("", $registro[2]);
+            $resultados[$i] = new Corte($registro[1], "", $registro[4], "", "", $modelo, $registro[5], "", "", "", $registro[3], $registro[6], $registro[0]);
+            $i++;
+        }
+        return $resultados;
+        $this->conexion->cerrar();
+    }
+
+    function cortesEntregadosPendientesR()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->cortesEntregadosPendientesR());
+        $resultados = array();
+        $i = 0;
+        while (($registro = $this->conexion->extraer()) != null) {
+            $modelo = new Modelo("", $registro[2]);
+            $resultados[$i] = new Corte($registro[1], "", $registro[4], "", "", $modelo, $registro[5], "", "", "", $registro[3], $registro[6], $registro[0]);
             $i++;
         }
         return $resultados;
@@ -410,10 +462,10 @@ class Corte
     }
 
 
-    function consultarCortes()
+    function consultarCortes($satelite)
     {
         $this->conexion->abrir();
-        $this->conexion->ejecutar($this->corteDAO->consultarCortes());
+        $this->conexion->ejecutar($this->corteDAO->consultarCortes($satelite));
         $resultados = array();
         $i = 0;
         while (($registro = $this->conexion->extraer()) != null) {

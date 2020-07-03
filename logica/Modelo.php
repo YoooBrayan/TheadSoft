@@ -366,7 +366,17 @@ class Modelo
 
             foreach ($colores as $c) {
                 $cantidadC = $this->colorTallaModeloBodega($c->getId(), $t);
-                $c->setCantidad($cantidadC);
+                if($cantidadC<1){
+                    $ids = array_column($colores, 'id');
+                    $indice = array_search($c -> getId(), $ids);
+                    unset($colores[$indice]);
+                    $coloresA = array_values($colores);
+                    unset($colores);
+                    $colores = $coloresA;
+                    
+               }else{
+                    $c -> setCantidad($cantidadC);
+                }
             }
 
             $talla = new Talla($t, "", "", $cantidad);

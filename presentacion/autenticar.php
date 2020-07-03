@@ -7,10 +7,11 @@ $super = new Super("", "", $correo, $clave);
 $operario = new Operario("", "", $correo, $clave);
 $representante = new Representante("", "", $correo, $clave);
 
-if($operario -> autenticar()){
-    $_SESSION['id'] = $operario -> getId();
+if($operario -> autenticar()){  
+    $_SESSION['id'] = array('id' => $operario -> getId(), 'satelite' => $operario -> getSatelite() -> getId());
+    //$_SESSION['id'] = $operario -> getId();
     $usuario = $operario -> getUsuario();
-    if($usuario=3){
+    if($usuario==3){
         header("Location: index.php?pid=" . base64_encode("presentacion/encargado/sesionEncargado.php"));
     }else{
         header("Location: index.php?pid=" . base64_encode("presentacion/encargado/sesionOperario.php"));

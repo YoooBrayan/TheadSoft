@@ -6,7 +6,7 @@ $corte = new Corte($_GET['idCorte']);
 $corte->consultarCorte();
 $corte->consultarTareas();
 $operario = new Operario();
-$operarios = $operario->consultarTodos();
+$operarios = $operario->consultarTodos($_SESSION['id']['satelite']);
 
 ?>
 

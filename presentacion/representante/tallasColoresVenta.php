@@ -17,8 +17,9 @@ if (isset($_POST['cantidadD'])) {
     echo json_encode($almacen->tallasModeloAlmacenV());
     
 } else if (isset($_POST['cantidadT'])) {
-    $almacen = new Almacen($_SESSION['almacen']);
-    $cantidad = $almacen->tallasModelo($_POST['modelo1'], $_POST['talla']);
+    $modelo = new Modelo($_POST['modelo1']);
+    $almacen = new Almacen($_SESSION['almacen'], "", $modelo);
+    $cantidad = $almacen->tallaModeloAlmacen($_POST['talla']);
 
     if ($_POST['cantidadT'] <= $cantidad) {
         echo 1;

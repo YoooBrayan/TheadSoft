@@ -111,7 +111,8 @@ class AlmacenDAO
         return "select talla_id
         from modelo_almacen ma join modelo_distribuido md on ma.modelo_distribuido_id = md.modelo_distribuido_id join modelo_distribuido_talla mdt on md.modelo_distribuido_id = mdt.modelo_distribuido_id join 
         modelo m on m.modelo_id = md.modelo_id
-        where m.modelo_id = '" . $this->modelos->getId() . "' and ma.almacen_id = '" . $this->id . "'";
+        where m.modelo_id = '" . $this->modelos->getId() . "' and ma.almacen_id = '" . $this->id . "'
+        GROUP BY talla_id";
     }
 
     /*function coloresTallaModeloAlmacen($talla)
@@ -126,7 +127,8 @@ class AlmacenDAO
         modelo m on m.modelo_id = md.modelo_id JOIN
         modelo_Talla_color mtc on mtc.MDT_id = mdt.modelo_D_talla_id JOIN
         color c on c.color_id = mtc.color_id
-        where m.modelo_id = '". $this->modelos->getId() ."' and ma.almacen_id = '". $this->id ."' and talla_id = '". $talla ."'";
+        where m.modelo_id = '". $this->modelos->getId() ."' and ma.almacen_id = '". $this->id ."' and talla_id = '". $talla ."'
+        group by c.color_id";
     }
 
     function idModeloDistribuido()

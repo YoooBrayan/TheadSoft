@@ -9,13 +9,15 @@ class Operario extends Persona
     private $tareas = array();
     private $conexion;
     private $operarioDAO;
+    private $satelite;
 
-    function Operario($id = "", $nombre = "", $correo = "", $clave = "", $usuario = "", $tareas = "")
+    function Operario($id = "", $nombre = "", $correo = "", $clave = "", $usuario = "", $tareas = "", $satelite = "")
     {
         $this->Persona($id, $nombre, $correo, $clave, $usuario);
         $this->conexion = new Conexion();
         $this->tareas = array();
         $this->operarioDAO = new OperarioDAO($id, $nombre, $correo, $clave, $usuario, $tareas);
+        $this->satelite = new Satelite();
     }
 
     function autenticar()
@@ -25,8 +27,15 @@ class Operario extends Persona
         $this->conexion->ejecutar($this->operarioDAO->autenticar());
         if ($this->conexion->numFilas() == 1) {
             $resultado = $this->conexion->extraer();
+
+            $satelite = new Satelite($resultado[2]);
+
+            echo "<br>Satelite" . $satelite -> getId();
+
             $this->id = $resultado[0];
             $this->usuario = $resultado[1];
+            $this->satelite = $satelite;
+            echo "<br>Satelite Operario" . $this -> satelite -> getId();
             $this->conexion->cerrar();
             return true;
         } else {
@@ -45,10 +54,10 @@ class Operario extends Persona
         $this->conexion->cerrar();
     }
 
-    function consultarTodos()
+    function consultarTodos($satelite)
     {
         $this->conexion->abrir();
-        $this->conexion->ejecutar($this->operarioDAO->consultarTodos());
+        $this->conexion->ejecutar($this->operarioDAO->consultarTodos($satelite));
         $resultados = array();
         $i = 0;
         while (($registro = $this->conexion->extraer()) != null) {
@@ -100,7 +109,7 @@ class Operario extends Persona
         $resultados = array();
         $i = 0;
         while (($registro = $this->conexion->extraer()) != null) {
-            
+
             $resultados[$i] = array(
                 'corte' => $registro[0],
                 'modelo' => $registro[1],
@@ -130,7 +139,7 @@ class Operario extends Persona
         }
         $this->conexion->cerrar();
         return $pago;
-    } 
+    }
 
     function setTareas($tareas)
     {
@@ -141,5 +150,10 @@ class Operario extends Persona
     function getTarea()
     {
         return $this->tareas;
+    }
+
+    function getSatelite()
+    {
+        return $this->satelite;
     }
 }

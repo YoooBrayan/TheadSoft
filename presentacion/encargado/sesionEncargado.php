@@ -11,7 +11,7 @@ include 'presentacion/encargado/cabeceraEncargado.php';
 
 $corte = new Corte();
 
-$cortesPorEntregar = $corte->cortesPorEntregar();
+$cortesPorEntregar = $corte->cortesPorEntregar($_SESSION['id']['satelite']);
 
 ?>
 
