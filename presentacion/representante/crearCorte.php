@@ -18,7 +18,12 @@ if(isset($_POST['idM'])){
     $corte -> setModelo($modelo);
 
 
-    $corte -> insertar();
+    if($_POST['idS']!=0){
+        $corte -> insertarS();
+    }else{
+        $corte -> insertar();
+    }
+    
 
     $corte -> agregarTallas();
 

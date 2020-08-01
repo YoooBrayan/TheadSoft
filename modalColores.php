@@ -36,7 +36,7 @@ if (isset($_GET['modelo'])) {
 <div class="modal-body">
 	<label>Seleccione Colores:</label>
 
-	<select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idCM">
+	<select class="selectpicker ml-1" data-show-subtext="true" data-live-search="true" id="idCM">
 		<?php
 		foreach ($colores as $c) {
 		?>

@@ -174,10 +174,16 @@ class Corte
         return $resultado[0];
     }
 
+    function insertarS()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->insertarS());
+        $this->conexion->cerrar();
+    }
+
     function insertar()
     {
         $this->conexion->abrir();
-        //echo "\n" . $this->corteDAO->insertar() . "\n";
         $this->conexion->ejecutar($this->corteDAO->insertar());
         $this->conexion->cerrar();
     }
@@ -489,5 +495,13 @@ class Corte
         }
         return $resultados;
         $this->conexion->cerrar();
+    }
+
+    function actualizarSatelite($satelite){
+
+        $this -> conexion -> abrir();
+        $this -> conexion -> ejecutar($this -> corteDAO -> actualizarSatelite($satelite));
+        $this -> conexion -> cerrar();
+
     }
 }

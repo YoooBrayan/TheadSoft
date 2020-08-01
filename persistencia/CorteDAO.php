@@ -31,10 +31,16 @@ class CorteDAO
         $this->satelite = $satelite;
     }
 
-    function insertar()
+    function insertarS()
     {
         return "call nuevoCorte('" . $this->id . "', '" . $this->representante->getId() . "', '" . $this->modelo->getId() . "', '" . $this->fecha_envio . "', '" . $this->fecha_entrega . "', '" . $this->observaciones . "', '". $this->satelite ."')";
     }
+
+    function insertar()
+    {
+        return "call nuevoCorte('" . $this->id . "', '" . $this->representante->getId() . "', '" . $this->modelo->getId() . "', '" . $this->fecha_envio . "', '" . $this->fecha_entrega . "', '" . $this->observaciones . "', null)";
+    }
+
 
     function idCorteNuevo()
     {
@@ -188,5 +194,9 @@ class CorteDAO
 
     function operariosNomina(){
         return "call operariosNomina('". $this->id ."')";
+    }
+
+    function actualizarSatelite($satelite){
+        return "update corte set corte_satelite = '". $satelite ."' where corte_id = '" . $this -> id . "'";
     }
 }

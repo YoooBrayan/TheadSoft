@@ -38,7 +38,8 @@ foreach ($tallas as $t) {
                         <h6>Nuevo corte</h6>
                         <div class="form-group">
                             <label>Seleccione Satelite</label>
-                            <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idS">
+                            <select class="selectpicker ml-1" data-show-subtext="true" data-live-search="true" id="idS">
+                            <option value="0">Seleccione</option>
                                 <?php
                                 foreach ($satelites as $s) {
                                 ?>
@@ -46,10 +47,11 @@ foreach ($tallas as $t) {
                                 <?php }
                                 ?>
                             </select>
+                            <span class="display-6 text-info"><u>Opcional</u></span>
                         </div>
                         <div class="form-group">
                             <label>Seleccione Modelo</label>
-                            <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idM">
+                            <select class="selectpicker ml-1" data-show-subtext="true" data-live-search="true" id="idM">
                                 <?php
                                 foreach ($modelos as $m) {
                                 ?>
@@ -76,7 +78,7 @@ foreach ($tallas as $t) {
                         <h6>Seleccionar Tallas y Colores</h6>
 
                         <label>Seleccione Tallas</label>
-                        <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idT">
+                        <select class="selectpicker ml-1" data-show-subtext="true" data-live-search="true"  id="idT">
                             <?php
                             foreach ($tallas as $t) {
                             ?>
@@ -230,6 +232,7 @@ foreach ($tallas as $t) {
                     observaciones
                 },
                 success: function(response) {
+                    console.log("Aqui: " + response);
                     if (response) {
                         $(".text-danger").attr("style", "display: none");
                         $("#mensaje").removeAttr("hidden");

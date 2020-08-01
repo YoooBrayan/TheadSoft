@@ -3,6 +3,10 @@
 require_once 'persistencia/Conexion.php';
 require_once 'persistencia/SateliteDAO.php';
 
+if(isset($_GET['idS'])){
+    echo $this -> listaSatelites();
+}
+
 class Satelite{
 
     private $id;
