@@ -17,16 +17,15 @@ $corte->tallas($_GET['idCorte']);
 
 
 <div class="modal-header">
-    <h5 class="modal-title">Modelo: <?php echo $corte->getModelo()->getNombre() . "<br>Cantidad: " . $corte->getCantidad(); ?><span style="color:brown; margin-left: 259px;">Estado: <?php //echo $proyecto->getEstado(); 
-                                                                                                                                                                                        ?></span></h5>
+    <h5 class="modal-title">Modelo: <?php echo $corte->getModelo()->getNombre() . "<br>Cantidad: " . $corte->getCantidad(); ?></h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
 </div>
 <div class="modal-body">
     <div class="card border-dark mb-3" style="max-width: 100%;">
         <div class="card-header">Fechas</div>
         <div class="card-body text-dark">
-            <p> Fecha de Envio:  <?php echo $corte->getFecha_Envio(); ?> </p>
-            <p> Fecha de Entrega:  <?php echo $corte->getFecha_Entrega(); ?> </p>
+            <p> Fecha de Envio: <?php echo $corte->getFecha_Envio(); ?> </p>
+            <p> Fecha de Entrega: <?php echo $corte->getFecha_Entrega(); ?> </p>
         </div>
     </div>
     <div class="card border-dark mb-3" style="max-width: 100%;">
@@ -38,7 +37,7 @@ $corte->tallas($_GET['idCorte']);
     </div>
 
     <div class="card border-dark mb-3">
-        <div class="card-header">Tallas y Colores</div> 
+        <div class="card-header">Tallas y Colores</div>
         <div class="card-body text-dark">
 
             <?php
@@ -46,7 +45,8 @@ $corte->tallas($_GET['idCorte']);
             foreach ($corte->getTallas() as $t) { ?>
 
                 <div class="card border-dark mb-3" style="max-width: 100%;">
-                    <div class="card-header"><?php echo $t->getId() . "<br>Cantidad: " . $t->getCantidad()?></div>
+                    <div class="card-header"><?php echo $t->getId(); ?><input id="CT<?php echo $t->getId(); ?>" class="ml-2" type="text" value="<?php echo $t->getCantidad(); ?>" style="width:45px;"></div>
+
                     <div class="card-body text-dark">
 
                         <table class="table table-striped table-hover">
@@ -80,3 +80,24 @@ $corte->tallas($_GET['idCorte']);
     </div>
 
 </div>
+
+<script>
+    <?php
+
+    foreach ($corte->getTallas() as $t) { ?>
+
+        let talla = "<?php echo $t -> getId(); ?>";
+        $("#CT"+talla).keypress(function(e) {
+            let code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) {
+                let cantidad = $("#CT"+talla).val();
+                console.log("Enter: " + talla + " Cantidad: " + cantidad);
+
+            }
+        })
+
+    <?php
+    }
+
+    ?>
+</script>
