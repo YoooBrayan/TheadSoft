@@ -199,4 +199,8 @@ class CorteDAO
     function actualizarSatelite($satelite){
         return "update corte set corte_satelite = '". $satelite ."' where corte_id = '" . $this -> id . "'";
     }
+
+    function actualizarTallaCorte($talla, $cantidad){
+        return "update corte_talla set Cantidad = '". $cantidad ."' where corte_id = '". $this->id ."' and talla_id = '". $talla ."'";
+    }
 }

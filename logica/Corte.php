@@ -504,4 +504,13 @@ class Corte
         $this -> conexion -> cerrar();
 
     }
+
+    function actualizarTallaCorte($talla, $cantidad){
+
+        $this -> conexion -> abrir();
+        $response = $this -> conexion -> ejecutar($this -> corteDAO -> actualizarTallaCorte($talla, $cantidad));
+        $this -> conexion -> cerrar();
+        return $response;
+
+    }
 }

@@ -15,9 +15,8 @@ $corte->tallas($_GET['idCorte']);
 
 ?>
 
-
 <div class="modal-header">
-    <h5 class="modal-title">Modelo: <?php echo $corte->getModelo()->getNombre() . "<br>Cantidad: " . $corte->getCantidad(); ?></h5>
+    <h5 class="modal-title">Corte # <?php echo $_GET['idCorte'] . "<br>Modelo: " . $corte->getModelo()->getNombre() . "<br>Cantidad: " . $corte->getCantidad(); ?></h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
 </div>
 <div class="modal-body">
@@ -45,7 +44,7 @@ $corte->tallas($_GET['idCorte']);
             foreach ($corte->getTallas() as $t) { ?>
 
                 <div class="card border-dark mb-3" style="max-width: 100%;">
-                    <div class="card-header"><?php echo $t->getId(); ?><input id="CT<?php echo $t->getId(); ?>" class="ml-2" type="text" value="<?php echo $t->getCantidad(); ?>" style="width:45px;"></div>
+                    <div class="card-header"><?php echo $t->getId(); ?><input id="CT<?php echo $t->getId(); ?>" class="ml-2" type="number" value="<?php echo $t->getCantidad(); ?>" style="width:45px; border:none; border-bottom: 1px solid #C7CAC7; background-color: #F6F6F6; focus: boor"></div>
 
                     <div class="card-body text-dark">
 
@@ -82,22 +81,42 @@ $corte->tallas($_GET['idCorte']);
 </div>
 
 <script>
-    <?php
+    $(document).ready(function() {
 
-    foreach ($corte->getTallas() as $t) { ?>
+        let url = "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/actualizarCorte.php") ?>";
+        let corte = <?php echo $_GET['idCorte']; ?>;
 
-        let talla = "<?php echo $t -> getId(); ?>";
-        $("#CT"+talla).keypress(function(e) {
-            let code = (e.keyCode ? e.keyCode : e.which);
-            if (code == 13) {
-                let cantidad = $("#CT"+talla).val();
-                console.log("Enter: " + talla + " Cantidad: " + cantidad);
+        <?php
 
-            }
-        })
+        foreach ($corte->getTallas() as $t) { ?>
 
-    <?php
-    }
+            $("#CT" + "<?php echo $t->getId(); ?>").keypress(function(e) {
+                let code = (e.keyCode ? e.keyCode : e.which);
+                if (code == 13) {
+                    let talla = "<?php echo $t->getId(); ?>";
+                    let cantidad = $("#CT" + talla).val();
+                    //console.log("Enter: " + "<?php echo $t->getId(); ?>" + " Cantidad: " + cantidad);
+                    $.post(url, {talla, cantidad, corte},
+                        function (response) {
+                            console.log(response);
+                            if(response){
+                                swal.fire({
+                                    position: "center",
+                                    icon: "success",
+                                    title: 'Cantidad Actualizada',
+                                    timer: 900
+                                });
+                            }
+                        }
+                    );
 
-    ?>
+                }
+            })
+
+        <?php
+        }
+
+        ?>
+
+    });
 </script>

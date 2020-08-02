@@ -11,7 +11,7 @@ class Conexion{
     }
 
     function ejecutar($sentencia){
-         $this -> resultado = $this -> mysqli -> query($sentencia);
+         return $this -> resultado = $this -> mysqli -> query($sentencia);
     }
 
     function cerrar(){
