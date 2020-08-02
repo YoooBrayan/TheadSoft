@@ -64,7 +64,7 @@ class Talla{
         //echo "<br>" . $this->tallaDAO->consultarColores($corte);
         $this->conexion->ejecutar($this->tallaDAO->consultarColores($corte));
         while (($registro = $this->conexion->extraer()) != null) {
-            $color = new Color("", $registro[0], $registro[1]);
+            $color = new Color($registro[0], $registro[1], $registro[2]);
             array_push($this->colores, $color);
         }
         $this->conexion->cerrar();

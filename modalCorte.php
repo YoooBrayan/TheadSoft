@@ -44,7 +44,7 @@ $corte->tallas($_GET['idCorte']);
             foreach ($corte->getTallas() as $t) { ?>
 
                 <div class="card border-dark mb-3" style="max-width: 100%;">
-                    <div class="card-header"><?php echo $t->getId(); ?><input id="CT<?php echo $t->getId(); ?>" class="ml-2" type="number" value="<?php echo $t->getCantidad(); ?>" style="width:45px; border:none; border-bottom: 1px solid #C7CAC7; background-color: #F6F6F6; focus: boor"></div>
+                    <div class="card-header"><?php echo $t->getId(); ?><input id="CT<?php echo $t->getId(); ?>" class="ml-2" type="number" value="<?php echo $t->getCantidad(); ?>" style="width:45px; border:none; border-bottom: 1px solid #C7CAC7; background-color: #F6F6F6;"></div>
 
                     <div class="card-body text-dark">
 
@@ -60,7 +60,7 @@ $corte->tallas($_GET['idCorte']);
                                 <?php foreach ($t->getColores() as $c) {
                                     echo "<tr id=" . $c->getId() . ">";
                                     echo "<td>" . $c->getNombre() . "</td>";
-                                    echo "<td>" . $c->getCantidad() . "</td>";
+                                    echo "<td><input id='CC". $t->getId() . $c->getId() ."' type='number' style='width:45px; border:none; border-bottom: 1px solid #C7CAC7; background-color: #EEEEEE;' value='". $c -> getCantidad() ."'></td>";
                                     echo "</tr>";
                                 }
                                 echo "<tr><td colspan='9'>" . count($t->getColores()) . " registros encontrados</td></tr>" ?>
@@ -93,10 +93,10 @@ $corte->tallas($_GET['idCorte']);
             $("#CT" + "<?php echo $t->getId(); ?>").keypress(function(e) {
                 let code = (e.keyCode ? e.keyCode : e.which);
                 if (code == 13) {
-                    let talla = "<?php echo $t->getId(); ?>";
-                    let cantidad = $("#CT" + talla).val();
+                    let cTalla = "<?php echo $t->getId(); ?>";
+                    let cantidad = $("#CT" + cTalla).val();
                     //console.log("Enter: " + "<?php echo $t->getId(); ?>" + " Cantidad: " + cantidad);
-                    $.post(url, {talla, cantidad, corte},
+                    $.post(url, {cTalla, cantidad, corte},
                         function (response) {
                             console.log(response);
                             if(response){
@@ -114,7 +114,36 @@ $corte->tallas($_GET['idCorte']);
             })
 
         <?php
+
+            foreach($t -> getColores() as $c){ ?>
+
+                $("#CC"+"<?php echo $t -> getId() . $c -> getId(); ?>").keypress(function(e){
+                    let code = (e.keyCode ? e.keyCode : e.which);
+                    if(code == 13){
+                        let talla = "<?php echo $t -> getId(); ?>";
+                        let cColor = "<?php echo $c -> getId(); ?>";
+                        let cantidad = $("#CC"+talla+cColor).val();
+                        //console.log("Talla: " + talla + " Color: "+ color + " Cantidad:" + cantidad);
+                        $.post(url, {cColor, talla, corte, cantidad},
+                            function (response) {
+                                console.log("Aqui: " + response);
+                                if(response){
+                                    swal.fire({
+                                        position: "center",
+                                        icon: 'success',
+                                        title: 'Cantidad Actualizada',
+                                        timer: 900
+                                    });
+                                }
+                            }
+                        );
+                    }
+                })
+
+            <?php    
+            }
         }
+
 
         ?>
 

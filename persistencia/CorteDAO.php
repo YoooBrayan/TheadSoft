@@ -203,4 +203,16 @@ class CorteDAO
     function actualizarTallaCorte($talla, $cantidad){
         return "update corte_talla set Cantidad = '". $cantidad ."' where corte_id = '". $this->id ."' and talla_id = '". $talla ."'";
     }
+
+    function actualizarColorTallaCorte($color, $cantidad){
+        return "update corte_talla_color set cantidad = '". $cantidad ."' where corte_Talla_color_id = '". $color ."'";
+    }
+
+    function obtenerIdColorTalla($talla, $color){
+        return "select corte_Talla_color_id
+        from corte c join corte_talla ct on ct.corte_id = c.corte_id join corte_talla_color ctc on ctc.corte_talla_id = ct.corte_talla_id join color co on co.color_id = ctc.color_id
+        where c.corte_id = '". $this->id ."' and ct.talla_id = '". $talla ."' and co.color_id = '". $color ."'";
+    }
+
+
 }

@@ -513,4 +513,20 @@ class Corte
         return $response;
 
     }
+
+    function actualizarColorTallaCorte($talla, $color, $cantidad){
+
+        $this -> conexion -> abrir();
+        $this -> conexion -> ejecutar($this -> corteDAO -> obtenerIdColorTalla($talla, $color));
+        if($this -> conexion -> numFilas() == 1){
+            $id = $this -> conexion -> extraer();
+            $response = $this -> conexion -> ejecutar($this -> corteDAO -> actualizarColorTallaCorte($id[0], $cantidad));
+            $this -> conexion -> cerrar();
+            return $response;
+        }else{
+            $this -> conexion -> cerrar();
+            return false;
+        }
+
+    }
 }
