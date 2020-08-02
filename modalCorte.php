@@ -98,7 +98,6 @@ $corte->tallas($_GET['idCorte']);
                     //console.log("Enter: " + "<?php echo $t->getId(); ?>" + " Cantidad: " + cantidad);
                     $.post(url, {cTalla, cantidad, corte},
                         function (response) {
-                            console.log(response);
                             if(response){
                                 swal.fire({
                                     position: "center",
@@ -106,6 +105,7 @@ $corte->tallas($_GET['idCorte']);
                                     title: 'Cantidad Actualizada',
                                     timer: 900
                                 });
+                                $("#cantidad"+corte).html(response);
                             }
                         }
                     );

@@ -497,36 +497,44 @@ class Corte
         $this->conexion->cerrar();
     }
 
-    function actualizarSatelite($satelite){
+    function actualizarSatelite($satelite)
+    {
 
-        $this -> conexion -> abrir();
-        $this -> conexion -> ejecutar($this -> corteDAO -> actualizarSatelite($satelite));
-        $this -> conexion -> cerrar();
-
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->actualizarSatelite($satelite));
+        $this->conexion->cerrar();
     }
 
-    function actualizarTallaCorte($talla, $cantidad){
+    function actualizarTallaCorte($talla, $cantidad)
+    {
 
-        $this -> conexion -> abrir();
-        $response = $this -> conexion -> ejecutar($this -> corteDAO -> actualizarTallaCorte($talla, $cantidad));
-        $this -> conexion -> cerrar();
+        $this->conexion->abrir();
+        $response = $this->conexion->ejecutar($this->corteDAO->actualizarTallaCorte($talla, $cantidad));
+        if ($response) {
+            $this->conexion->ejecutar($this->corteDAO->cantidad());
+            if ($this->conexion->numFilas() == 1) {
+                $cantidad = $this->conexion->extraer();
+                $this->conexion->cerrar();
+                return $cantidad[0];
+            }
+        }
+        $this->conexion->cerrar();
         return $response;
-
     }
 
-    function actualizarColorTallaCorte($talla, $color, $cantidad){
+    function actualizarColorTallaCorte($talla, $color, $cantidad)
+    {
 
-        $this -> conexion -> abrir();
-        $this -> conexion -> ejecutar($this -> corteDAO -> obtenerIdColorTalla($talla, $color));
-        if($this -> conexion -> numFilas() == 1){
-            $id = $this -> conexion -> extraer();
-            $response = $this -> conexion -> ejecutar($this -> corteDAO -> actualizarColorTallaCorte($id[0], $cantidad));
-            $this -> conexion -> cerrar();
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->obtenerIdColorTalla($talla, $color));
+        if ($this->conexion->numFilas() == 1) {
+            $id = $this->conexion->extraer();
+            $response = $this->conexion->ejecutar($this->corteDAO->actualizarColorTallaCorte($id[0], $cantidad));
+            $this->conexion->cerrar();
             return $response;
-        }else{
-            $this -> conexion -> cerrar();
+        } else {
+            $this->conexion->cerrar();
             return false;
         }
-
     }
 }

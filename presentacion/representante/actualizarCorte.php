@@ -4,7 +4,10 @@
 if(isset($_POST['cTalla'])){
 
     $corte = new Corte($_POST['corte']);
-    echo $response = $corte -> actualizarTallaCorte($_POST['cTalla'], $_POST['cantidad']);
+    $response = $corte -> actualizarTallaCorte($_POST['cTalla'], $_POST['cantidad']);
+    if($response != false){
+        echo $response;
+    }
     
 }else if(isset($_POST['cColor'])){
 

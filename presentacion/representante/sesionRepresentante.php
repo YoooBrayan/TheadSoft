@@ -37,7 +37,7 @@ $cortesPorEntregar = $corte->cortesPorEntregarR();
 									echo "<td>" . $cpe->getId() . "</td>";
 									echo "<td>" . $cpe->getModelo()->getNombre() . "</td>";
 									echo "<td>" . $cpe->getFecha_Envio() . "</td>";
-									echo "<td>" . $cpe->getCantidad() . "</td>";
+									echo "<td id='cantidad". $cpe -> getId() ."'>" . $cpe->getCantidad() . "</td>";
 									echo "<td id='tdSatelite". $cpe -> getId() ."'>" . ($cpe->getSatelite() == '' ? "<div class='ml-3' href='modalSatelite.php?idCorte=" . $cpe->getId() . "' data-toggle='modal' data-target='#modalSatelite'><span class='far fa-square' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Asignar Satelite'></span></div>" :  $cpe->getSatelite() . " <span class='ml-1' href='modalSatelite.php?idCorte=" . $cpe->getId() . "' data-toggle='modal' data-target='#modalSatelite'><span class='far fa-square' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Cambiar Satelite'></span></span>") . "</td>";
 									echo "<td>" . "<a href='modalCorte.php?idCorte=" . $cpe->getId() . "' data-toggle='modal' data-target='#modalCorte' ><span class='fas fa-eye' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Ver Detalles' ></span> </a>
 									</td>";
