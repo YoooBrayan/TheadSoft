@@ -30,30 +30,30 @@ class MyPdf extends FPDF
 
 	function headerTable()
 	{
-		$this->Cell(15, 10, "Corte", 1, 0, "C");
-		$this->Cell(40, 10, "Modelo", 1, 0, "C");
-		$this->Cell(55, 10, "Tarea", 1, 0, "C");
-		$this->Cell(30, 10, "Cantidad", 1, 0, "C");
-		$this->Cell(30, 10, "Valor Operacion", 1, 0, "C");
-		$this->Cell(18, 10, "Pago", 1, 0, "C");
+		$this->Cell(15, 5, "Corte", 1, 0, "C");
+		$this->Cell(40, 5, "Modelo", 1, 0, "C");
+		$this->Cell(55, 5, "Tarea", 1, 0, "C");
+		$this->Cell(30, 5, "Cantidad", 1, 0, "C");
+		$this->Cell(30, 5, "Valor Operacion", 1, 0, "C");
+		$this->Cell(18, 5, "Pago", 1, 0, "C");
 		$this->Ln();
 	}
 
 	function viewTable($operario)
 	{
-		$this->Cell((strlen($operario->getId()) < 10 ? 10 : strlen($operario->getId()) + 18), 10, "ID: " . $operario->getId(), 0, 1, "C");
-		$this->Cell(28, 10, "Nombre: " . $operario->getNombre(), 0, 1, "C");
+		$this->Cell((strlen($operario->getId()) < 10 ? 10 : strlen($operario->getId()) + 18), 3, "ID: " . $operario->getId(), 0, 1, "C");
+		$this->Cell(28, 8, "Nombre: " . $operario->getNombre(), 0, 1, "C");
 
 		$this->headerTable();
 		foreach ($_SESSION['cortes'] as $c) {
 			$nominaCO = $operario->tareasNomina($c);
 			foreach ($nominaCO as $n) {
-				$this->Cell(15, 10, $c, 1, 0, "C");
-				$this->Cell(40, 10, $n['modelo'], 1, 0, "C");
-				$this->Cell(55, 10, $n['tarea'], 1, 0, "C");
-				$this->Cell(30, 10, $n['cantidad'], 1, 0, "C");
-				$this->Cell(30, 10, $n['valorU'], 1, 0, "C");
-				$this->Cell(18, 10, $n['pago'], 1, 0, "C");
+				$this->Cell(15, 5, $c, 1, 0, "C");
+				$this->Cell(40, 5, $n['modelo'], 1, 0, "C");
+				$this->Cell(55, 5, $n['tarea'], 1, 0, "C");
+				$this->Cell(30, 5, $n['cantidad'], 1, 0, "C");
+				$this->Cell(30, 5, $n['valorU'], 1, 0, "C");
+				$this->Cell(18, 5, $n['pago'], 1, 0, "C");
 				$this->Ln();
 				//echo $n['modelo'] . "<br><br>";
 				//echo $n['tarea'] . "<br><br>";
