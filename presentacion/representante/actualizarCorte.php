@@ -1,6 +1,5 @@
 <?php 
 
-
 if(isset($_POST['cTalla'])){
 
     $corte = new Corte($_POST['corte']);
