@@ -15,7 +15,7 @@ echo "Corte: " . $_GET['idCorte'];
 <div class="modal-body">
 
     <div class="input-group">
-        <select class="selectpicker ml-1" data-show-subtext="true" data-live-search="true" id="idCM">
+        <select id="idSatelites" class="selectpicker ml-1" data-show-subtext="true" data-live-search="true" id="idCM">
             <?php
             foreach ($satelites as $s) {
             ?>
@@ -43,7 +43,7 @@ echo "Corte: " . $_GET['idCorte'];
         $("#vincular").click(() => {
             
             let idC = "<?php echo $_GET['idCorte']; ?>";
-            let idS = $("select option:selected")[0].value;
+            let idS = $("#idSatelites option:selected")[0].value;
             let url = "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/actualizarSatelite.php"); ?>";
 
             $.post(url, {idC, idS},

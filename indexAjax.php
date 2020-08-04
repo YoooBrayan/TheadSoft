@@ -16,6 +16,8 @@ require_once 'logica/Venta.php';
 require_once 'logica/Insumo.php';
 require_once 'logica/Satelite.php';
 
+
+
 if (isset($_GET["pid"])) {
 
     $pid = base64_decode($_GET["pid"]);

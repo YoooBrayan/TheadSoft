@@ -124,6 +124,17 @@ class CorteDAO
         return "select * from cortesPorEntregar";
     }
 
+    function cortesPorEntregarFiltrado($filtro)
+    {
+        $consulta = "select * from cortesPorEntregar where corte_satelite";
+        if($filtro==1){
+            return $consulta .= " is not null";
+        }else{
+            return $consulta .= " is null";
+            
+        }
+    }
+
     function tallas($corte)
     {
         return "select ct.Talla_Id, ct.Cantidad

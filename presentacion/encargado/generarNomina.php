@@ -45,10 +45,10 @@ if (isset($_POST['idCortes'])) {
                 );
             }
         }
-        $pago = $operario -> pagoNeto($_SESSION['cortes']);
+        $pago = $operario->pagoNeto($_SESSION['cortes']);
         $nomina[] = array(
             'operario' =>  $o,
-            'nomina' => $nominaO, 
+            'nomina' => $nominaO,
             'pago' => $pago
         );
     }

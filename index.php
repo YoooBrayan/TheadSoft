@@ -17,6 +17,7 @@ require_once 'logica/Almacen.php';
 require_once 'logica/Venta.php';
 require_once 'logica/Insumo.php';
 require_once 'logica/Satelite.php';
+require_once 'pdf/class.ezpdf.php';
 
 ?>
 

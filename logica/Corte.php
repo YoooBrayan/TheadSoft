@@ -264,6 +264,26 @@ class Corte
         return $resultados;
     }
 
+    function cortesPorEntregarFiltrado($filtro)
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->cortesPorEntregarFiltrado($filtro));
+        $resultados[] = array();
+        $i = 0;
+        while (($registro = $this->conexion->extraer()) != null) {
+            $resultados[$i] = array(
+                'idCorte' => $registro[1],
+                'idSatelite' => ($registro[0]==''?'':$registro[0]),
+                'modelo' => $registro[2],
+                'fecha' => $registro[3],
+                'cantidad' => $registro[4]
+            );
+            $i++;
+        }
+        $this->conexion->cerrar();
+        return json_encode($resultados);
+    }
+
     function consultarCorte()
     {
         $this->conexion->abrir();
