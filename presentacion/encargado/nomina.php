@@ -138,7 +138,7 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 					</div></div>`
 				});
 
-				template += `<a id='nominaPdf' target='_blank' href='index.php?pid=<?php echo base64_encode("presentacion/encargado/generarNominaPdf.php"); ?>' type='button' class='btn btn-dark mt-2 mb-3' >Exportar PDF</a>`;
+				template += `<a id='nominaPdf' target='_blank' href='generarNominaPdf.php' type='button' class='btn btn-dark mt-2 mb-3' >Exportar PDF</a>`;
 
 				$("#cNomina").html(template);
 			}
