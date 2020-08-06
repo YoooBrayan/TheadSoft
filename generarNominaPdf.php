@@ -102,6 +102,9 @@ unset($operarios[0]);
 
 $pdf = new MyPdf();
 
+$pdf->SetTitle('Nomina ' . date('jnYhis'), true);
+
+
 $pdf->AddPage();
 
 $pdf->SetFont('arial', 'B', 16);
@@ -115,6 +118,31 @@ foreach ($operarios as $o) {
 	$pdf->viewTable($operario);
 }
 
+$pdf->Cell(195, 5, "Ganancias", 0, 1, "C");
+$pdf->Ln();
+$pdf->Cell(22, 5, "Pago Total", 1, 0, "C");
+$pdf->Cell(20, 5, "Nomina", 1, 0, "C");
+$pdf->Cell(20, 5, "Insumos", 1, 0, "C");
+$pdf->Cell(22, 5, "Ganancias", 1, 0, "C");
+$pdf->Cell(40, 5, "Ganancias Divididas", 1, 0, "C");
+$pdf->Cell(30, 5, "Sueldo Blanca", 1, 0, "C");
+$pdf->Cell(30, 5, "Sueldo jessica", 1, 0, "C");
+$pdf->Ln();
+$pdf->Cell(22, 5, "123333", 1, 0, "C");
+$pdf->Cell(20, 5, "123333", 1, 0, "C");
+$pdf->Cell(20, 5, "123333", 1, 0, "C");
+$pdf->Cell(22, 5, "123333", 1, 0, "C");
+$pdf->Cell(40, 5, "123333", 1, 0, "C");
+$pdf->Cell(30, 5, "123333", 1, 0, "C");
+$pdf->Cell(30, 5, "123333", 1, 0, "C");
+
 array_push($_SESSION['cortes'], 0);
 
 $pdf->Output();
+
+?>
+<script>
+
+document.title = ' <?php echo "Nomina " . date('jnYhis'); ?> ';
+
+</script>

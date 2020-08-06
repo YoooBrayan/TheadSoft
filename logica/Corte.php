@@ -273,7 +273,7 @@ class Corte
         while (($registro = $this->conexion->extraer()) != null) {
             $resultados[$i] = array(
                 'idCorte' => $registro[1],
-                'idSatelite' => ($registro[0]==''?'':$registro[0]),
+                'idSatelite' => ($registro[0] == '' ? '' : $registro[0]),
                 'modelo' => $registro[2],
                 'fecha' => $registro[3],
                 'cantidad' => $registro[4]
@@ -556,5 +556,53 @@ class Corte
             $this->conexion->cerrar();
             return false;
         }
+    }
+
+    function obtenerPagoTotal()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->pagoTotalCorte());
+        if ($this->conexion->numFilas() == 1) {
+            $pagoTotal = $this->conexion->extraer();
+            $this->conexion->cerrar();
+            return $pagoTotal;
+        }
+        $this->conexion->cerrar();
+    }
+
+    function obtenerTotalPagos()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->totalPagosCorte());
+        if ($this->conexion->numFilas() == 1) {
+            $totalPagos = $this->conexion->extraer();
+            $this->conexion->cerrar();
+            return $totalPagos;
+        }
+        $this->conexion->cerrar();
+    }
+
+    function ganancias()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->ganancias());
+        if ($this->conexion->numFilas() == 1) {
+            $ganancias = $this->conexion->extraer();
+            $this->conexion->cerrar();
+            return $ganancias;
+        }
+        $this->conexion->cerrar();
+    }
+
+    function cuentas()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->corteDAO->cuentas());
+        if ($this->conexion->numFilas() == 1) {
+            $cuentas = $this->conexion->extraer();
+            $this->conexion->cerrar();
+            return $cuentas;
+        }
+        $this->conexion->cerrar();
     }
 }

@@ -1235,3 +1235,59 @@ modelo_almacen ma on ma.modelo_almacen_id = mv.modelo_almacen_id JOIN
 modelo_distribuido md on md.modelo_distribuido_id = ma.modelo_distribuido_id JOIN
 modelo m on m.modelo_id = md.modelo_id
 where v.venta_id = 8 and m.modelo_id = 9 and talla_id = 'P' and color_id = 8
+
+
+
+/*Funcion para obtener Pago de Corte mediante cantidad de Talla*/
+create function ObtenerPagoCorteT(idCorte int)
+returns int 
+	begin
+	declare Pago int;
+	
+	select sum(cantidad * Modelo_Valor) into Pago 
+	from Corte_Talla, Corte, Modelo 
+	where Corte_Talla.Corte_Id = Corte.Corte_Id and Corte_Modelo = Modelo_Id and Corte.Corte_Id = IdCorte;
+	
+	if Pago is null then
+	set Pago = 0;
+	end if;
+	return Pago;
+end//
+
+
+/*Funcion para obtener pago de operarios de un corte*/
+create function ObtenerTotalPagos(idCorte int)
+returns int
+Begin
+	declare pagos int;
+	
+	select sum(Tarea_Operario.Tarea_Cantidad * Operacion_Valor) into pagos 
+	from Tarea_Operario, Tarea, Operario, Operacion, Corte 
+	where Tarea_Operario.Tarea_Id = tarea.Tarea_Id and Tarea_Operario.Operario_Id = Operario.Operario_Id and Tarea.Tarea_Corte = Corte_Id and Tarea_Operacion = Operacion_Id and Corte_Id = idCorte;
+	
+	if pagos is null then
+	set pagos = 0;
+	end if;
+	return Pagos;
+end;							 
+//					
+
+
+/*Funcion para obtener ganancias de un corte*/
+create function Ganancias(idCorte int)
+returns int
+Begin	
+	declare ganancia int;
+	select Sum(ObtenerPagoCorteT(idCorte)-ObtenerTotalPagos(idCorte)) as 'Ganancias' into ganancia;
+	
+	RETURN ganancia;
+end//
+
+
+/*Mostrar las ganancias de un Corte*/
+create procedure cuentas(Pagototal int, Nomina int, Insumos int, ganancias int)
+begin
+	
+	select Pagototal as 'Pago Total', Nomina, Insumos, ganancias, sum(ganancias/2) as 'Ganancias a la Mitad';
+	
+end//

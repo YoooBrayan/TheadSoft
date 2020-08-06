@@ -89,13 +89,16 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 
 	$(document).on("click", "#nomina", function() {
 
+		let insumos = prompt("Ingrese Insumos");
+	
 		let idCortes = "1";
 
 		$.ajax({
 			type: "POST",
 			url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/encargado/generarNomina.php") ?>",
 			data: {
-				idCortes
+				idCortes,
+				insumos
 			},
 			success: function(response) {
 
@@ -137,6 +140,21 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 					<p class='card-text'>Sueldo: ${operario.pago}</p>
 					</div></div>`
 				});
+
+				template += `
+					<div class='card border-dark mt-3 mb-2' style='max-width: 100%;'> 
+						<div class="card-header text-center">Ganancias</div>
+						<div class="card-body text-dark container">
+							<strong class='p-1 text-dark border border-dark ml-3'>Pago Total: 11111</strong>
+							<strong class='p-1 text-dark border border-dark ml-3'>Pago Total: 11111</strong>
+							<strong class='p-1 text-dark border border-dark ml-3'>Pago Total: 11111</strong>
+							<strong class='p-1 text-dark border border-dark ml-3'>Pago Total: 11111</strong>
+							<strong class='p-1 text-dark border border-dark ml-3'>Pago Total: 11111</strong>
+							<strong class='p-1 text-dark border border-dark ml-3 mt-3'>Pago Total: 11111</strong>
+							<strong class='p-1 text-dark border border-dark ml-3 mt-3'>Pago Total: 11111</strong>
+						</div>
+					</div>
+				`;
 
 				template += `<a id='nominaPdf' target='_blank' href='generarNominaPdf.php' type='button' class='btn btn-dark mt-2 mb-3' >Exportar PDF</a>`;
 

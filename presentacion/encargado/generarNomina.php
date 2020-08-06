@@ -8,10 +8,17 @@ if (isset($_POST['idCortes'])) {
 
     $operarios = array();
     array_push($operarios, ['id' => 0]);
+    $pagoTotal = 0;
+    $pagoNomina = 0;
+    $insumos = 0;
+    $ganancias = 0;
 
     foreach ($_SESSION['cortes'] as $c) {
         $corte = new Corte($c);
         $operario = $corte->operariosNomina();
+        $pagoTotal .= $corte -> obtenerPagoTotal();
+        $pagoNomina .= $corte -> obtenerTotalPagos();
+        $ganancias .= $corte -> ganancias($_POST['insumos']);
         foreach ($operario as $o) {
 
             $ids = array_column($operarios, 'id');
@@ -52,6 +59,7 @@ if (isset($_POST['idCortes'])) {
             'pago' => $pago
         );
     }
+
 
     array_push($_SESSION['cortes'], 0);
     echo json_encode($nomina);

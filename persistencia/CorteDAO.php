@@ -33,7 +33,7 @@ class CorteDAO
 
     function insertarS()
     {
-        return "call nuevoCorte('" . $this->id . "', '" . $this->representante->getId() . "', '" . $this->modelo->getId() . "', '" . $this->fecha_envio . "', '" . $this->fecha_entrega . "', '" . $this->observaciones . "', '". $this->satelite ."')";
+        return "call nuevoCorte('" . $this->id . "', '" . $this->representante->getId() . "', '" . $this->modelo->getId() . "', '" . $this->fecha_envio . "', '" . $this->fecha_entrega . "', '" . $this->observaciones . "', '" . $this->satelite . "')";
     }
 
     function insertar()
@@ -127,11 +127,10 @@ class CorteDAO
     function cortesPorEntregarFiltrado($filtro)
     {
         $consulta = "select * from cortesPorEntregar where corte_satelite";
-        if($filtro==1){
+        if ($filtro == 1) {
             return $consulta .= " is not null";
-        }else{
+        } else {
             return $consulta .= " is null";
-            
         }
     }
 
@@ -145,84 +144,116 @@ class CorteDAO
 
     function consultarTareas()
     {
-        return "call tareasPorAsignar('". $this->id ."')";
+        return "call tareasPorAsignar('" . $this->id . "')";
     }
 
-    function setCantidad($cantidad){
+    function setCantidad($cantidad)
+    {
         $this->cantidad = $cantidad;
     }
 
-    function coloresAEliminar(){
-        return "select corte_talla_color_id from corte_talla ct join corte_Talla_color  ctc on ctc.corte_talla_id = ct.corte_talla_id and corte_id = '". $this->id ."'";
+    function coloresAEliminar()
+    {
+        return "select corte_talla_color_id from corte_talla ct join corte_Talla_color  ctc on ctc.corte_talla_id = ct.corte_talla_id and corte_id = '" . $this->id . "'";
     }
 
-    function eliminarColor($id){
-        return "delete from corte_talla_color where corte_talla_color_id = '". $id ."'";
+    function eliminarColor($id)
+    {
+        return "delete from corte_talla_color where corte_talla_color_id = '" . $id . "'";
     }
 
-    function eliminarCorte(){
-        return "call eliminarCorte('". $this->id ."')";
+    function eliminarCorte()
+    {
+        return "call eliminarCorte('" . $this->id . "')";
     }
 
-    function entregarCorte(){
-        return "call entregarCorte('". $this->id ."', '". $this->cantidad ."')";
+    function entregarCorte()
+    {
+        return "call entregarCorte('" . $this->id . "', '" . $this->cantidad . "')";
     }
 
-    function cantidad(){
-        return "select obtenerCantidadPrendasT('". $this->id ."')";
+    function cantidad()
+    {
+        return "select obtenerCantidadPrendasT('" . $this->id . "')";
     }
 
-    function cortesEntregadosCompletos($satelite){
+    function cortesEntregadosCompletos($satelite)
+    {
         return "select id, modelo, realizadas 'fecha de entrega', corte_estado, 'total pago' from cortesEntregadosC where corte_satelite = '" . $satelite . "'";
     }
 
-    function cortesEntregadosPendientes($satelite){
+    function cortesEntregadosPendientes($satelite)
+    {
         return "select id, modelo, realizadas 'fecha de entrega', corte_estado, pago from cortesEntregadosP where corte_satelite = '" . $satelite . "'";
     }
 
-    function cortesEntregadosCompletosR(){
+    function cortesEntregadosCompletosR()
+    {
         return "select * from cortesEntregadosC";
     }
 
-    function cortesEntregadosPendientesR(){
+    function cortesEntregadosPendientesR()
+    {
         return "select * from cortesEntregadosP";
     }
 
-    function pagarCorte(){
-        return "call pagarCorte('". $this->id ."')";
+    function pagarCorte()
+    {
+        return "call pagarCorte('" . $this->id . "')";
     }
 
-    function removerPago(){
-        return "call removerPago('". $this->id ."')";
+    function removerPago()
+    {
+        return "call removerPago('" . $this->id . "')";
     }
 
-    function consultarCortes($satelite){
+    function consultarCortes($satelite)
+    {
         return "select C.Corte_ID as ID, Modelo_Nombre as Modelo, Corte_Fecha_Envio, sum(Cantidad) as Cantidad 
-        from corte c join Modelo m on c.corte_modelo = m.modelo_id join Corte_Talla ct on ct.corte_id = c.corte_id = '". $satelite ."'
+        from corte c join Modelo m on c.corte_modelo = m.modelo_id join Corte_Talla ct on ct.corte_id = c.corte_id = '" . $satelite . "'
         where corte_satelite 
         group by c.Corte_id";
     }
 
-    function operariosNomina(){
-        return "call operariosNomina('". $this->id ."')";
+    function operariosNomina()
+    {
+        return "call operariosNomina('" . $this->id . "')";
     }
 
-    function actualizarSatelite($satelite){
-        return "update corte set corte_satelite = '". $satelite ."' where corte_id = '" . $this -> id . "'";
+    function actualizarSatelite($satelite)
+    {
+        return "update corte set corte_satelite = '" . $satelite . "' where corte_id = '" . $this->id . "'";
     }
 
-    function actualizarTallaCorte($talla, $cantidad){
-        return "update corte_talla set Cantidad = '". $cantidad ."' where corte_id = '". $this->id ."' and talla_id = '". $talla ."'";
+    function actualizarTallaCorte($talla, $cantidad)
+    {
+        return "update corte_talla set Cantidad = '" . $cantidad . "' where corte_id = '" . $this->id . "' and talla_id = '" . $talla . "'";
     }
 
-    function actualizarColorTallaCorte($color, $cantidad){
-        return "update corte_talla_color set cantidad = '". $cantidad ."' where corte_Talla_color_id = '". $color ."'";
+    function actualizarColorTallaCorte($color, $cantidad)
+    {
+        return "update corte_talla_color set cantidad = '" . $cantidad . "' where corte_Talla_color_id = '" . $color . "'";
     }
 
-    function obtenerIdColorTalla($talla, $color){
+    function obtenerIdColorTalla($talla, $color)
+    {
         return "select corte_Talla_color_id
         from corte c join corte_talla ct on ct.corte_id = c.corte_id join corte_talla_color ctc on ctc.corte_talla_id = ct.corte_talla_id join color co on co.color_id = ctc.color_id
-        where c.corte_id = '". $this->id ."' and ct.talla_id = '". $talla ."' and co.color_id = '". $color ."'";
+        where c.corte_id = '" . $this->id . "' and ct.talla_id = '" . $talla . "' and co.color_id = '" . $color . "'";
+    }
+
+    function pagoTotalCorte()
+    {
+        return "select obtenerPagoCorteT('" . $this->id . "')";
+    }
+
+    function totalPagosCorte()
+    {
+        return "select obtenerTotalpagos('" . $this->id . "')";
+    }
+
+    function ganancias($insumos){
+        return "select ganancias('". $insumos ."')";
     }
 
 
