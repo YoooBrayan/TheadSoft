@@ -68,6 +68,20 @@ class Operario extends Persona
         return $resultados;
     }
 
+    function listaSocios()
+    {
+        $this->conexion->abrir();
+        $this->conexion->ejecutar($this->operarioDAO->listaSocios());
+        $resultados = array();
+        $i = 0;
+        while (($registro = $this->conexion->extraer()) != null) {
+            $resultados[$i] = new Operario($registro[0], $registro[1]);
+            $i++;
+        }
+        $this->conexion->cerrar();
+        return $resultados;
+    }
+
     function asignarTareas($corte)
     {
         $this->conexion->abrir();

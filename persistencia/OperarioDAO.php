@@ -34,7 +34,7 @@ class OperarioDAO{
     }
 
     function asignarTareas($corte){
-        return "call asignarTarea('". $this->tareas -> getId() ."', '". $this->tareas->getCantidad() ."', '". $corte ."', '". $this->id ."')";
+        return "call asignarTarea('". $this->tareas-> getId() ."', '". $this->tareas->getCantidad() ."', '". $corte ."', '". $this->id ."')";
     }
 
     function tareas($corte){
@@ -55,5 +55,9 @@ class OperarioDAO{
 
     function pagoNeto($corte){
         return "select pagoNeto('". $this->id ."', '". $corte ."')";
+    }
+
+    function listasocios(){
+        return "select operario_id, operario_nombre from operario where operario_usuario = 3";
     }
 }

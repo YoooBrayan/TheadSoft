@@ -52,6 +52,7 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 		</div>
 	</div>
 	<button id="nomina" type="button" class="btn btn-dark mt-2" hidden>Generar Nomina</button>
+	<div id="mensaje"></div>
 </div>
 
 <div id="cNomina" class="container">
@@ -90,7 +91,7 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 	$(document).on("click", "#nomina", function() {
 
 		let insumos = prompt("Ingrese Insumos");
-	
+
 		let idCortes = "1";
 
 		$.ajax({
@@ -100,16 +101,20 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 				idCortes,
 				insumos
 			},
+			beforeSend: function() {
+				$('#mensaje').prepend('<img src="img/loader.gif" />')
+
+			},
 			success: function(response) {
 
-				console.log(response);
-				let nomina = JSON.parse(response);
-				console.log(nomina);
-				let template = '';
+				$("#mensaje").fadeOut("fast", function() {
+					let nomina = JSON.parse(response);
+					console.log(nomina);
+					let template = '';
 
 
-				nomina.forEach(operario => {
-					template += `
+					nomina.nomina.forEach(operario => {
+						template += `
 					<div class='card border-dark mt-3 mb-2' style='max-width: 100%;'> 
 					<div class="card-header">${operario.operario.Nombre}</div>
 					<div class="card-body text-dark">
@@ -124,8 +129,8 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 					<th></th>
 					</tr>
 					</thead> <tbody>`;
-					operario.nomina.forEach(element => {
-						template += `
+						operario.nomina.forEach(element => {
+							template += `
 					<tr>
 					<td>${element.modelo}</td>
 					<td>${element.tarea}</td>
@@ -133,32 +138,37 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 					<td>${element.valorU}</td>
 					<td>${element.pago}</td>
 					</tr>`
-					});
-					template += `</tbody>
+						});
+						template += `</tbody>
 					</table>
 					<hr/ style='border: 1px solid'>
 					<p class='card-text'>Sueldo: ${operario.pago}</p>
 					</div></div>`
-				});
+					});
 
-				template += `
+					template += `
 					<div class='card border-dark mt-3 mb-2' style='max-width: 100%;'> 
 						<div class="card-header text-center">Ganancias</div>
 						<div class="card-body text-dark container">
-							<strong class='p-1 text-dark border border-dark ml-3'>Pago Total: 11111</strong>
-							<strong class='p-1 text-dark border border-dark ml-3'>Pago Total: 11111</strong>
-							<strong class='p-1 text-dark border border-dark ml-3'>Pago Total: 11111</strong>
-							<strong class='p-1 text-dark border border-dark ml-3'>Pago Total: 11111</strong>
-							<strong class='p-1 text-dark border border-dark ml-3'>Pago Total: 11111</strong>
-							<strong class='p-1 text-dark border border-dark ml-3 mt-3'>Pago Total: 11111</strong>
-							<strong class='p-1 text-dark border border-dark ml-3 mt-3'>Pago Total: 11111</strong>
-						</div>
-					</div>
-				`;
+							<strong class='p-1 text-dark border border-dark mr-5'>Pago Total: ${nomina.pagoTotal}</strong>
+							<strong class='p-1 text-dark border border-dark mr-5'>Nomina: ${nomina.pagoNomina}</strong>
+							<strong class='p-1 text-dark border border-dark mr-5'>Insumos: ${nomina.insumos}</strong>
+							<strong class='p-1 text-dark border border-dark mr-5'>Ganancias: ${nomina.ganancias}</strong>
+							<strong class='p-1 text-dark border border-dark mr-5'>Ganancias Divididas: ${nomina.gananciasD}</strong> <br><br>`;
 
-				template += `<a id='nominaPdf' target='_blank' href='generarNominaPdf.php' type='button' class='btn btn-dark mt-2 mb-3' >Exportar PDF</a>`;
+					nomina.pagoSocios.forEach(socio => {
+						template += `<strong class='p-1 text-dark border border-dark mr-4'>Sueldo ${socio.socio} : ${socio.pago}</strong>`;
+					});
 
-				$("#cNomina").html(template);
+					template += `</div></div>`;
+
+					template += ` <a id='nominaPdf' target='_blank' href='generarNominaPdf.php?insumos=${nomina.insumos}' type='button' class='btn btn-dark mt-2 mb-3' > Exportar PDF </a>`;
+
+					$("#cNomina").html(template);
+				});
+
+				$("mensaje").fadeIn("slow");
+
 			}
 		});
 	});

@@ -565,7 +565,7 @@ class Corte
         if ($this->conexion->numFilas() == 1) {
             $pagoTotal = $this->conexion->extraer();
             $this->conexion->cerrar();
-            return $pagoTotal;
+            return $pagoTotal[0];
         }
         $this->conexion->cerrar();
     }
@@ -577,7 +577,7 @@ class Corte
         if ($this->conexion->numFilas() == 1) {
             $totalPagos = $this->conexion->extraer();
             $this->conexion->cerrar();
-            return $totalPagos;
+            return $totalPagos[0];
         }
         $this->conexion->cerrar();
     }
@@ -589,7 +589,7 @@ class Corte
         if ($this->conexion->numFilas() == 1) {
             $ganancias = $this->conexion->extraer();
             $this->conexion->cerrar();
-            return $ganancias;
+            return $ganancias[0];
         }
         $this->conexion->cerrar();
     }

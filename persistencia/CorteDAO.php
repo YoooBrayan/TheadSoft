@@ -252,9 +252,13 @@ class CorteDAO
         return "select obtenerTotalpagos('" . $this->id . "')";
     }
 
-    function ganancias($insumos){
-        return "select ganancias('". $insumos ."')";
+    function ganancias()
+    {
+        return "select ganancias('" . $this->id . "')";
     }
 
-
+    function cuentas($pagoTotal, $totalPagos, $insumos, $ganancias)
+    {
+        return "select cuentas('" . $pagoTotal . "', '" . $totalPagos . "', '" . $insumos . "', '" . $ganancias - $insumos . "')";
+    }
 }

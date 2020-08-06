@@ -8,6 +8,7 @@ if (isset($_POST['idCortes'])) {
 
     $operarios = array();
     array_push($operarios, ['id' => 0]);
+
     $pagoTotal = 0;
     $pagoNomina = 0;
     $insumos = 0;
@@ -16,9 +17,9 @@ if (isset($_POST['idCortes'])) {
     foreach ($_SESSION['cortes'] as $c) {
         $corte = new Corte($c);
         $operario = $corte->operariosNomina();
-        $pagoTotal .= $corte -> obtenerPagoTotal();
-        $pagoNomina .= $corte -> obtenerTotalPagos();
-        $ganancias .= $corte -> ganancias($_POST['insumos']);
+        $pagoTotal += $corte->obtenerPagoTotal();
+        $pagoNomina += $corte->obtenerTotalPagos();
+        $ganancias += $corte->ganancias();
         foreach ($operario as $o) {
 
             $ids = array_column($operarios, 'id');
@@ -35,7 +36,10 @@ if (isset($_POST['idCortes'])) {
 
     unset($operarios[0]);
 
+    $socios = new Operario();
+    $listaSocios = $socios -> listaSocios();
     $nomina = array();
+    $pagoSocios = array();
 
     foreach ($operarios as $o) {
         $operario = new Operario($o['id']);
@@ -58,9 +62,28 @@ if (isset($_POST['idCortes'])) {
             'nomina' => $nominaO,
             'pago' => $pago
         );
+
+        foreach($listaSocios as $s){
+            if($o['id'] == $s -> getId()){
+                $pagoSocios[] = array(
+                    'socio' => $s -> getNombre(),
+                    'pago' => $pago + floor((($ganancias - $_POST['insumos']) / count($listaSocios)))
+                );
+            }
+        }
     }
 
 
+    $datos = array(
+        'nomina' => $nomina,
+        'pagoTotal' => $pagoTotal,
+        'pagoNomina' => $pagoNomina,
+        'insumos' => $_POST['insumos'],
+        'ganancias' => $ganancias - $_POST['insumos'],
+        'gananciasD' => floor(($ganancias - $_POST['insumos']) / count($listaSocios)),
+        'pagoSocios' => $pagoSocios
+    );
+
     array_push($_SESSION['cortes'], 0);
-    echo json_encode($nomina);
+    echo json_encode($datos);
 }

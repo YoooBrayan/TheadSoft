@@ -81,9 +81,18 @@ unset($_SESSION["cortes"][0]);
 $operarios = array();
 array_push($operarios, ['id' => 0]);
 
+$pagoTotal = 0;
+$pagoNomina = 0;
+$insumos = 0;
+$ganancias = 0;
+
+
 foreach ($_SESSION['cortes'] as $c) {
 	$corte = new Corte($c);
 	$operario = $corte->operariosNomina();
+	$pagoTotal += $corte->obtenerPagoTotal();
+	$pagoNomina += $corte->obtenerTotalPagos();
+	$ganancias += $corte->ganancias();
 	foreach ($operario as $o) {
 
 		$ids = array_column($operarios, 'id');
@@ -99,6 +108,10 @@ foreach ($_SESSION['cortes'] as $c) {
 }
 
 unset($operarios[0]);
+
+$socios = new Operario();
+$listaSocios = $socios->listaSocios();
+$pagoSocios = array();
 
 $pdf = new MyPdf();
 
@@ -116,25 +129,37 @@ foreach ($operarios as $o) {
 
 	$operario = new Operario($o['id'], $o['Nombre']);
 	$pdf->viewTable($operario);
+	$pago = $operario->pagoNeto($_SESSION['cortes']);
+	foreach ($listaSocios as $s) {
+		if ($o['id'] == $s->getId()) {
+			$pagoSocios[] = array(
+				'socio' => $s->getNombre(),
+				'pago' => $pago + (floor(($ganancias - $_GET['insumos']) / count($listaSocios)))
+			);
+		}
+	}
 }
 
 $pdf->Cell(195, 5, "Ganancias", 0, 1, "C");
 $pdf->Ln();
-$pdf->Cell(22, 5, "Pago Total", 1, 0, "C");
-$pdf->Cell(20, 5, "Nomina", 1, 0, "C");
-$pdf->Cell(20, 5, "Insumos", 1, 0, "C");
-$pdf->Cell(22, 5, "Ganancias", 1, 0, "C");
-$pdf->Cell(40, 5, "Ganancias Divididas", 1, 0, "C");
-$pdf->Cell(30, 5, "Sueldo Blanca", 1, 0, "C");
-$pdf->Cell(30, 5, "Sueldo jessica", 1, 0, "C");
+$pdf->Cell(35, 5, "Pago Total", 1, 0, "C");
+$pdf->Cell(35, 5, "Nomina", 1, 0, "C");
+$pdf->Cell(35, 5, "Insumos", 1, 0, "C");
+$pdf->Cell(35, 5, "Ganancias", 1, 0, "C");
+$pdf->Cell(45, 5, "Ganancias Divididas", 1, 0, "C");
 $pdf->Ln();
-$pdf->Cell(22, 5, "123333", 1, 0, "C");
-$pdf->Cell(20, 5, "123333", 1, 0, "C");
-$pdf->Cell(20, 5, "123333", 1, 0, "C");
-$pdf->Cell(22, 5, "123333", 1, 0, "C");
-$pdf->Cell(40, 5, "123333", 1, 0, "C");
-$pdf->Cell(30, 5, "123333", 1, 0, "C");
-$pdf->Cell(30, 5, "123333", 1, 0, "C");
+$pdf->Cell(35, 5, $pagoTotal, 1, 0, "C");
+$pdf->Cell(35, 5, $pagoNomina, 1, 0, "C");
+$pdf->Cell(35, 5, $_GET['insumos'], 1, 0, "C");
+$pdf->Cell(35, 5, $ganancias, 1, 0, "C");
+$pdf->Cell(45, 5, (floor(($ganancias - $_GET['insumos']) / count($listaSocios))), 1, 0, "C");
+
+$pdf->Ln();
+$pdf->Ln();
+
+foreach ($pagoSocios as $s) {
+	$pdf->Cell(30, 5, "Sueldo " . $s['socio'] .": " . $s['pago'], 0, 1, "C");
+}
 
 array_push($_SESSION['cortes'], 0);
 
@@ -142,7 +167,5 @@ $pdf->Output();
 
 ?>
 <script>
-
-document.title = ' <?php echo "Nomina " . date('jnYhis'); ?> ';
-
+	document.title = ' <?php echo "Nomina " . date('jnYhis'); ?> ';
 </script>
