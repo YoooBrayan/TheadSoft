@@ -22,7 +22,7 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
             <div class="card">
                 <div style="text-align: center;" class="card-header bg-dark text-white">Lista de Cortes</div>
                 <div class="card-body">
-                    <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                    <div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
                         <table class="table table-striped table-hover mb-0">
                             <thead>
                                 <tr>

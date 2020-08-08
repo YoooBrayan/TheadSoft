@@ -1,6 +1,6 @@
-<?php 
+<?php
 $representante = new Representante($_SESSION['id']);
-$representante -> consultar();
+$representante->consultar();
 
 ?>
 
@@ -8,7 +8,7 @@ $representante -> consultar();
     <link rel="stylesheet" href="presentacion/estilos.css">
 </head>
 
-<header>
+<header class="container-fluid">
     <div class="logo">
         <h1 class="logo-text"><span>Thread</span>Soft</h1>
     </div>
@@ -18,37 +18,28 @@ $representante -> consultar();
     <ul class="nav">
         <li><a href="index.php?pid=<?php echo base64_encode('presentacion/representante/sesionRepresentante.php') ?>">Home</a></li>
         <li><a href="index.php?pid=<?php echo base64_encode('presentacion/representante/almacenes.php') ?>">Almacenes</a></li>
-        <li>
         <li><a href="index.php?pid=<?php echo base64_encode('presentacion/representante/modelos.php') ?>">Modelos</a></li>
         <li>
             <a href="#">Corte</a>
             <ul style="right: 0px;">
-                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/representante/nuevoCorte.php")?>">Nuevo</a></li>
-                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/representante/consultarCortes.php")?>">Consultar</a></li>
+                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/representante/nuevoCorte.php") ?>">Nuevo</a></li>
+                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/representante/consultarCortes.php") ?>">Consultar</a></li>
             </ul>
         </li>
         <li>
             <a href="#">
                 <i class="fa fa-user"></i>
-                <?php  echo $representante->getNombre(); ?>
+                <?php echo $representante->getNombre(); ?>
                 <i class="fa fa-chevron-down" style="font-size: .8em;"></i>
             </a>
             <ul>
-                <li><a href="#"><?php  echo $representante->getId(); ?></a></li>
+                <li><a href="#"><?php echo $representante->getId(); ?></a></li>
                 <li><a id="info" href="#"><?php echo $representante->getCorreo(); ?></a></li>
                 <li><a class="logout" href="index.php">Cerrar sesion</a></li>
             </ul>
         </li>
     </ul>
 </header>
-
-
-<div>
-<?php if(isset($_GET['mensaje']))
-		{
-			echo "<div class='alert alert-danger' role='alert'>". $_GET['mensaje'] . " </div>";
-		}?>
-</div>
 
 <script>
     $(document).ready(function() {

@@ -20,7 +20,7 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 			<div class="card">
 				<div style="text-align: center;" class="card-header bg-dark text-white">Seleccione Cortes</div>
 				<div class="card-body">
-					<div class="table-wrapper-scroll-y my-custom-scrollbar">
+					<div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
 						<table class="table table-striped table-hover mb-0">
 							<thead>
 								<tr>
@@ -118,6 +118,7 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 					<div class='card border-dark mt-3 mb-2' style='max-width: 100%;'> 
 					<div class="card-header">${operario.operario.Nombre}</div>
 					<div class="card-body text-dark">
+					<div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
 					<table class='table table-striped table-hover'>
 					<thead>
 					<tr>
@@ -141,6 +142,7 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 						});
 						template += `</tbody>
 					</table>
+					</div>
 					<hr/ style='border: 1px solid'>
 					<p class='card-text'>Sueldo: ${operario.pago}</p>
 					</div></div>`
@@ -172,4 +174,5 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 			}
 		});
 	});
+
 </script>

@@ -32,9 +32,8 @@ foreach ($tallas as $t) {
     <div class="mt-2">
         <i href="modalCarrito.php" class="fas fa-cart-plus " style="color: orange; float: right; font-size: 25px" data-toggle='modal' data-target='#modalCarrito'><span id="cantidadCarrito" style="font-size: 0.6em; color: #FF5900"></span></i>
     </div>
-    <div class="row" style="width: 100%; padding: 0px;">
-        <div class="col-3"></div>
-        <div class="col-6">
+    <div class="row">
+        <div class="col-12 col-md-6 mx-md-auto">
             <div class="card">
                 <div id="mensaje" class='alert alert-danger' role='alert' hidden></div>
                 <div class="card-header bg-primary text-white bg-dark" style="text-align: center;">Nueva Venta</div>
@@ -77,21 +76,22 @@ foreach ($tallas as $t) {
                         </div>
 
                         <button id="btnTalla" type="submit" name="registrar" class="btn btn-dark mt-2 mb-2">Agregar</button>
-                        <table class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Talla</th>
-                                    <th scope="col">Cantidad</th>
-                                    <th scope="col">Servicios</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tallas">
-                            </tbody>
-                        </table>
+                        <div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Talla</th>
+                                        <th scope="col">Cantidad</th>
+                                        <th scope="col">Servicios</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tallas">
+                                </tbody>
+                            </table>
+                        </div>
 
                         <hr/ style="border: 1px solid">
 
-                        <hr/ style="border: 1px solid">
                         <br>
                         <br>
 

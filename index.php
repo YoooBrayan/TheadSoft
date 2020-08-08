@@ -29,6 +29,8 @@ require_once ('librerias/fpdf/fpdf.php');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
+    <link href="presentacion/representante/estilos.css" rel="stylesheet" type="text/css" />
+
     <!--Librerias-->
 
     <!-- JQuery -->
@@ -50,8 +52,6 @@ require_once ('librerias/fpdf/fpdf.php');
         })
     </script>
 
-    <!--PDF-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script>
 
     <!-- Font Awesome-->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
@@ -64,17 +64,7 @@ require_once ('librerias/fpdf/fpdf.php');
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.min.js"></script>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
-
-    <script src="//cdn.jsdelivr.net/jquery.mcustomscrollbar/3.0.6/jquery.mCustomScrollbar.concat.min.js"></script>
-
-    <script src="presentacion/js/material.min.js"></script>
-
-    <script>
-		$.material.init();
-	</script>
+<!--------------------------------------------------------------->
     
 </head>
 

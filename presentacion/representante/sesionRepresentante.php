@@ -1,6 +1,6 @@
-<head>
+<!--<head>
 	<link href="presentacion/representante/estilos.css" rel="stylesheet" type="text/css" />
-</head>
+</head>-->
 
 <?php
 
@@ -12,12 +12,11 @@ $cortesPorEntregar = $corte->cortesPorEntregarR();
 
 ?>
 
-<br>
-<div class="container">
+<div class="container mt-3">
 	<div class="row">
 		<div class="col-12">
 			<div class="card">
-				<div style="text-align: center;" class="card-header bg-dark text-white">Cortes Por entregar</div>
+				<div class="card-header bg-dark text-white text-center">Cortes Por entregar</div>
 				<div class="container">
 					<label>Filtrar Cortes: </label>
 					<select class="selectpicker mt-2" id="filtrarCortes">
@@ -27,7 +26,7 @@ $cortesPorEntregar = $corte->cortesPorEntregarR();
 					</select>
 				</div>
 				<div class="card-body">
-					<div class="table-wrapper-scroll-y my-custom-scrollbar">
+					<div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
 						<table class="table table-striped table-hover mb-0">
 							<thead>
 								<tr>
@@ -48,6 +47,7 @@ $cortesPorEntregar = $corte->cortesPorEntregarR();
 									echo "<td id='cantidad" . $cpe->getId() . "'>" . $cpe->getCantidad() . "</td>";
 									echo "<td id='tdSatelite" . $cpe->getId() . "'>" . ($cpe->getSatelite() == '' ? "<div class='ml-3' href='modalSatelite.php?idCorte=" . $cpe->getId() . "' data-toggle='modal' data-target='#modalSatelite'><span class='far fa-square' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Asignar Satelite'></span></div>" :  $cpe->getSatelite() . " <span class='ml-1' href='modalSatelite.php?idCorte=" . $cpe->getId() . "' data-toggle='modal' data-target='#modalSatelite'><span class='far fa-square' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Cambiar Satelite'></span></span>") . "</td>";
 									echo "<td>" . "<a href='modalCorte.php?idCorte=" . $cpe->getId() . "' data-toggle='modal' data-target='#modalCorte' ><span class='fas fa-eye' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Ver Detalles' ></span> </a>
+									<a class='eliminar' ><span class='fas fa-times-circle' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Eliminar' ></span> </a>
 									</td>";
 									echo "</tr>";
 								}
@@ -97,11 +97,12 @@ $cortesPorEntregar = $corte->cortesPorEntregarR();
 					function(response) {
 						let datos = JSON.parse(response);
 						let plantilla = '';
-						console.log(datos);
+						console.log(datos[0].length);
 
-						datos.forEach(corte => {
-							plantilla +=
-								`<tr id='${corte.idCorte}'>
+						if (datos[0].length != 0) {
+							datos.forEach(corte => {
+								plantilla +=
+									`<tr id='${corte.idCorte}'>
 								<td>${corte.idCorte}</td>
 								<td>${corte.modelo}</td>
 								<td>${corte.fecha}</td>
@@ -111,19 +112,59 @@ $cortesPorEntregar = $corte->cortesPorEntregarR();
 									corte.idSatelite + '<span class="ml-1" href="modalSatelite.php?idCorte='+corte.idCorte+'" data-toggle="modal" data-target="#modalSatelite"><span class="far fa-square" data-toggle="tooltip" class="tooltipLink" data-placement="left" data-original-title="Cambiar Satelite"></span></span>'}</td>
 								<td> 
 									<a href='modalCorte.php?idCorte=${corte.idCorte}' data-toggle='modal' data-target='#modalCorte' ><span class='fas fa-eye' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Ver Detalles' ></span> </a>
+									<a class='eliminar' ><span class='fas fa-times-circle' data-toggle='tooltip' class='tooltipLink' data-placement='left' data-original-title='Eliminar' ></span> </a>
 								</td>
 							`
 
 
-						});
+							});
 
+						}else{
+							plantilla = '<p>No se encontraron datos.</p>'
+						}
 						$("#tabla").html(plantilla);
-
 
 					}
 				);
 			}
 
+		});
+	});
+
+	$("table").on("click", "tbody .eliminar", function(e) {
+		e.preventDefault();
+
+		let elemento = $(this)[0].parentElement.parentElement;
+		let idCorte = $(elemento).attr('id');
+
+		Swal.fire({
+			title: 'Esta seguro?',
+			text: "Eliminar Corte!",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Si, Eliminar!'
+		}).then((result) => {
+			if (result.value) {
+				$.ajax({
+					type: "POST",
+					url: "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/eliminarCorte.php"); ?>",
+					data: {
+						idCorte
+					},
+					success: function(response) {
+						$("#" + idCorte).remove();
+						Swal.fire({
+							position: 'top-end',
+							icon: 'success',
+							title: response,
+							showConfirmButtom: false,
+							timer: 1000
+						});
+					}
+				});
+			}
 		});
 	});
 </script>

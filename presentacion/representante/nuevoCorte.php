@@ -25,10 +25,9 @@ foreach ($tallas as $t) {
 
 ?>
 <br>
-<div class="container">
-    <div class="row" style="width: 100%; padding: 0px;">
-        <div class="col-3"></div>
-        <div class="col-6">
+<div class="container bg-primary">
+    <div class="row">
+        <div class="col-12 col-md-6 mx-md-auto">
             <div class="card">
                 <div id="mensaje" class='alert alert-danger' role='alert' hidden></div>
                 <div class="card-header bg-primary text-white bg-dark" style="text-align: center;">Registro</div>

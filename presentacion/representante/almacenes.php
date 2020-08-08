@@ -16,24 +16,28 @@ $modelos = new Modelo("", "", "", $representante->getProveedor());
 $modelos = $modelos->consultarModelos();
 
 ?>
+<div class="container mt-2 mb-4">
+	<div class="row">
+		<div class="col-12 col-md-9 mb-3">
+			<label class="text-white h5">Seleccione Almacen:</label>
+			<select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idA">
 
+				<option value="0">Seleccione</option>
+				<?php
+				foreach ($almacenes as $a) {
+					echo "<option value=" . $a->getId() . ">" . $a->getLugar() . "</option>";
+				}
+				?>
 
-<div class="container mt-3 mb-4">
-	<label class="text-white h5">Seleccione Almacen:</label>
-	<select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idA">
+			</select>
+		</div>
+		<div class="col-12 col-md-3">
+			<a id="btnVenta" hidden class="btn btn-success" href="index.php?pid=<?php echo base64_encode("presentacion/representante/agregarVenta.php") ?>">Añadir Venta</a>
+			<a class="btn btn-info" href="index.php?pid=<?php echo base64_encode("presentacion/representante/registrarAlmacen.php") ?>">Nuevo Almacen</a>
+		</div>
 
-		<option value="0">Seleccione</option>
-		<?php
-		foreach ($almacenes as $a) {
-			echo "<option value=" . $a->getId() . ">" . $a->getLugar() . "</option>";
-		}
-		?>
-
-	</select>
-	<a id="btnVenta" hidden class="btn btn-info" href="index.php?pid=<?php echo base64_encode("presentacion/representante/agregarVenta.php") ?>">Añadir Venta</a>
-	<a class="btn btn-info" style="float: right" href="index.php?pid=<?php echo base64_encode("presentacion/representante/registrarAlmacen.php") ?>">Nuevo Almacen</a>
+	</div>
 </div>
-
 
 <div id="inventario" class="container" hidden>
 	<div class="row">
@@ -48,17 +52,19 @@ $modelos = $modelos->consultarModelos();
 
 					</select>
 					<div class="mt-5">
-						<table class="table table-striped table-hover">
-							<thead>
-								<tr>
-									<th scope="col">Modelo</th>
-									<th scope="col">Cantidad</th>
-									<th scope="col">Servicios</th>
-								</tr>
-							</thead>
-							<tbody id="mercancia">
-							</tbody>
-						</table>
+						<div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th scope="col">Modelo</th>
+										<th scope="col">Cantidad</th>
+										<th scope="col">Servicios</th>
+									</tr>
+								</thead>
+								<tbody id="mercancia">
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -79,20 +85,21 @@ $modelos = $modelos->consultarModelos();
 					<label class="text-dark h5 m-3">Seleccione Fecha Final:</label>
 					<input id="fechaFinal" onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha Final" name="fechaVenta">
 					<div class="mt-5">
-						<table class="table table-striped table-hover">
-							<thead>
-								<tr>
-									<th scope="col">Venta</th>
-									<th scope="col">Fecha</th>
-									<th scope="col">Modelos</th>
-									<th scope="col">Cantidad</th>
-									<th scope="col">Valor</th>
-									<th scope="col">Servicios</th>
-								</tr>
-							</thead>
-							<tbody id="ventasT">
-							</tbody>
-						</table>
+						<div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th scope="col">Venta</th>
+										<th scope="col">Fecha</th>
+										<th scope="col">Cantidad</th>
+										<th scope="col">Valor</th>
+										<th scope="col">Servicios</th>
+									</tr>
+								</thead>
+								<tbody id="ventasT">
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -116,20 +123,21 @@ $modelos = $modelos->consultarModelos();
 							echo "<option value=" . $m->getId() . ">" . $m->getNombre() . "</option>";
 						}
 						?>
-
 					</select>
 					<div class="mt-5">
-						<table class="table table-striped table-hover">
-							<thead>
-								<tr>
-									<th scope="col">Modelo</th>
-									<th scope="col">Cantidad</th>
-									<th scope="col">Servicios</th>
-								</tr>
-							</thead>
-							<tbody id="importarM">
-							</tbody>
-						</table>
+						<div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th scope="col">Modelo</th>
+										<th scope="col">Cantidad</th>
+										<th scope="col">Servicios</th>
+									</tr>
+								</thead>
+								<tbody id="importarM">
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -137,6 +145,7 @@ $modelos = $modelos->consultarModelos();
 	</div>
 </div>
 <br>
+
 
 <div class="modal fade" id="modalCorte" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
@@ -289,7 +298,7 @@ $modelos = $modelos->consultarModelos();
 		let fechaInicio = document.getElementById("fechaInicio").value;
 		let fechaFinal = document.getElementById("fechaFinal").value;
 
-		if(fechaFinal==""){
+		if (fechaFinal == "") {
 			fechaFinal = document.getElementById("fechaInicio").value;
 		}
 
@@ -306,32 +315,28 @@ $modelos = $modelos->consultarModelos();
 				let datos = JSON.parse(response);
 				console.log(datos);
 
-				datos.forEach(venta => {
-					plantilla += `
-						<tr id='${venta.id}'>
-							<td>${venta.id}</td>
-							<td>${venta.fecha}</td>
-							<td>
-								<a class='fas fa-eye' data-toggle='tooltip' class='tooltipLink' data-placement='left' title='`;
+				if (datos.length != 0) {
+					datos.forEach(venta => {
+						plantilla += `
+							<tr id='${venta.id}'>
+								<td>${venta.id}</td>
+								<td>${venta.fecha}</td>
+								<td>${venta.cantidad}</td>
+								<td>${venta.valor}</td>
+								<td>
+								<a class='fas fa-eye' href='modalModelosVenta.php?idVenta=${venta.id}' data-toggle='modal' data-target='#modalModelosVenta' data-placement='left' title='Ver Detalles'></a>
+								</td>
+							</tr>
+							`
 
-					venta.modelo.forEach(modelos => {
-						plantilla += modelos.nombre + `\n`
-					})
+					});
+					//<tr><td colspan='6'>${venta.total}</td></tr>
+					plantilla += "<tr><th scope='row'>Total</th><td colspan='3' ></td><td>" + datos[0].total + "</td></tr>";
 
-					plantilla += `'></a>
-							</td>
-							<td>${venta.cantidad}</td>
-							<td>
-							<a class='fas fa-eye' href='modalModelosVenta.php?idVenta=${venta.id}' data-toggle='modal' data-target='#modalModelosVenta' data-placement='left' title='Ver Detalles'></a>
-							</td>
-							<td>${venta.valor}</td>
-						</tr>
-						`
-
-				});
-				//<tr><td colspan='6'>${venta.total}</td></tr>
-				plantilla += "<tr><th scope='row'>Total</th><td colspan='4' ></td><td>" + datos[0].total + "</td></tr>";
-
+					$("#ventasT").html(plantilla);
+				} else {
+					plantilla += 'No se encontraron ventas.';
+				}
 				$("#ventasT").html(plantilla);
 			}
 		});
@@ -346,7 +351,7 @@ $modelos = $modelos->consultarModelos();
 		if (fechaInicio == "") {
 			Swal.fire({
 				position: 'center',
-				icon: 'danger',
+				icon: 'error',
 				title: 'Seleccione Fecha de Inicio',
 				timer: 1999
 			});
@@ -373,32 +378,28 @@ $modelos = $modelos->consultarModelos();
 					let datos = JSON.parse(response);
 					console.log(datos);
 
-					datos.forEach(venta => {
-						plantilla += `
-				<tr id='${venta.id}'>
-					<td>${venta.id}</td>
-					<td>${venta.fecha}</td>
-					<td>
-						<a class='fas fa-eye' data-toggle='tooltip' class='tooltipLink' data-placement='left' title='`;
+					if (datos.length != 0) {
+						datos.forEach(venta => {
+							plantilla += `
+							<tr id='${venta.id}'>
+								<td>${venta.id}</td>
+								<td>${venta.fecha}</td>
+								<td>${venta.cantidad}</td>
+								<td>${venta.valor}</td>
+								<td>
+								<a class='fas fa-eye' href='modalModelosVenta.php?idVenta=${venta.id}' data-toggle='modal' data-target='#modalModelosVenta' data-placement='left' title='Ver Detalles'></a>
+								</td>
+							</tr>
+							`
 
-						venta.modelo.forEach(modelos => {
-							plantilla += modelos.nombre + `\n`
-						})
+						});
+						//<tr><td colspan='6'>${venta.total}</td></tr>
+						plantilla += "<tr><th scope='row'>Total</th><td colspan='3' ></td><td>" + datos[0].total + "</td></tr>";
 
-						plantilla += `'></a>
-					</td>
-					<td>${venta.cantidad}</td>
-					<td>
-					<a class='fas fa-eye' href='modalModelosVenta.php?idVenta=${venta.id}' data-toggle='modal' data-target='#modalModelosVenta' data-placement='left' title='Ver Detalles'></a>
-					</td>
-					<td>${venta.valor}</td>
-				</tr>
-				`
-
-					});
-					//<tr><td colspan='6'>${venta.total}</td></tr>
-					plantilla += "<tr><th scope='row'>Total</th><td colspan='4' ></td><td>" + datos[0].total + "</td></tr>";
-
+						$("#ventasT").html(plantilla);
+					} else {
+						plantilla += 'No se encontraron ventas.';
+					}
 					$("#ventasT").html(plantilla);
 				}
 			});

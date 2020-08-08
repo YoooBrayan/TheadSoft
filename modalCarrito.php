@@ -33,10 +33,15 @@ foreach($_SESSION['carrito'] as $m){
 
             echo "
         <div d-flex flex-row>
-        <div>
-        <button id='m" . $c->getId() . "' class='btn btn-primary mb-2 mt-2 col-11' type='button' data-toggle='collapse' data-target='#collapseExample" . $c->getId() . "' aria-expanded='false' aria-controls='collapseExample'> " . $c->getNombre() . "
+        <div class='row'>
+        <div class='col-9 col-md-11'>
+        <button id='m" . $c->getId() . "' class='btn btn-primary mb-2 mt-2 w-100' type='button' data-toggle='collapse' data-target='#collapseExample" . $c->getId() . "' aria-expanded='false' aria-controls='collapseExample'> " . $c->getNombre() . "
         </button>
-        <button id='" . $c->getId() . "' class='btn btn-danger ml-3 eliminar' style='transform: translatey(-1px);'><i class='fas fa-times'></i></button>
+        </div>
+        <div class='col-1 col-md-1'>
+        <button id='" . $c->getId() . "' class='btn btn-danger mt-2 eliminar ' style='transform: translatey(-1px);'><i class='fas fa-times'></i></button>
+        </div>
+        
         </div>
 
         <div class='collapse' id='collapseExample" . $c->getId() . "'>

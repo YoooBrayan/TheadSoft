@@ -185,6 +185,7 @@ class Venta
         $this->conexion->ejecutar($this->ventaDAO->tallasModeloVenta($modelo));
 
         $i = 0;
+        $resultados = array();
         while (($registro = $this->conexion->extraer()) != null) {
             $resultados[$i] = new Talla($registro[0]);
             $i++;
@@ -210,6 +211,7 @@ class Venta
         $this->conexion->ejecutar($this->ventaDAO->coloresTallaModeloVenta($modelo, $talla));
 
         $i = 0;
+        $resultados = array();
         while (($registro = $this->conexion->extraer()) != null) {
             $resultados[$i] = new Color($registro[0], $registro[1]);
             $i++;

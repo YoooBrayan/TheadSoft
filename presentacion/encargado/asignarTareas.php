@@ -10,10 +10,9 @@ $operarios = $operario->consultarTodos($_SESSION['id']['satelite']);
 
 ?>
 
-<div class="container">
-    <div class="row" style="width: 100%; padding: 0px;">
-        <div class="col-3"></div>
-        <div class="col-6">
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12 col-md-6 mx-md-auto">
             <div class="card">
                 <div class="card-header bg-primary text-white bg-dark" style="text-align: center;">Asignar Tareas <?php echo "<br>Modelo: " . $corte->getModelo()->getNombre(); ?></div>
                 <div class="card-body">
@@ -52,19 +51,21 @@ $operarios = $operario->consultarTodos($_SESSION['id']['satelite']);
 
                     <button id="btnAsignar" type="submit" name="registrar" class="btn btn-dark mt-2 mb-2">Agregar</button>
 
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th scope="col">Tarea</th>
-                                <th scope="col">Cantidad</th>
-                                <th scope="col">Valor</th>
-                                <th scope="col">Total</th>
-                                <th scope="col">Servicios</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tareas">
-                        </tbody>
-                    </table>
+                    <div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Tarea</th>
+                                    <th scope="col">Cantidad</th>
+                                    <th scope="col">Valor</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">Servicios</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tareas">
+                            </tbody>
+                        </table>
+                    </div>
 
                 </div>
 

@@ -14,7 +14,7 @@ $modelos = $modelos->consultarModelos();
 
 
 <div class="container mt-3 mb-4">
-	<label class="text-white h5">Seleccione Tipo:</label>
+	<label class="text-white text-center h5">Seleccione Tipo:</label>
 	<select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;">
 
 		<option value="">Seleccione</option>
@@ -30,10 +30,10 @@ $modelos = $modelos->consultarModelos();
 	<div class="row">
 		<div class="col-12">
 			<div class="card">
-				<div style="text-align: center;" class="card-header bg-dark text-white">Cortes Entregados</div>
+				<div class="card-header bg-dark text-white text-center text-center">Cortes Entregados</div>
 				<div class="card-body">
-					<div id="resultadosProfesores">
-						<table class="table table-striped table-hover">
+					<div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
+						<table class="table table-striped table-hover ">
 							<thead>
 								<tr>
 									<th scope="col">Id</th>
@@ -61,9 +61,9 @@ $modelos = $modelos->consultarModelos();
 	<div class="row">
 		<div class="col-12">
 			<div class="card">
-				<div style="text-align: center;" class="card-header bg-dark text-white">Cortes Pendientes</div>
+				<div  class="card-header bg-dark text-white text-center">Cortes Pendientes</div>
 				<div class="card-body">
-					<div id="resultadosProfesores">
+					<div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
 						<table class="table table-striped table-hover">
 							<thead>
 								<tr>
@@ -85,13 +85,12 @@ $modelos = $modelos->consultarModelos();
 		</div>
 	</div>
 </div>
-<br>
 
 <div id="CB" class="container" hidden>
 	<div class="row">
 		<div class="col-12">
 			<div class="card">
-				<div style="text-align: center;" class="card-header bg-dark text-white">Cortes en Bodega</div>
+				<div  class="card-header bg-dark text-white text-center">Cortes en Bodega</div>
 				<div class="card-body">
 					<label class="text-dark h5 m-3">Seleccione Modelo:</label>
 					<select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idM">
@@ -104,17 +103,19 @@ $modelos = $modelos->consultarModelos();
 						?>
 
 					</select>
-					<table class="table table-striped table-hover">
-						<thead>
-							<tr>
-								<th scope="col">Modelo</th>
-								<th scope="col">Cantidad</th>
-								<th scope="col">Servicios</th>
-							</tr>
-						</thead>
-						<tbody id="tcb">
-						</tbody>
-					</table>
+					<div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
+						<table class="table table-striped table-hover">
+							<thead>
+								<tr>
+									<th scope="col">Modelo</th>
+									<th scope="col">Cantidad</th>
+									<th scope="col">Servicios</th>
+								</tr>
+							</thead>
+							<tbody id="tcb">
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -398,7 +399,7 @@ $modelos = $modelos->consultarModelos();
 		});
 	});
 
-	$("#idM").change(function(){
+	$("#idM").change(function() {
 
 		let modelo = $("#idM option:selected")[0].value;
 		console.log(modelo);

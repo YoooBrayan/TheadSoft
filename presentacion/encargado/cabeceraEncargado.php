@@ -1,6 +1,6 @@
-<?php 
+<?php
 $operario = new Operario($_SESSION['id']['id']);
-$operario -> consultar();
+$operario->consultar();
 
 ?>
 
@@ -8,7 +8,7 @@ $operario -> consultar();
     <link rel="stylesheet" href="presentacion/estilos.css">
 </head>
 
-<header>
+<header class="container-fluid">
     <div class="logo">
         <h1 class="logo-text"><span>Thread</span>Soft</h1>
     </div>
@@ -25,34 +25,26 @@ $operario -> consultar();
         <li>
             <a href="#">Corte</a>
             <ul style="right: 0px;">
-                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/encargado/cortesPendientes.php")?>">Pendientes</a></li>
-                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/encargado/cortesPorPagar.php")?>">Por Pagar</a></li>
-                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/encargado/cortesEntregados.php")?>">Entregados</a></li>
-                
+                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/encargado/cortesPendientes.php") ?>">Pendientes</a></li>
+                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/encargado/cortesPorPagar.php") ?>">Por Pagar</a></li>
+                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/encargado/cortesEntregados.php") ?>">Entregados</a></li>
+
             </ul>
         </li>
         <li>
             <a href="#">
                 <i class="fa fa-user"></i>
-                <?php  echo $operario->getNombre(); ?>
+                <?php echo $operario->getNombre(); ?>
                 <i class="fa fa-chevron-down" style="font-size: .8em;"></i>
             </a>
             <ul>
-                <li><a href="#"><?php  echo $operario->getId(); ?></a></li>
+                <li><a href="#"><?php echo $operario->getId(); ?></a></li>
                 <li><a id="info" href="#"><?php echo $operario->getCorreo(); ?></a></li>
                 <li><a class="logout" href="index.php">Cerrar sesion</a></li>
             </ul>
         </li>
     </ul>
 </header>
-
-
-<div>
-<?php if(isset($_GET['mensaje']))
-		{
-			echo "<div class='alert alert-danger' role='alert'>". $_GET['mensaje'] . " </div>";
-		}?>
-</div>
 
 <script>
     $(document).ready(function() {
