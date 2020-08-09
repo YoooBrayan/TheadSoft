@@ -36,7 +36,7 @@ if (isset($_GET['modelo'])) {
 <div class="modal-body">
 	<label>Seleccione Colores:</label>
 
-	<select class="selectpicker ml-1" data-show-subtext="true" data-live-search="true" id="idCM">
+	<select class="form-control ml-1" id="idCM">
 		<?php
 		foreach ($colores as $c) {
 		?>
@@ -94,10 +94,6 @@ if (isset($_GET['modelo'])) {
 	});
 
 	$(document).ready(function() {
-		$('.selectpicker').selectpicker({
-			style: 'btn-default'
-		});
-
 
 		let modelo = "<?php echo $modeloId; ?>";
 
@@ -162,7 +158,7 @@ if (isset($_GET['modelo'])) {
 		if (cantidadCM > 0) {
 			var itemSelectorOption = $('#idCM option:selected');
 			itemSelectorOption.remove();
-			$('#idCM').selectpicker('refresh');
+			//$('#idCM').selectpicker('refresh');
 
 			$.ajax({
 				type: "POST",
@@ -291,7 +287,7 @@ if (isset($_GET['modelo'])) {
 
 				$("#" + color).remove();
 				$('#idCM').append(`<option value="${color}">${colorN}</option>`);
-				$('#idCM').selectpicker('refresh');
+				//$('#idCM').selectpicker('refresh');
 
 				var optionsC = $("#idCM option").length;
 				if (optionsC + 1 > 0) {

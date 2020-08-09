@@ -18,7 +18,7 @@ $representante->consultar();
     <ul class="nav">
         <li><a href="index.php?pid=<?php echo base64_encode('presentacion/representante/sesionRepresentante.php') ?>">Home</a></li>
         <li><a href="index.php?pid=<?php echo base64_encode('presentacion/representante/almacenes.php') ?>">Almacenes</a></li>
-        <li><a href="index.php?pid=<?php echo base64_encode('presentacion/representante/modelos.php') ?>">Modelos</a></li>
+        <li><a href="#">Modelos</a></li>
         <li>
             <a href="#">Corte</a>
             <ul style="right: 0px;">

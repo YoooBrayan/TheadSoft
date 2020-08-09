@@ -36,14 +36,13 @@ foreach ($tallas as $t) {
         <div class="col-12 col-md-6 mx-md-auto">
             <div class="card">
                 <div id="mensaje" class='alert alert-danger' role='alert' hidden></div>
-                <div class="card-header bg-primary text-white bg-dark" style="text-align: center;">Nueva Venta</div>
+                <div class="card-header bg-primary text-white bg-dark text-center">Nueva Venta</div>
                 <div class="card-body">
                     <form action=<?php echo "index.php?pid=" . base64_encode("presentacion/representante/registrarCorte.php") ?> method="post">
                         <hr/ style="border: 1px solid">
-                        <div class="form-group">
-                            <label>Seleccione Modelo</label>
-                            <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idM">
-
+                        <div class="form-group row">
+                            <label class="form-control-label p-2 col-5 col-md-4">Seleccione Modelo</label>
+                            <select class="form-control col-6" id="idM">
                                 <option value="0">Seleccione</option>
                                 <?php
                                 foreach ($modelos as $m) {
@@ -57,20 +56,20 @@ foreach ($tallas as $t) {
                         <hr/ style="border: 1px solid">
 
                         <h6>Seleccionar Tallas y Colores</h6>
-
-                        <label>Seleccione Tallas</label>
-                        <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idT">
-
-                            <?php
-                            foreach ($tallas as $t) {
-                            ?>
-                                <option value="<?php echo $t->getId() ?>"><?php echo $t->getId();  ?></option>
-                            <?php }
-                            ?>
-                        </select>
-                        <div class="form-gruop mt-2">
-                            <label>Cantidad</label>
-                            <input id="cantidadT" type="number" min="0" oninput="validity.valid||(value='');" style="width: 61px">
+                        <div class="form-group mt-2 mb-0 row">
+                            <label class="form-control-label ml-0 col-12 col-md-4">Seleccione Tallas</label>
+                            <select class="form-control col-md-3 col-10 ml-2 mr-1" id="idT">
+                                <?php
+                                foreach ($tallas as $t) {
+                                ?>
+                                    <option value="<?php echo $t->getId() ?>"><?php echo $t->getId();  ?></option>
+                                <?php }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-gruop mt-1 row">
+                            <label class="form-group-label col-12 col-md-4">Cantidad</label>
+                            <input class="col-md-3 col-10 ml-2 mr-1" id="cantidadT" type="number" min="0" oninput="validity.valid||(value='');" style="width: 61px">
                             <label id="cantidadD"></label>
                             <label id="labelTalla" class="text-danger" style="display: none">Cantidad Invalida</label>
                         </div>

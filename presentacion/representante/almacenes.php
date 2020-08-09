@@ -18,9 +18,9 @@ $modelos = $modelos->consultarModelos();
 ?>
 <div class="container mt-2 mb-4">
 	<div class="row">
-		<div class="col-12 col-md-9 mb-3">
-			<label class="text-white h5">Seleccione Almacen:</label>
-			<select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idA">
+		<div class="col-12 col-md-9 mb-3 row">
+			<label class="text-white h5 col-12 col-md-3">Seleccione Almacen:</label>
+			<select class="form-control ml-1 col-12 col-md-4" id="idA">
 
 				<option value="0">Seleccione</option>
 				<?php
@@ -32,7 +32,7 @@ $modelos = $modelos->consultarModelos();
 			</select>
 		</div>
 		<div class="col-12 col-md-3">
-			<a id="btnVenta" hidden class="btn btn-success" href="index.php?pid=<?php echo base64_encode("presentacion/representante/agregarVenta.php") ?>">Añadir Venta</a>
+			<a id="btnVenta" hidden class="btn btn-success ml-0" href="index.php?pid=<?php echo base64_encode("presentacion/representante/agregarVenta.php") ?>">Añadir Venta</a>
 			<a class="btn btn-info" href="index.php?pid=<?php echo base64_encode("presentacion/representante/registrarAlmacen.php") ?>">Nuevo Almacen</a>
 		</div>
 
@@ -43,15 +43,17 @@ $modelos = $modelos->consultarModelos();
 	<div class="row">
 		<div class="col-12">
 			<div class="card">
-				<div style="text-align: center;" class="card-header bg-dark text-white">Mercancia</div>
+				<div class="card-header bg-dark text-white text-center">Mercancia</div>
 				<div class="card-body">
-					<label class="text-dark h5 m-3">Seleccione Modelo:</label>
-					<select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idMA">
+					<div class="form-group row">
+						<label class="form-control-label p-2 text-dark h5 ml-1 col-6 col-md-3">Seleccione Modelo:</label>
+						<select class="form-control col-5 col-md-3" id="idMA">
 
-						<option value="">Seleccione</option>
+							<option value="">Seleccione</option>
 
-					</select>
-					<div class="mt-5">
+						</select>
+					</div>
+					<div class="mt-3">
 						<div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
 							<table class="table table-striped table-hover">
 								<thead>
@@ -78,13 +80,15 @@ $modelos = $modelos->consultarModelos();
 	<div class="row">
 		<div class="col-12">
 			<div class="card">
-				<div style="text-align: center;" class="card-header bg-dark text-white">Ventas</div>
+				<div class="card-header bg-dark text-white text-center">Ventas</div>
 				<div class="card-body">
-					<label class="text-dark h5 m-3">Seleccione Fecha Inicial:</label>
-					<input id="fechaInicio" onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha Inicial" name="fechaVenta">
-					<label class="text-dark h5 m-3">Seleccione Fecha Final:</label>
-					<input id="fechaFinal" onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha Final" name="fechaVenta">
-					<div class="mt-5">
+					<div class="row">
+						<label class="form-control-label text-dark h5 p-2 col-6 col-md-3">Seleccione Fecha Inicial:</label>
+						<input id="fechaInicio" onfocus="(this.type='date')" class="form-control col-6 col-md-2 mb-1" placeholder="Fecha Inicial" name="fechaVenta">
+						<label class="form-control-label text-dark h5 p-2 col-6 col-md-3">Seleccione Fecha Final:</label>
+						<input id="fechaFinal" onfocus="(this.type='date')" class="form-control col-6 col-md-2" placeholder="Fecha Final" name="fechaVenta">
+					</div>
+					<div class="mt-3">
 						<div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
 							<table class="table table-striped table-hover">
 								<thead>
@@ -112,19 +116,20 @@ $modelos = $modelos->consultarModelos();
 	<div class="row">
 		<div class="col-12">
 			<div class="card d-flex">
-				<div style="text-align: center;" class="card-header bg-dark text-white">Importar Modelos</div>
+				<div class="card-header bg-dark text-white text-center">Importar Modelos</div>
 				<div class="card-body">
-					<label class="text-dark h5 m-3">Seleccione Modelo:</label>
-					<select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idM">
-
-						<option value="">Seleccione</option>
-						<?php
-						foreach ($modelos as $m) {
-							echo "<option value=" . $m->getId() . ">" . $m->getNombre() . "</option>";
-						}
-						?>
-					</select>
-					<div class="mt-5">
+					<div class="form-group row">
+						<label class="form-control-label p-2 text-dark h5 ml-1 col-6 col-md-3">Seleccione Modelo:</label>
+						<select class="form-control col-5 col-md-3" id="idM">
+							<option value="">Seleccione</option>
+							<?php
+							foreach ($modelos as $m) {
+								echo "<option value=" . $m->getId() . ">" . $m->getNombre() . "</option>";
+							}
+							?>
+						</select>
+					</div>
+					<div class="mt-3">
 						<div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
 							<table class="table table-striped table-hover">
 								<thead>

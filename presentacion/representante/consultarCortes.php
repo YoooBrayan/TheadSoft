@@ -14,15 +14,17 @@ $modelos = $modelos->consultarModelos();
 
 
 <div class="container mt-3 mb-4">
-	<label class="text-white text-center h5">Seleccione Tipo:</label>
-	<select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;">
+	<div class="form-group row">
+		<label class="text-white h5 col-12 col-md-2">Seleccione Tipo:</label>
+		<select class="form-control ml-2 col-8 col-md-2">
 
-		<option value="">Seleccione</option>
-		<option value="CE">Cortes Entregados</option>
-		<option value="CP">Cortes Pendientes</option>
-		<option value="CB">Bodega</option>
+			<option value="">Seleccione</option>
+			<option value="CE">Cortes Entregados</option>
+			<option value="CP">Cortes Pendientes</option>
+			<option value="CB">Bodega</option>
 
-	</select>
+		</select>
+	</div>
 </div>
 
 
@@ -61,7 +63,7 @@ $modelos = $modelos->consultarModelos();
 	<div class="row">
 		<div class="col-12">
 			<div class="card">
-				<div  class="card-header bg-dark text-white text-center">Cortes Pendientes</div>
+				<div class="card-header bg-dark text-white text-center">Cortes Pendientes</div>
 				<div class="card-body">
 					<div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
 						<table class="table table-striped table-hover">
@@ -90,19 +92,21 @@ $modelos = $modelos->consultarModelos();
 	<div class="row">
 		<div class="col-12">
 			<div class="card">
-				<div  class="card-header bg-dark text-white text-center">Cortes en Bodega</div>
+				<div class="card-header bg-dark text-white text-center">Cortes en Bodega</div>
 				<div class="card-body">
-					<label class="text-dark h5 m-3">Seleccione Modelo:</label>
-					<select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idM">
+					<div class="form-group row mb-2">
+						<label class="form-control-label p-1 text-dark col-12 col-md-2">Seleccione Modelo:</label>
+						<select class="ml-1 form-control col-10 col-md-3 mr-2" id="idM">
 
-						<option value="">Seleccione</option>
-						<?php
-						foreach ($modelos as $m) {
-							echo "<option value=" . $m->getId() . ">" . $m->getNombre() . "</option>";
-						}
-						?>
+							<option value="">Seleccione</option>
+							<?php
+							foreach ($modelos as $m) {
+								echo "<option value=" . $m->getId() . ">" . $m->getNombre() . "</option>";
+							}
+							?>
 
-					</select>
+						</select>
+					</div>
 					<div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
 						<table class="table table-striped table-hover">
 							<thead>

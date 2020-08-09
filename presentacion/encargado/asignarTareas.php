@@ -18,8 +18,9 @@ $operarios = $operario->consultarTodos($_SESSION['id']['satelite']);
                 <div class="card-body">
 
                     <div class="form-group">
-                        <label>Seleccione Operario</label>
-                        <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idO">
+
+                        <label for="exampleFormControlSelect1">Seleccione Operario</label>
+                        <select id="idO" class="form-control" id="exampleFormControlSelect1">
                             <?php
                             foreach ($operarios as $o) {
                             ?>
@@ -29,11 +30,12 @@ $operarios = $operario->consultarTodos($_SESSION['id']['satelite']);
                             <?php }
                             ?>
                         </select>
+
                     </div>
 
                     <div class="form-group">
-                        <label>Seleccione Tarea</label>
-                        <select class="selectpicker" data-show-subtext="true" data-live-search="true" style="margin-left: 5px;" id="idT">
+                        <label for="exampleFormControlSelect1">Seleccione Tarea</label>
+                        <select id="idT" class="form-control" id="exampleFormControlSelect1">
                             <?php
                             foreach ($corte->getTarea() as $t) {
                             ?>
@@ -89,7 +91,7 @@ $operarios = $operario->consultarTodos($_SESSION['id']['satelite']);
             if (cantidad == cantidadR) {
                 var itemSelectorOption = $('#idT option:selected');
                 itemSelectorOption.remove();
-                $('#idT').selectpicker('refresh');
+                //$('#idT').selectpicker('refresh');
             }
 
             $.ajax({
@@ -209,7 +211,7 @@ $operarios = $operario->consultarTodos($_SESSION['id']['satelite']);
                 $("#" + tarea).remove();
 
                 $('#idT').append(`<option value="${response}">${tareaN}</option>`);
-                $('#idT').selectpicker('refresh');
+                //$('#idT').selectpicker('refresh');
                 /*let tallas = JSON.parse(response);
 
                 let template = '';

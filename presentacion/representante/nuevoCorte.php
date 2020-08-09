@@ -15,7 +15,7 @@ $color = new Color();
 $colores = $color->consultarColores();
 
 $satelite = new Satelite();
-$satelites = $satelite -> listaSatelites();
+$satelites = $satelite->listaSatelites();
 
 $tallass = array();
 
@@ -25,7 +25,7 @@ foreach ($tallas as $t) {
 
 ?>
 <br>
-<div class="container bg-primary">
+<div class="container">
     <div class="row">
         <div class="col-12 col-md-6 mx-md-auto">
             <div class="card">
@@ -35,10 +35,10 @@ foreach ($tallas as $t) {
                     <form action=<?php echo "index.php?pid=" . base64_encode("presentacion/representante/registrarCorte.php") ?> method="post">
                         <hr/ style="border: 1px solid">
                         <h6>Nuevo corte</h6>
-                        <div class="form-group">
-                            <label>Seleccione Satelite</label>
-                            <select class="selectpicker ml-1" data-show-subtext="true" data-live-search="true" id="idS">
-                            <option value="0">Seleccione</option>
+                        <div class="form-group row">
+                            <label class="col-form-label col-12 col-md-4">Seleccione Satelite</label>
+                            <select class="ml-2 form-control col-7 col-md-4 ml-md-0" id="idS">
+                                <option value="0">Seleccione</option>
                                 <?php
                                 foreach ($satelites as $s) {
                                 ?>
@@ -46,11 +46,11 @@ foreach ($tallas as $t) {
                                 <?php }
                                 ?>
                             </select>
-                            <span class="display-6 text-info"><u>Opcional</u></span>
+                            <label class="display-6 text-info col-md-4 col-4 col-form-label"><u>Opcional</u></label>
                         </div>
-                        <div class="form-group">
-                            <label>Seleccione Modelo</label>
-                            <select class="selectpicker ml-1" data-show-subtext="true" data-live-search="true" id="idM">
+                        <div class="form-group row">
+                            <label class="col-form-label col-12 col-md-4">Seleccione Modelo</label>
+                            <select class="ml-2 form-control col-8 col-md-4 ml-md-0" id="idM">
                                 <?php
                                 foreach ($modelos as $m) {
                                 ?>
@@ -60,11 +60,11 @@ foreach ($tallas as $t) {
                             </select>
                         </div>
                         <div class="form-group">
-                            <input id="fechaEnvio" onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha de Envio" name="fechaEnvio" required="required">
+                            <input id="fechaEnvio" onfocus="(this.type='date')" class="form-control w-75" placeholder="Fecha de Envio" name="fechaEnvio" required="required" title="Fecha de Envio">
                             <label class="text-danger" hidden>Seleccione Fecha</label>
                         </div>
                         <div class="form-group">
-                            <input id="fechaEntrega" onfocus="(this.type='date')" class="js-form-control" placeholder="Fecha de Entrega" name="fechaEntrega" required="required">
+                            <input id="fechaEntrega" onfocus="(this.type='date')" class="form-control w-75" placeholder="Fecha de Entrega" name="fechaEntrega" required="required" title="Fecha de Entrega">
                             <label class="text-danger" hidden>Seleccione Fecha</label>
                         </div>
                         <div class="form-group">
@@ -75,37 +75,39 @@ foreach ($tallas as $t) {
                         <hr/ style="border: 1px solid">
 
                         <h6>Seleccionar Tallas y Colores</h6>
-
-                        <label>Seleccione Tallas</label>
-                        <select class="selectpicker ml-1" data-show-subtext="true" data-live-search="true"  id="idT">
-                            <?php
-                            foreach ($tallas as $t) {
-                            ?>
-                                <option value="<?php echo $t->getId() ?>"><?php echo $t->getId();  ?></option>
-                            <?php }
-                            ?>
-                        </select>
-                        <div class="form-gruop mt-2">
-                            <label>Cantidad</label>
-                            <input id="cantidadT" type="number" min="0" oninput="validity.valid||(value='');" style="width: 61px">
+                        <div class="form-group mt-2 mb-0 row">
+                            <label class="form-group-label ml-0 col-12 col-md-4">Seleccione Tallas</label>
+                            <select class="form-control col-md-3 col-10 ml-2 mr-1" id="idT">
+                                <?php
+                                foreach ($tallas as $t) {
+                                ?>
+                                    <option value="<?php echo $t->getId() ?>"><?php echo $t->getId();  ?></option>
+                                <?php }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group row mt-1">
+                            <label class="form-group-label col-12 col-md-4">Cantidad</label>
+                            <input class="col-md-3 col-10 ml-2 mr-1" id="cantidadT" type="number" min="0" oninput="validity.valid||(value='');" style="width: 61px">
                         </div>
 
                         <button id="btnTalla" type="submit" name="registrar" class="btn btn-dark mt-2 mb-2">Agregar</button>
-                        <table class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Talla</th>
-                                    <th scope="col">Cantidad</th>
-                                    <th scope="col">Servicios</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tallas">
-                            </tbody>
-                        </table>
+                        <div class="table-wrapper-scroll-y my-custom-scrollbar h-25">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Talla</th>
+                                        <th scope="col">Cantidad</th>
+                                        <th scope="col">Servicios</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tallas">
+                                </tbody>
+                            </table>
+                        </div>
 
                         <hr/ style="border: 1px solid">
 
-                        <hr/ style="border: 1px solid">
                         <br>
                         <br>
 
@@ -151,7 +153,7 @@ foreach ($tallas as $t) {
         if (cantidadT > 0) {
             var itemSelectorOption = $('#idT option:selected');
             itemSelectorOption.remove();
-            $('#idT').selectpicker('refresh');
+            //$('#idT').form-control('refresh');
             let urls = "<?php echo "indexAjax.php?pid=" . base64_encode("presentacion/representante/modalColores.php") ?>";
 
             $.ajax({
@@ -209,7 +211,7 @@ foreach ($tallas as $t) {
     });
 
     $(document).on("click", "#registrar", function(e) {
-        
+
         e.preventDefault();
         let idM = $("#idM option:selected")[0].value;
         let idS = $("#idS option:selected")[0].value;
@@ -249,7 +251,7 @@ foreach ($tallas as $t) {
                             }
                         );
 
-                        $('#idT').selectpicker('refresh');
+                        //$('#idT').form-control('refresh');
 
                         window.scrollTo(0, 0);
 
@@ -289,7 +291,7 @@ foreach ($tallas as $t) {
                 $("#" + talla).remove();
 
                 $('#idT').append(`<option value="${talla}">${talla}</option>`);
-                $('#idT').selectpicker('refresh');
+                //$('#idT').form-control('refresh');
                 /*let tallas = JSON.parse(response);
 
                 let template = '';
