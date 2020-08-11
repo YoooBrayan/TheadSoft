@@ -67,7 +67,7 @@ if (isset($_POST['idCortes'])) {
             if($o['id'] == $s -> getId()){
                 $pagoSocios[] = array(
                     'socio' => $s -> getNombre(),
-                    'pago' => $pago + floor((($ganancias - $_POST['insumos']) / count($listaSocios)))
+                    'pago' => $pago + floor(((($ganancias - $_POST['insumos']) < 0 ? 0 : ($ganancias - $_POST['insumos'])) / count($listaSocios)))
                 );
             }
         }
@@ -79,8 +79,8 @@ if (isset($_POST['idCortes'])) {
         'pagoTotal' => $pagoTotal,
         'pagoNomina' => $pagoNomina,
         'insumos' => $_POST['insumos'],
-        'ganancias' => $ganancias - $_POST['insumos'],
-        'gananciasD' => floor(($ganancias - $_POST['insumos']) / count($listaSocios)),
+        'ganancias' => ($ganancias - $_POST['insumos'] < 0 ? 0 : $ganancias - $_POST['insumos']),
+        'gananciasD' => floor((($ganancias - $_POST['insumos']) < 0 ? 0 : $ganancias - $_POST['insumos']) / count($listaSocios)),
         'pagoSocios' => $pagoSocios
     );
 

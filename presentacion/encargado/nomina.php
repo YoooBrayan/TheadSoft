@@ -92,6 +92,7 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 
 		let insumos = prompt("Ingrese Insumos");
 
+		Number.isInteger(insumos)
 		let idCortes = "1";
 
 		$.ajax({
@@ -151,15 +152,15 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 					template += `
 					<div class='card border-dark mt-3 mb-2' style='max-width: 100%;'> 
 						<div class="card-header text-center">Ganancias</div>
-						<div class="card-body text-dark container">
-							<strong class='p-1 text-dark border border-dark mr-5'>Pago Total: ${nomina.pagoTotal}</strong>
-							<strong class='p-1 text-dark border border-dark mr-5'>Nomina: ${nomina.pagoNomina}</strong>
-							<strong class='p-1 text-dark border border-dark mr-5'>Insumos: ${nomina.insumos}</strong>
-							<strong class='p-1 text-dark border border-dark mr-5'>Ganancias: ${nomina.ganancias}</strong>
-							<strong class='p-1 text-dark border border-dark mr-5'>Ganancias Divididas: ${nomina.gananciasD}</strong> <br><br>`;
+						<div class="card-body text-dark container row">
+							<strong class='p-1 text-dark border border-light col-12 col-sm-6 col-md-3 mb-1'>Pago Total: ${nomina.pagoTotal}</strong>
+							<strong class='p-1 text-dark border border-light col-12 col-sm-6 col-md-3 mb-1'>Nomina: ${nomina.pagoNomina}</strong>
+							<strong class='p-1 text-dark border border-light col-12 col-sm-6 col-md-3 mb-1'>Insumos: ${nomina.insumos}</strong>
+							<strong class='p-1 text-dark border border-light col-12 col-sm-6 col-md-3 mb-1'>Ganancias: ${nomina.ganancias}</strong>
+							<strong class='p-1 text-dark border border-light col-12 col-sm-6 col-md-3 mb-1'>Ganancias Divididas: ${nomina.gananciasD}</strong> <br><br>`;
 
 					nomina.pagoSocios.forEach(socio => {
-						template += `<strong class='p-1 text-dark border border-dark mr-4'>Sueldo ${socio.socio} : ${socio.pago}</strong>`;
+						template += `<strong class='p-1 text-dark border border-light col-12 col-sm-6 col-md-3 mb-1'>Sueldo ${socio.socio} : ${socio.pago}</strong>`;
 					});
 
 					template += `</div></div>`;
