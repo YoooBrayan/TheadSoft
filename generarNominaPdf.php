@@ -151,7 +151,7 @@ $pdf->Ln();
 $pdf->Cell(35, 5, $pagoTotal, 1, 0, "C");
 $pdf->Cell(35, 5, $pagoNomina, 1, 0, "C");
 $pdf->Cell(35, 5, $_GET['insumos'], 1, 0, "C");
-$pdf->Cell(35, 5, ($ganancias - $_GET['insumos'] < 0 ? 0 : $ganancias), 1, 0, "C");
+$pdf->Cell(35, 5, ($ganancias - $_GET['insumos'] < 0 ? 0 : $ganancias - $_GET['insumos']), 1, 0, "C");
 $pdf->Cell(45, 5, (floor((($ganancias - $_GET['insumos']) < 0 ? 0 : ($ganancias - $_GET['insumos'])) / count($listaSocios))), 1, 0, "C");
 
 $pdf->Ln();

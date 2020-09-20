@@ -55,7 +55,7 @@ create table Telefono_Admi(
 );
 
 create table Modelo(
-   Modelo_Id int not null,
+   Modelo_Id int not null auto_increment,
    Modelo_Nombre varchar(30) not null,
    Modelo_Valor int not null,
    Modelo_Proveedor int not null,
@@ -63,19 +63,28 @@ create table Modelo(
    foreign key(Modelo_Proveedor) references Proveedor(Proveedor_Id)
 );
 
+create table Satelite(
+	satelite_Id int not null auto_increment,
+	satelite_Nombre varchar(60) not null,
+	satelite_Direccion varchar(60) not null,
+	PRIMARY KEY(satelite_Id)
+); 
+
+
 create table Corte(
-   Corte_Id int not null,
+   Corte_Id int not null auto_increment,
    Corte_Fecha_Envio date not null,
    Corte_Fecha_Entrega date not null,
    Corte_Observacion_Prov varchar(100) null,
    Corte_Representante int not null,
    Corte_Modelo int not null,
+   corte_satelite int not null,
    primary key(Corte_Id),
    foreign key(Corte_Representante) references Representante(Representante_Id),
-   foreign key(Corte_Modelo) references Modelo(Modelo_Id)
+   foreign key(Corte_Modelo) references Modelo(Modelo_Id),
+   FOREIGN KEY(corte_satelite) REFERENCES Satelite(satelite_Id)
 );
 
-alter table corte add column corte_satelite int not null;
 
 create table Estado(
 	Estado_Id int not null,
@@ -111,7 +120,7 @@ create table Talla (
 );
 
 create table color(
-   Color_Id int not null,
+   Color_Id int not null auto_increment,
    Color_Nombre varchar(20) not null,
    primary key(Color_Id)
 );
@@ -128,7 +137,7 @@ create table Insumo_Bodega(
 );
 
 create table Operacion(
-   Operacion_Id int not null,
+   Operacion_Id int not null auto_increment,
    Operacion_Descripcion varchar(60) not null,
    Operacion_Valor int not null,
    primary key(Operacion_Id)
@@ -162,13 +171,6 @@ create table corte_talla_color(
 	foreign key(corte_talla_id) references Corte_talla(Corte_Talla_Id),
 	foreign key(Color_Id) references Color(Color_Id)
 );
-
-create table Satelite(
-	satelite_Id int not null auto_increment,
-	satelite_Nombre varchar(60) not null,
-	satelite_Direccion varchar(60) not null,
-	PRIMARY KEY(satelite_Id)
-); 
 
 create table Operario(
    Operario_Id int not null,
@@ -242,6 +244,49 @@ create table venta_talla_Color(
 	foreign key(modelo_venta_talla_id) REFERENCES modelo_venta_talla(modelo_venta_Talla_id),
 	foreign key(color_id) REFERENCES color(color_id)
 );
+
+CREATE TABLE almacen(
+	almacen_id int not null auto_increment,
+	almacen_nombre varchar(65) not null,
+	PRIMARY KEY(almacen_id)
+);
+
+CREATE TABLE modelo_distribuido(
+	modelo_distribuido_id int not null auto_increment,
+	modelo_id int not null,
+	PRIMARY KEY(modelo_distribuido_id),
+	FOREIGN KEY(modelo_id) REFERENCES modelo(modelo_id)
+);
+
+CREATE TABLE modelo_almacen(
+	modelo_almacen_id int not null auto_increment,
+	modelo_distribuido_id int not null,
+	almacen_id int not null,
+	PRIMARY KEY(modelo_almacen_id),
+	FOREIGN KEY(modelo_distribuido_id) REFERENCES modelo_Distribuido(modelo_distribuido_id),
+	FOREIGN KEY(almacen_id) REFERENCES almacen(almacen_id)
+)
+
+CREATE TABLE modelo_distribuido_talla (
+  modelo_D_talla_id int(11) NOT NULL AUTO_INCREMENT,
+  modelo_distribuido_id int(11) NOT NULL,
+  talla_id varchar(4) NOT NULL,
+  cantidad int(11) NOT NULL,
+  PRIMARY KEY (modelo_D_talla_id),
+  FOREIGN KEY(modelo_distribuido_id) REFERENCES modelo_distribuido(modelo_distribuido_id),
+  FOREIGN KEY(talla_id) REFERENCES talla(talla_id)
+);
+
+CREATE TABLE modelo_talla_color (
+  modelo_talla_color_id int(11) NOT NULL AUTO_INCREMENT,
+  MDT_id int(11) NOT NULL,
+  color_id int(11) NOT NULL,
+  cantidad int(11) NOT NULL,
+  PRIMARY KEY (modelo_talla_color_id),
+  FOREIGN KEY(MDT_id) REFERENCES modelo_distribuido_talla(modelo_D_talla_id),
+  FOREIGN KEY(color_id) REFERENCES color(color_id)
+);
+
 
 
 /*Consultas*/
@@ -331,6 +376,11 @@ select Operario_Id as 'ID', Operario_Nombre as 'Nombre', Operario_Correo as 'Cor
 from Operario
 order by Operario_Id;
 
+
+Create view tallasmodelosalmacen AS select ma.almacen_id AS almacen,m.Modelo_Id AS modelo,mdt.talla_id AS talla_id,sum(mdt.cantidad) AS cantidadAlmacen from (((modelo_almacen ma join modelo_distribuido md on((ma.modelo_distribuido_id = md.modelo_distribuido_id))) join modelo_distribuido_talla mdt on((md.modelo_distribuido_id = mdt.modelo_distribuido_id))) join modelo m on((m.Modelo_Id = md.modelo_id))) group by mdt.talla_id,m.Modelo_Id;
+
+
+VIEW tallasmodelosvendidos AS select ma.almacen_id AS almacen,md.modelo_id AS modelo,mvt.talla_id AS talla_id,ifnull(sum(vtc.cantidad),0) AS cantidadVenta from ((((modelo_distribuido md join modelo_almacen ma on((ma.modelo_distribuido_id = md.modelo_distribuido_id))) join modelo_vendido mv on((mv.modelo_almacen_id = ma.modelo_almacen_id))) join modelo_venta_talla mvt on((mvt.modelo_vendido_id = mv.modelo_vendido_id))) join venta_talla_color vtc on((vtc.modelo_venta_Talla_id = mvt.modelo_venta_talla_id))) group by mvt.talla_id,md.modelo_id;
 
 /*Funciones*/
 
@@ -465,7 +515,8 @@ select t.tarea_id, o.Operacion_Descripcion from tarea t join operacion o on t.ta
 	select t.tarea_id
 	from corte c join tarea t on t.tarea_Corte = c.Corte_id join tarea_operario tao on tao.tarea_id = t.tarea_id join operacion o on o.Operacion_Id = t.Tarea_Operacion join corte_Talla ct on ct.corte_id = c.corte_id	
 	where c.corte_id = corte and cantidad = tao.tarea_cantidad
-);
+)
+order by o.Operacion_Descripcion;
 end//
 
 /*eliminar Tarea*/

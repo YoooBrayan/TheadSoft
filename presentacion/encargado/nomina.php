@@ -51,7 +51,7 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 			</div>
 		</div>
 	</div>
-	<button id="nomina" type="button" class="btn btn-dark mt-2" hidden>Generar Nomina</button>
+	<button id="nomina" type="button" class="btn btn-dark mt-2 mb-4 col-12 text-center" hidden>Generar Nomina</button>
 	<div id="mensaje"></div>
 </div>
 
