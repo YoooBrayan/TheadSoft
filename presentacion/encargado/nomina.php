@@ -51,7 +51,9 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 			</div>
 		</div>
 	</div>
-	<button id="nomina" type="button" class="btn btn-dark mt-2 mb-4 col-12 text-center" hidden>Generar Nomina</button>
+	<div id="mostrar" hidden>
+		<button id="nomina" type="button" class="btn btn-dark mt-2 mb-4 col-12 text-center">Generar Nomina</button>
+	</div>
 	<div id="mensaje"></div>
 </div>
 
@@ -78,10 +80,44 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 
 				if (icon[0].count == 1) {
 					//$("#entregasC").attr("style", "display: none")
-					$("#nomina").attr("hidden", true);
+					$("#mostrar").attr("hidden", true);
 				} else {
-					$("#nomina").removeAttr("hidden");
+					$("#mostrar").removeAttr("hidden");
 					//$("#entregasC").attr("style", "display: line-block");
+				}
+			}
+		});
+
+	});
+
+
+	$(document).on("click", "#mail", function() {
+		const filepdf = $("#filePdf").val()
+		let namePdf = filepdf.split("\\")[2];
+
+		$.ajax({
+			type: "POST",
+			data: {
+				filePdf: namePdf
+			},
+			url: "enviarMail.php",
+			success: function(response) {
+				if (response) {
+					Swal.fire({
+						position: "center",
+						text: "Correo enviado con éxito!!!",
+						icon: "success",
+						title: "OK",
+						timer: 1500
+					})
+				} else {
+					Swal.fire({
+						position: "center",
+						text: "Mail NOT Sent",
+						icon: "warning",
+						title: ":(",
+						timer: 1500
+					})
 				}
 			}
 		});
@@ -165,7 +201,10 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 
 					template += `</div></div>`;
 
-					template += ` <a id='nominaPdf' target='_blank' href='generarNominaPdf.php?insumos=${nomina.insumos}' type='button' class='btn btn-dark mt-2 mb-3' > Exportar PDF </a>`;
+					template += ` <a id='nominaPdf' target='_blank' href='generarNominaPdf.php?insumos=${nomina.insumos}' type='button' class='btn btn-dark mt-2 mb-3' > Exportar PDF </a>
+					<input type="file" value="Seleccione archivo" name="Archivo" id="filePdf" class="form-control bg-light">
+		<button id="mail" type="button" class="btn btn-light mb-4 col-12 text-center">Enviar Email</button>
+					 `;
 
 					$("#cNomina").html(template);
 				});
@@ -175,5 +214,4 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 			}
 		});
 	});
-
 </script>

@@ -25,9 +25,9 @@ $operario->consultar();
         <li>
             <a href="#">Corte</a>
             <ul style="right: 0px;">
-                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/encargado/cortesPendientes.php") ?>">Pendientes</a></li>
-                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/encargado/cortesPorPagar.php") ?>">Por Pagar</a></li>
-                <li><a style="text-align: left;" href="index.php?pid=<?php echo base64_encode("presentacion/encargado/cortesEntregados.php") ?>">Entregados</a></li>
+                <li><a style="text-align: left;" href="#">Pendientes</a></li>
+                <li><a style="text-align: left;" href="#">Por Pagar</a></li>
+                <li><a style="text-align: left;" href="#">Entregados</a></li>
 
             </ul>
         </li>

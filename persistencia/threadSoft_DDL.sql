@@ -435,6 +435,17 @@ end//
 
 /*Procedimientos*/
 
+/*Modelos de un proveedor*/
+CREATE PROCEDURE modelosProveedor(id int)
+begin
+
+select Modelo_Id as ID, Modelo_Nombre as Nombre, Modelo_Valor as Valor
+from Proveedor, Modelo
+where proveedor_Id = Modelo_Proveedor and proveedor_Id = id
+order by nombre;
+end
+
+
 /*Mostrar las tareas de un corte*/
 create procedure tareasCorte(idcorte int)
 begin 
