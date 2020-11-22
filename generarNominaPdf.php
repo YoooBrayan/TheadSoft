@@ -65,7 +65,7 @@ class MyPdf extends FPDF
 		$this->Ln();
 		$pago = $operario->pagoNeto($_SESSION['cortes']);
 		$this->SetFont('Arial', 'B');
-		$this->Cell(25, 10, "Sueldo: " . $pago, 0, 1, "C");
+		$this->Cell(30, 10, "Sueldo: " . $pago, 0, 1, "C");
 		$this->cell(65);
 		$this->Cell(58, 10, "*************************************************************************************************************************************", 0, 0, "C");
 		$this->SetFont('Arial');
@@ -142,23 +142,25 @@ foreach ($operarios as $o) {
 
 $pdf->Cell(195, 5, "Ganancias", 0, 1, "C");
 $pdf->Ln();
-$pdf->Cell(35, 5, "Pago Total", 1, 0, "C");
-$pdf->Cell(35, 5, "Nomina", 1, 0, "C");
-$pdf->Cell(35, 5, "Insumos", 1, 0, "C");
-$pdf->Cell(35, 5, "Ganancias", 1, 0, "C");
-$pdf->Cell(45, 5, "Ganancias Divididas", 1, 0, "C");
+$pdf->Cell(30, 5, "Pago Total", 1, 0, "C");
+$pdf->Cell(30, 5, "Nomina", 1, 0, "C");
+$pdf->Cell(30, 5, "Insumos", 1, 0, "C");
+$pdf->Cell(30, 5, "Ganancias", 1, 0, "C");
+$pdf->Cell(39, 5, "Ganancias Divididas", 1, 0, "C");
+$pdf->Cell(30, 5, "Perdidas", 1, 0, "C");
 $pdf->Ln();
-$pdf->Cell(35, 5, $pagoTotal, 1, 0, "C");
-$pdf->Cell(35, 5, $pagoNomina, 1, 0, "C");
-$pdf->Cell(35, 5, $_GET['insumos'], 1, 0, "C");
-$pdf->Cell(35, 5, ($ganancias - $_GET['insumos'] < 0 ? 0 : $ganancias - $_GET['insumos']), 1, 0, "C");
-$pdf->Cell(45, 5, (floor((($ganancias - $_GET['insumos']) < 0 ? 0 : ($ganancias - $_GET['insumos'])) / count($listaSocios))), 1, 0, "C");
+$pdf->Cell(30, 5, $pagoTotal, 1, 0, "C");
+$pdf->Cell(30, 5, $pagoNomina, 1, 0, "C");
+$pdf->Cell(30, 5, $_GET['insumos'], 1, 0, "C");
+$pdf->Cell(30, 5, ($ganancias - $_GET['insumos'] < 0 ? 0 : $ganancias - $_GET['insumos']), 1, 0, "C");
+$pdf->Cell(39, 5, (floor((($ganancias - $_GET['insumos']) < 0 ? 0 : ($ganancias - $_GET['insumos'])) / count($listaSocios))), 1, 0, "C");
+$pdf->Cell(30, 5, ($ganancias - $_GET['insumos'] < 0 ? ($ganancias - $_GET['insumos']) * -1 : 0), 1, 0, "C");
 
 $pdf->Ln();
 $pdf->Ln();
 
 foreach ($pagoSocios as $s) {
-	$pdf->Cell(30, 5, "Sueldo " . $s['socio'] .": " . $s['pago'], 0, 1, "C");
+	$pdf->Cell(30, 5, "Sueldo " . $s['socio'] . ": " . $s['pago'], 0, 1, "C");
 }
 
 array_push($_SESSION['cortes'], 0);

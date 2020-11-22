@@ -72,16 +72,21 @@ require_once ('librerias/fpdf/fpdf.php');
 
     <?php
 
-    if (isset($_GET['pid'])) {
+    if (isset($_GET['pid']) && $_GET['pid']!='prueba') {
         $pid = base64_decode($_GET['pid']);
         if (isset($_GET['nos']) || (!isset($_GET['nos']) && $_SESSION['id'] != "")) {
             include $pid;
         } else {
-            header("Location: index.php");
+            header("Location: index.php?ns=true");
         }
     } else {
         $_SESSION['id'] = "";
-        include 'presentacion/inicio.php';
+        if(isset($_GET['ns'])){
+            include 'presentacion/inicio.php';
+        }else{
+            include 'presentacion/inicio.php';
+        }
+        
     }
 
     ?>

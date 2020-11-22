@@ -146,9 +146,7 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 
 				$("#mensaje").fadeOut("fast", function() {
 					let nomina = JSON.parse(response);
-					console.log(nomina);
 					let template = '';
-
 
 					nomina.nomina.forEach(operario => {
 						template += `
@@ -193,7 +191,9 @@ $cortes = $corte->consultarCortes($_SESSION['id']['satelite']);
 							<strong class='p-1 text-dark border border-light col-12 col-sm-6 col-md-3 mb-1'>Nomina: ${nomina.pagoNomina}</strong>
 							<strong class='p-1 text-dark border border-light col-12 col-sm-6 col-md-3 mb-1'>Insumos: ${nomina.insumos}</strong>
 							<strong class='p-1 text-dark border border-light col-12 col-sm-6 col-md-3 mb-1'>Ganancias: ${nomina.ganancias}</strong>
-							<strong class='p-1 text-dark border border-light col-12 col-sm-6 col-md-3 mb-1'>Ganancias Divididas: ${nomina.gananciasD}</strong> <br><br>`;
+							<strong class='p-1 text-dark border border-light col-12 col-sm-6 col-md-3 mb-1'>Ganancias Divididas: ${nomina.gananciasD}</strong> 
+							<strong class='p-1 text-dark border border-light col-12 col-sm-6 col-md-3 mb-1'>Perdidas: ${nomina.perdidas}</strong> 
+							<br><br>`;
 
 					nomina.pagoSocios.forEach(socio => {
 						template += `<strong class='p-1 text-dark border border-light col-12 col-sm-6 col-md-3 mb-1'>Sueldo ${socio.socio} : ${socio.pago}</strong>`;

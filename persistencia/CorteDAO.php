@@ -144,7 +144,7 @@ class CorteDAO
 
     function consultarTareas()
     {
-        return "call tareasPorAsignar(' " . $this->id . "')";
+        return "call tareasPorAsignar2(' " . $this->id . "')";
     }
 
     function setCantidad($cantidad)

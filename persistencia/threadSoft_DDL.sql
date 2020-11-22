@@ -530,6 +530,32 @@ select t.tarea_id, o.Operacion_Descripcion from tarea t join operacion o on t.ta
 order by o.Operacion_Descripcion;
 end//
 
+
+/*Consultar las tareas no asignadas (filtra por tareas que ya se asignaron y operaciones que fueron eliminadas del modelo)*/
+create procedure tareasPorAsignar2(corte int)
+BEGIN
+declare cantidad int;
+declare modelo int;
+
+select obtenerCantidadPrendasT(corte) into cantidad;
+select corte_modelo into modelo from corte where corte_id = corte;
+
+select t.tarea_id, o.Operacion_Descripcion from tarea t join operacion o on t.tarea_operacion = o.operacion_id where tarea_corte = corte and tarea_id not in
+	(
+	select t.tarea_id
+	from corte c join tarea t on t.tarea_Corte = c.Corte_id join tarea_operario tao on tao.tarea_id = t.tarea_id join operacion o on o.Operacion_Id = t.Tarea_Operacion join corte_Talla ct on ct.corte_id = c.corte_id	
+	where c.corte_id = corte and cantidad = tao.tarea_cantidad
+	) and o.operacion_id in (
+	select Operacion.Operacion_ID
+	from Operacion, tarea, modelo, modelo_Operacion, corte
+	where Tarea_Operacion = Operacion.Operacion_ID and Operacion.Operacion_ID = Modelo_Operacion.Operacion_ID and Modelo_Operacion.Modelo_ID = Modelo.Modelo_Id and Tarea_Corte = Corte_id and Corte_Modelo = Modelo.Modelo_id and Modelo.Modelo_Id = modelo and corte_id = corte
+	order by operacion.operacion_Id
+
+	)
+	order by o.Operacion_Descripcion;
+end//
+
+
 /*eliminar Tarea*/
 create procedure eliminarTarea(idTarea int)
 begin
@@ -1352,4 +1378,40 @@ begin
 	
 	select Pagototal as 'Pago Total', Nomina, Insumos, ganancias, sum(ganancias/2) as 'Ganancias a la Mitad';
 	
+end//
+
+/*Consultar las operaciones nuevas */
+CREATE PROCEDURE nuevasOperaciones(modelo int)
+begin
+select Operacion.Operacion_ID
+from Operacion, Modelo_Operacion, Modelo, Corte
+where Operacion.Operacion_Id not in
+(
+select Operacion.Operacion_Id
+from Operacion, tarea, modelo, modelo_Operacion, corte
+where Tarea_Operacion = Operacion.Operacion_ID and Operacion.Operacion_ID = Modelo_Operacion.Operacion_ID and Modelo_Operacion.Modelo_ID = Modelo.Modelo_Id and Tarea_Corte = Corte_id and Corte_Modelo = Modelo.Modelo_id and Modelo.Modelo_Id = modelo
+group by Operacion.Operacion_ID
+) and Operacion.Operacion_ID = Modelo_Operacion.operacion_Id and modelo_Operacion.Modelo_ID = Modelo.Modelo_ID and Modelo.Modelo_Id = Corte_Modelo and Modelo.modelo_ID = modelo
+group by Operacion.Operacion_Id;
+end//
+
+
+/* insertar nuevas operaciones a un corte*/
+create procedure insertarNuevasOperacionesCorte(modelo int)
+begin
+
+insert into Tarea(Tarea_Corte, Tarea_Operacion) 
+select C.corte_id, Operacion.Operacion_ID
+from Operacion, Modelo_Operacion, Modelo, Corte c inner join ( select corte_ID
+from Corte, modelo
+where Corte_modelo = modelo_Id and modelo_Id = modelo limit 1) s on s.corte_id = c.Corte_id
+where Operacion.Operacion_Id not in
+(
+select Operacion.Operacion_Id
+from Operacion, tarea, modelo, modelo_Operacion, corte
+where Tarea_Operacion = Operacion.Operacion_ID and Operacion.Operacion_ID = Modelo_Operacion.Operacion_ID and Modelo_Operacion.Modelo_ID = Modelo.Modelo_Id and Tarea_Corte = Corte_id and Corte_Modelo = Modelo.Modelo_id and Modelo.Modelo_Id = modelo
+group by Operacion.Operacion_ID
+) and Operacion.Operacion_ID = Modelo_Operacion.operacion_Id and modelo_Operacion.Modelo_ID = Modelo.Modelo_ID and Modelo.Modelo_Id = Corte_Modelo and Modelo.modelo_ID = modelo
+group by Operacion.Operacion_Id;
+
 end//

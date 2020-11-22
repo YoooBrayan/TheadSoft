@@ -81,6 +81,7 @@ if (isset($_POST['idCortes'])) {
         'insumos' => $_POST['insumos'],
         'ganancias' => ($ganancias - $_POST['insumos'] < 0 ? 0 : $ganancias - $_POST['insumos']),
         'gananciasD' => floor((($ganancias - $_POST['insumos']) < 0 ? 0 : $ganancias - $_POST['insumos']) / count($listaSocios)),
+        'perdidas' => $ganancias - $_POST['insumos'] < 0 ? ($ganancias - $_POST['insumos']) * - 1 : 0,
         'pagoSocios' => $pagoSocios
     );
 

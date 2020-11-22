@@ -26,7 +26,7 @@ if($operario -> autenticar()){
     header("Location: index.php?pid=" . base64_encode("presentacion/sesionSuper.php"));
 }else{
     echo "Else";
-    //header("Location: index.php?pid=" . base64_encode("presentacion/inicio.php") . "&di=true");
+    header("Location: index.php?pid=" . base64_encode("presentacion/inicio.php") . "&ns=true");
 }
 
 
